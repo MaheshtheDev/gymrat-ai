@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Gymrats-ai",
-    "slug": "Gymrats-ai",
+    "name": "gymrat-ai",
+    "slug": "gymrat-ai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
