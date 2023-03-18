@@ -12,11 +12,7 @@ export const OnboardingStack: React.FC<OnboardingStackProps> = ({}) => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen
-        name={ROUTES.WELCOME_SCREEN}
-        component={WelcomeScreen}
-        // options={headerOptionsWithoutBack}
-      />
+      <Stack.Screen name={ROUTES.WELCOME_SCREEN} component={WelcomeScreen} />
     </Stack.Navigator>
   )
 }
