@@ -21,6 +21,27 @@ export type AuthStackParamList = {
     email: string
     password: string
   }
+  SignUpOtpScreen: {
+    code: string | undefined
+  }
+  SignUpConfirmScreen: {
+    text: string | undefined
+  }
+  AddMoreDetailsScreen: {
+    height: string | undefined
+    weight: string | undefined
+    gender: string | undefined
+  }
+  HomeScreen: {
+    state: string | undefined
+    access_token: string | undefined
+    token_type: string | undefined
+  }
+  ProfileScreen: {
+    state: string | undefined
+    access_token: string | undefined
+    token_type: string | undefined
+  }
   AgreementsScreen: undefined
 }
 

@@ -1,6 +1,55 @@
 import { StyleSheet } from 'react-native'
-import { Typography } from '@styles'
+import {
+  FONT_SIZE_20,
+  FONT_WEIGHT_OR_TEXT,
+  MONTSERRAT_LIGHT,
+} from '@styles'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen'
+import Colors from '@styles/colors'
 
 export const styles = StyleSheet.create({
-  parentContainer: { flex: 1 },
+  parentContainer: {
+    flex: 1,
+    backgroundColor: Colors.BLACK,
+  },
+  titlecontainer: {
+    marginTop: wp('5%'),
+  },
+  buttoncontainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '53%',
+    backgroundColor: 'black',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderTopWidth: 1,
+
+    borderWidth: 1,
+    borderTopColor: Colors.YELLOW,
+    justifyContent: 'center',
+  },
+
+  loginbtncontainer: {
+    marginBottom: hp('2%'),
+    marginTop: hp('5.8%'),
+  },
+  ortxt: {
+    marginTop: wp('4%'),
+    marginBottom: wp('4%'),
+  },
+  orlabeltxt: {
+    fontSize: FONT_SIZE_20,
+    color: Colors.WHITE,
+    fontWeight: FONT_WEIGHT_OR_TEXT,
+    fontFamily: MONTSERRAT_LIGHT,
+    alignSelf: 'center',
+  },
+  googlebtncoinatiner: {
+    marginBottom: hp('2%'),
+  },
 })
