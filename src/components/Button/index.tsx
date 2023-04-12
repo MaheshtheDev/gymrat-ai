@@ -19,6 +19,7 @@ export enum ButtonVarient {
   lightgreen = 'lightgreen',
   savebutton = 'savebutton',
   cancelbutton = 'cancelbutton',
+  continue='continue'
 }
 
 export const ButtonComponent: React.FC<ButtonComponentProps> = ({
@@ -36,6 +37,8 @@ export const ButtonComponent: React.FC<ButtonComponentProps> = ({
 
       case ButtonVarient.lightgreen:
         return styles.lightgreen
+      case ButtonVarient.continue:
+        return styles.continue
 
       case ButtonVarient.withBorder:
         return styles.withBorder
@@ -68,4 +71,3 @@ export const ButtonComponent: React.FC<ButtonComponentProps> = ({
     </TouchableOpacity>
   )
 }
-

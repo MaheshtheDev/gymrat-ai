@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { AuthStackNavProps } from '@navigation'
 import { SafeAreaView, SectionList, View, FlatList, TouchableOpacity } from 'react-native'
 import { styles } from './style'
 import Modal from 'react-native-modal'
+import axios from 'axios'
 
 import { Entypo } from '@expo/vector-icons'
 import {
@@ -17,11 +18,36 @@ import {
 import { Strings } from '@constants'
 import Colors from '@styles/colors'
 
-
 export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   navigation,
   route,
 }) => {
+  useEffect(() => {
+    console.log('sagar')
+    const getWorkoutSuggestion = async () => {
+      try {
+        const response = await axios.post(
+          'https://api.openai.com/v1/chat/completions?model=gpt-3.5-turbo',
+          {
+            prompt: 'workout',
+            max_tokens: 50,
+            n: 1,
+            stop: '\n',
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${YOUR_OPENAI_API_KEY}`,
+            },
+          }
+        )
+        console.log(response.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }, [])
+
   const [modalVisible, setModalVisible] = useState(false)
 
   const DATA4 = [

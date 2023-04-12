@@ -1,0 +1,23 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-gymratai-staging-224952-authRole",
+      "UnauthRoleArn": "arn:aws:iam::059498811446:role/amplify-gymratai-staging-224952-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::059498811446:role/amplify-gymratai-staging-224952-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-gymratai-staging-224952-deployment",
+      "UnauthRoleName": "amplify-gymratai-staging-224952-unauthRole",
+      "StackName": "amplify-gymratai-staging-224952",
+      "StackId": "arn:aws:cloudformation:us-east-1:059498811446:stack/amplify-gymratai-staging-224952/85b58f60-cc28-11ed-83a0-121b44e79a29",
+      "AmplifyAppId": "d3ig11b7p7znpt"
+    },
+    "categories": {
+      "auth": {
+        "gymratai": {}
+      },
+      "api": {
+        "gymratai": {}
+      }
+    }
+  }
+}

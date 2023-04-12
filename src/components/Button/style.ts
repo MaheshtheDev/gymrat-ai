@@ -29,6 +29,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     opacity: 0.5,
   },
+  continue: {
+    backgroundColor: Colors.CHLOROPHYL_GREEN,
+    marginHorizontal: wp('5.4%'),
+    borderRadius: 25,
+  },
   imageButtonContainer: {
     backgroundColor: Colors.TRANSPARENT,
     borderColor: Colors.YELLOW,
@@ -68,9 +73,8 @@ const styles = StyleSheet.create({
     marginHorizontal: wp('5.4%'),
     paddingVertical: hp('1%'),
     paddingHorizontal: hp('7%'),
-    marginRight:wp('9.5%'),
+    marginRight: wp('9.5%'),
     borderRadius: 25,
-
   },
 })
 

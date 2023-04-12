@@ -24,7 +24,7 @@ export const SignUpConfirmScreen: React.FC<AuthStackNavProps<'SignUpConfirmScree
       <View style={styles.titlecontainer}>
         <LabelComponent style={styles.title} label={Strings.SUCCESSFULLY_VERIFIED} />
       </View>
-      <ButtonComponent  onPress={()=> navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.ADD_MORE_DETAILS_SCREEN })}
+      <ButtonComponent  onPress={()=> navigation.reset(ROUTES.AUTH_STACK, { screen: ROUTES.ADD_MORE_DETAILS_SCREEN })}
         label={Strings.CHECK_IN}
         varient={ButtonVarient.lightgreen}
         labelVarient={TextVarient.greenbutton}

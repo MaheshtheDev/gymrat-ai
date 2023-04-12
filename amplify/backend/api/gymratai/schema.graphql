@@ -1,0 +1,12 @@
+type SuggestedPlan @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  weight: Float
+  height: Float
+  gender: Int
+  goal: Int
+  age: Int
+  bmiValue: Float!
+  mealPlan: AWSJSON
+  workoutPlan: AWSJSON
+}
+ 
