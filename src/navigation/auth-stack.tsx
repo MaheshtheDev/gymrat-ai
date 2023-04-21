@@ -11,18 +11,20 @@ import {
   SignInScreen,
   AddMoreDetailsScreen,
   HomeScreen,
-  ProfileScreen
+  ProfileScreen,
 } from '@containers'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Header, ProfileHeader } from '@components'
 import { NavigationService, navigationRef } from './NavigationService'
+import { Workoutscreen } from '@containers/auth-stack/workout-details-screen'
+import { MealScreen } from '@containers/auth-stack/meal-plan-screen'
 
 const Stack = createNativeStackNavigator<AuthStackParamList>()
 type AuthStackProps = {
-  onPress?:() => void
+  onPress?: () => void
 }
 
-export const AuthStack: React.FC<AuthStackProps> = ({ navigation ,onPress}) => {
+export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -100,7 +102,18 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation ,onPress}) => {
       <Stack.Screen
         name={ROUTES.PROFILE_SCREEN}
         component={ProfileScreen}
-        options={{headerShown: false, gestureEnabled: false }}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
+
+      <Stack.Screen
+        name={ROUTES.WORKOUT_DETAILS}
+        component={Workoutscreen}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={ROUTES.MEAL_DETAILS}
+        component={MealScreen}
+        options={{ headerShown: false, gestureEnabled: false }}
       />
     </Stack.Navigator>
   )

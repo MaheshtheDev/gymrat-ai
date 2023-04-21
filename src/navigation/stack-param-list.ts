@@ -43,6 +43,8 @@ export type AuthStackParamList = {
     token_type: string | undefined
   }
   AgreementsScreen: undefined
+  Workoutscreen: undefined
+  MealScreen: undefined
 }
 
 export type AuthStackNavProps<T extends keyof AuthStackParamList> = {

@@ -33,7 +33,7 @@ export const WelcomeScreen: React.FC<OnboardingStackNavProps<'WelcomeScreen'>> =
       <ButtonComponent
         onPress={() =>
           navigation.navigate(ROUTES.AUTH_STACK, {
-            screen: ROUTES.SIGN_UP_OPTIONS_SCREEN,
+            screen: ROUTES.HOME_SCREEN,
           })
         }
         label={Strings.LETS_GO}

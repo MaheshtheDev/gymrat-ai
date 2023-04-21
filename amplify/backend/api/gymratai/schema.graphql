@@ -1,3 +1,14 @@
+type UserProfile @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userId: String!
+  weight: Float!
+  height: Float!
+  gender: Int!
+  goal: Int!
+  age: Int!
+  bmiValue: Float!
+}
+
 type SuggestedPlan @model @auth(rules: [{allow: public}]) {
   id: ID!
   weight: Float

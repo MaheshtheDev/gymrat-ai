@@ -109,12 +109,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flex: 1,
   },
-  table1: {
+  days: {
     fontSize: FONT_SIZE_16,
     fontWeight: FONT_WEIGHT_OR_TEXT,
     fontFamily: MONTSERRAT_MEDIUM,
-    color: Colors.WHITE,
-    paddingRight: wp('12.4%'),
+    color: Colors.SPRING_GREEN,
+    justifyContent: 'space-between',
+    flex: 1,
   },
   repsitem: {
     fontSize: FONT_SIZE_16,
@@ -189,7 +190,7 @@ export const styles = StyleSheet.create({
     fontWeight: FONT_WEIGHT_TITLE,
     fontFamily: MONTSERRAT_BOLD,
     color: Colors.SELECTIVE_YELLOW,
-    marginTop: hp('1%'),
+    marginTop: hp('-1.5%'),
   },
   workout: {
     flex: 1,
@@ -197,7 +198,7 @@ export const styles = StyleSheet.create({
     fontWeight: FONT_WEIGHT_TITLE,
     fontFamily: MONTSERRAT_BOLD,
     color: Colors.LIGHT_GREEN,
-    marginTop: hp('1%'),
+    marginBottom: hp('-1%'),
   },
   goalcontainer: {
     justifyContent: 'center',
@@ -232,7 +233,6 @@ export const styles = StyleSheet.create({
   },
   flatlist: {
     flexDirection: 'row',
-    flex: 1,
   },
   headercontainer: {
     flexDirection: 'row',

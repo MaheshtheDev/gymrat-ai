@@ -1,7 +1,7 @@
 {
-  "expoServerNgrokUrl": "https://56-5m9.sagar-panchal3690.gymrat-ai.exp.direct",
-  "packagerNgrokUrl": "https://56-5m9.sagar-panchal3690.gymrat-ai.exp.direct",
-  "ngrokPid": 21760,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "expoServerPort": 19000,
   "packagerPort": 19000,
   "packagerPid": null,
