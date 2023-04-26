@@ -24,7 +24,6 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
     try {
       const user = await Auth.signIn(email, password)
       navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.HOME_SCREEN })
-      console.log(user,"user ")
     } catch (error) {
       console.log('error signing in', error)
     }

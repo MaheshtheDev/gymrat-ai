@@ -55,7 +55,6 @@ export const MealScreen: React.FC<AuthStackNavProps<'MealScreen'>> = ({
           },
         }
       )
-      console.log(response.data, 'sagar')
       setMealPlan(response?.data?.mealPlan)
     } catch (error) {
       console.error(error)

@@ -17,33 +17,33 @@ import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth'
 
 import awsconfig from '../../../../src/aws-exports'
 
-const isLocalHost = Boolean(__DEV__)
+// const isLocalHost = Boolean(__DEV__)
 
-const [localRedirectSignIn, productionRedirectSignIn] =
-  awsconfig.oauth.redirectSignIn.split(',')
+// const [localRedirectSignIn, productionRedirectSignIn] =
+//   awsconfig.oauth.redirectSignIn.split(',')
 
-const [localRedirectSignOut, productionRedirectSignOut] =
-  awsconfig.oauth.redirectSignOut.split(',')
+// const [localRedirectSignOut, productionRedirectSignOut] =
+//   awsconfig.oauth.redirectSignOut.split(',')
 
-async function urlOpener(url, redirectUrl) {
-  const { type, url: newUrl } = await WebBrowser.openAuthSessionAsync(url, redirectUrl)
+// async function urlOpener(url, redirectUrl) {
+//   const { type, url: newUrl } = await WebBrowser.openAuthSessionAsync(url, redirectUrl)
 
-  if (type === 'success' && Platform.OS === 'ios') {
-    WebBrowser.dismissBrowser()
-    return Linking.openURL(newUrl)
-  }
-}
+//   if (type === 'success' && Platform.OS === 'ios') {
+//     WebBrowser.dismissBrowser()
+//     return Linking.openURL(newUrl)
+//   }
+// }
 
-const updatedConfig = {
-  ...awsconfig,
-  oauth: {
-    ...awsconfig.oauth,
-    redirectSignIn: isLocalHost ? localRedirectSignIn : productionRedirectSignIn,
-    redirectSignOut: isLocalHost ? localRedirectSignOut : productionRedirectSignOut,
-    urlOpener,
-  },
-}
-Amplify.configure(updatedConfig)
+// const updatedConfig = {
+//   ...awsconfig,
+//   oauth: {
+//     ...awsconfig.oauth,
+//     redirectSignIn: isLocalHost ? localRedirectSignIn : productionRedirectSignIn,
+//     redirectSignOut: isLocalHost ? localRedirectSignOut : productionRedirectSignOut,
+//     urlOpener,
+//   },
+// }
+Amplify.configure(awsconfig)
 
 export const SignUpOptionsScreen: React.FC<AuthStackNavProps<'SignUpOptionsScreen'>> = ({
   navigation,
@@ -51,6 +51,27 @@ export const SignUpOptionsScreen: React.FC<AuthStackNavProps<'SignUpOptionsScree
 }) => {
   const [user, setUser] = useState(null)
   const [customState, setCustomState] = useState(null)
+
+  useEffect(() => {
+    const unsubscribe = Hub.listen('auth', ({ payload: { event, data } }) => {
+      switch (event) {
+        case 'signIn':
+          setUser(data)
+          break
+        case 'signOut':
+          setUser(null)
+          break
+        case 'customOAuthState':
+          setCustomState(data)
+      }
+    })
+
+    Auth.currentAuthenticatedUser()
+      .then(currentUser => setUser(currentUser))
+      .catch(() => console.log('Not signed in'))
+
+    return unsubscribe
+  }, [])
 
   useEffect(() => {
     const unsubscribe = Hub.listen('auth', ({ payload: { event, data } }) => {
@@ -141,9 +162,7 @@ export const SignUpOptionsScreen: React.FC<AuthStackNavProps<'SignUpOptionsScree
           <View>
             <ButtonComponent
               onPress={() =>
-                Auth.federatedSignIn({
-                  provider: CognitoHostedUIIdentityProvider.Apple,
-                })
+                Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Apple })
               }
               varient={ButtonVarient.withBorder}
               label={Strings.APPLE_BUTTON_TEXT}

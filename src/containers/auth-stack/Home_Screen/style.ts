@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 1,
     backgroundColor: Colors.BLACK,
-    marginHorizontal: wp('1.6%'),
+    marginHorizontal: wp('1%'),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -273,7 +273,7 @@ export const styles = StyleSheet.create({
   modalcontainer: {
     backgroundColor: Colors.BLACK,
     alignSelf: 'center',
-    height: WINDOW_HEIGHT * 0.45,
+    height: WINDOW_HEIGHT * 0.52,
     width: WINDOW_WIDTH * 0.9,
     borderRadius: 7,
   },

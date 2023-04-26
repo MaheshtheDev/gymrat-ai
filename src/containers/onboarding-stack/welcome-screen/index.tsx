@@ -1,5 +1,5 @@
 import React from 'react'
-import {  View, SafeAreaView, StatusBar } from 'react-native'
+import {  View, SafeAreaView } from 'react-native'
 
 import { OnboardingStackNavProps } from '@navigation'
 import { styles } from './style'
@@ -33,7 +33,7 @@ export const WelcomeScreen: React.FC<OnboardingStackNavProps<'WelcomeScreen'>> =
       <ButtonComponent
         onPress={() =>
           navigation.navigate(ROUTES.AUTH_STACK, {
-            screen: ROUTES.HOME_SCREEN,
+            screen: ROUTES.SIGN_UP_OPTIONS_SCREEN,
           })
         }
         label={Strings.LETS_GO}

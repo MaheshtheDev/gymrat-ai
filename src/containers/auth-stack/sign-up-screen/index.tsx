@@ -25,9 +25,14 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isValid, setIsValid] = useState(false)
 
-
   useEffect(() => {
-    setIsValid(firstName !== '' && lastName !== '' && email !== '' && password !== '' && confirmPassword !== '')
+    setIsValid(
+      firstName !== '' &&
+        lastName !== '' &&
+        email !== '' &&
+        password !== '' &&
+        confirmPassword !== ''
+    )
   }, [firstName, lastName, email, password, confirmPassword])
 
   const signUp = async (
@@ -43,15 +48,12 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
         password,
         username,
         attributes: {
-          email: username, // optional
-          // other custom attributes
+          email: username,
         },
         autoSignIn: {
-          // optional - enables auto sign in after user is confirmed
           enabled: true,
         },
       })
-      console.log(user)
     } catch (error) {
       console.log('error signing up:', error)
     }

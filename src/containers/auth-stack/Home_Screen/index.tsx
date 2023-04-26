@@ -26,6 +26,7 @@ import {
 } from '@components'
 import { ROUTES, Strings } from '@constants'
 import Colors from '@styles/colors'
+import { Auth } from 'aws-amplify'
 
 export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   navigation,
@@ -34,13 +35,17 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   const [workoutPlan, setWorkoutPlan] = useState([])
   const [mealPlan, setMealPlan] = useState([])
   const [isLoading, setLoading] = useState(true)
+  const [userdata, setUserdata] = useState([])
+  const [update, setUpdate] = useState([])
+  const [height, setHeight] = useState('')
+  const [weight, setWeight] = useState('')
+  const [goal, setGoal] = useState('')
+  const [inputFilled, setInputFilled] = useState(false)
+  const [userid, setUserid] = useState('')
+
   const [dayName, setDayName] = useState('')
 
   useEffect(() => {
-    // console.log('sagar')
-    // const date = new Date().toLocaleDateString('en-us', { weekday:"long"});
-
-    // console.log(date, 'date')
     let daysArray = [
       'Sunday',
       'Monday',
@@ -52,12 +57,26 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
     ]
     let day = new Date().getDay()
     let dayName = daysArray[day]
-    console.log(dayName)
     setDayName(dayName)
-
     getWorkoutData()
     getMealData()
+    getUserDetails()
+    
   }, [])
+ 
+  useEffect(() => {
+    fetchCurrentSessions()
+  }, [userid])
+  const clearInputs = () => {
+    setHeight('')
+    setWeight('')
+    setGoal('')
+  }
+  const fetchCurrentSessions = async () => {
+    const attributes = await Auth.currentUserInfo()
+    setUserid(attributes.id)
+    console.log(attributes.id, 'my name is sagfar')
+  }
 
   const getWorkoutData = async () => {
     try {
@@ -77,7 +96,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
           },
         }
       )
-      // console.log(response.data, 'data')
       setWorkoutPlan(response?.data?.workoutPlan)
     } catch (error) {
       console.error(error)
@@ -104,8 +122,61 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
           },
         }
       )
-      // console.log(response.data, 'sagar')
       setMealPlan(response?.data?.mealPlan)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getUserDetails = async () => {
+    console.log(userid, 'userrrr')
+    const attributes = await Auth.currentUserInfo()
+
+    try {
+      const response = await axios.get(
+        `https://gymrat-api.vercel.app/api/user/details?userId=${attributes?.id}`,
+
+        {
+          headers: {
+            Authorization: 'Bearer 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',
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      console.log(response.data, 'ssasasa')
+      setUserdata(response.data)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const GoalUpdate = async () => {
+    const attributes = await Auth.currentUserInfo()
+
+    try {
+      let body = JSON.stringify({
+        userId: attributes.id,
+        height: height,
+        weight: weight,
+        goal: goal,
+      })
+      console.log(body, 'body')
+      const response = await axios.put(
+        'https://gymrat-api.vercel.app/api/user/details',
+        body,
+
+        {
+          headers: {
+            Authorization: 'Bearer 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',
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      setUpdate(response.data)
     } catch (error) {
       console.error(error)
     } finally {
@@ -114,76 +185,50 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   }
   const [modalVisible, setModalVisible] = useState(false)
 
-  // const DATA4 = [
-  //   {
-  //     id: 0,
-  //     data: [
-  //       {
-  //         key: 0,
-  //         size: '178',
-  //         perameter: 'lbs',
-  //         label: 'Weight',
-  //       },
-  //       {
-  //         key: 1,
-  //         size: '177.08',
-  //         perameter: 'cm',
-  //         label: 'Height',
-  //       },
-  //       {
-  //         key: 2,
-  //         size: '178',
-  //         perameter: '',
-  //         label: 'BMI',
-  //       },
-  //     ],
-  //   },
-  // ]
-
-  // const onCardView = item => {
-  //   return (
-  //     <CardComponent cardStyle={styles.cardcontainer}>
-  //       <FlatList
-  //         data={DATA4[0].data}
-  //         // style={styles.flatlist}
-  //         renderItem={({ item }) => {
-  //           return (
-  //             <View>
-  //               <View style={{ flexDirection: 'row', backgroundColor: 'red' }}>
-  //                 <View style={styles.roundcontainer}>
-  //                   <LabelComponent label={item.size} style={styles.txt} />
-  //                 </View>
-  //                 <View style={styles.roundcontainer}>
-  //                   <LabelComponent label={item.size} style={styles.txt} />
-  //                 </View>
-  //                 <View style={styles.roundcontainer}>
-  //                   <LabelComponent label={item.size} style={styles.txt} />
-  //                 </View>
-  //               </View>
-  //               {/* <LabelComponent label={item.label} style={styles.label1} /> */}
-  //             </View>
-  //           )
-  //         }}
-  //       />
-  //       <View style={styles.goalcontainer}>
-  //         <LabelComponent label='GOAL' style={styles.goaltxt} />
-  //         <LabelComponent label='Gain Muscle' style={styles.gaintxt} />
-  //         <TouchableOpacity onPress={() => setModalVisible(true)}>
-  //           <LabelComponent label='what to update goal?' style={styles.goalchangetxt} />
-  //         </TouchableOpacity>
-  //       </View>
-  //     </CardComponent>
-  //   )
-  // }
+  const onCardView = item => {
+    return (
+      <CardComponent cardStyle={styles.cardcontainer}>
+        <FlatList
+          data={userdata}
+          style={styles.flatlist}
+          renderItem={({ item }) => {
+            return (
+              <View style={{ flexDirection: 'row' }}>
+                <View style={styles.roundcontainer}>
+                  <LabelComponent label={item.height} style={styles.txt} />
+                  <LabelComponent label='lbs' style={styles.subtxt} />
+                </View>
+                <View style={styles.roundcontainer}>
+                  <LabelComponent label={item.weight} style={styles.txt} />
+                  <LabelComponent label='cm' style={styles.subtxt} />
+                </View>
+                <View style={styles.roundcontainer}>
+                  <LabelComponent label={item.bmiValue} style={styles.txt} />
+                </View>
+              </View>
+            )
+          }}
+        />
+        <View style={styles.goalcontainer}>
+          <LabelComponent label='GOAL' style={styles.goaltxt} />
+          <LabelComponent label='Gain Muscle' style={styles.gaintxt} />
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <LabelComponent label='what to update goal?' style={styles.goalchangetxt} />
+          </TouchableOpacity>
+        </View>
+      </CardComponent>
+    )
+  }
   const combinedSections = [
     { title: 'Workout', subtitle: 'Meal for the day' },
-    // { title: 'Meal Plan Schedules' },
   ]
 
   const work = [{ title: 'Workout Schedules', data: workoutPlan, subtitle: 'Workout' }]
   const Meal = [
     { title: 'Meal Plan Schedules', data: mealPlan, subtitle: 'Meal for the day' },
   ]
+  const User = [{ title: 'Workout Schedules', data: userdata, subtitle: 'Workout' }]
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -191,9 +236,12 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
           <ActivityIndicator size={'large'} style={{ alignSelf: 'center' }} />
         ) : (
           <View>
+            {onCardView()}
+
             <LabelComponent label='Today’s Plan' style={styles.title} />
             <FlatList
               data={combinedSections}
+              scrollEnabled={false}
               renderItem={({ item }) => {
                 return (
                   <CardComponent>
@@ -207,7 +255,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                         )
                       }}
                       renderItem={({ item }) =>
-                        // console.log(item, 'ds'),
                         item.day === dayName && (
                           <View>
                             <View style={styles.tablecontainer}>
@@ -224,7 +271,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                               </View>
                             </View>
                             {item?.exercises?.map(v => {
-                              // console.log(v, 'sa')
                               return (
                                 <View>
                                   <View style={styles.tablecontainer}>
@@ -357,7 +403,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                   )
                 }}
                 renderItem={({ item }) =>
-                  // console.log(item, 'ds'),
                   item.day === dayName && (
                     <View style={styles.card}>
                       <View style={styles.tablecontainer}>
@@ -371,7 +416,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                         </View>
                       </View>
                       {item?.exercises?.map(v => {
-                        // console.log(v, 'sa')
                         return (
                           <View>
                             <View style={styles.tablecontainer}>
@@ -389,82 +433,83 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                 }
               />
             </View>
-            <View>
-              <SectionList
-                sections={Meal}
-                renderSectionHeader={({ section: { title, subtitle } }) => {
-                  return (
-                    <View style={styles.headercontainer}>
-                      <LabelComponent label={title} style={styles.title} />
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate(ROUTES.AUTH_STACK, {
-                            screen: ROUTES.MEAL_DETAILS,
-                          })
-                        }>
-                        <View style={styles.iconcontainer}>
-                          <LabelComponent label='View all' style={styles.viewalltxt} />
-                          <Entypo
-                            name='chevron-thin-right'
-                            size={15}
-                            color={Colors.CHLOROPHYL_GREEN}
+            {/* <View> */}
+            <SectionList
+              sections={Meal}
+              scrollEnabled
+              renderSectionHeader={({ section: { title, subtitle } }) => {
+                return (
+                  <View style={styles.headercontainer}>
+                    <LabelComponent label={title} style={styles.title} />
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate(ROUTES.AUTH_STACK, {
+                          screen: ROUTES.MEAL_DETAILS,
+                        })
+                      }>
+                      <View style={styles.iconcontainer}>
+                        <LabelComponent label='View all' style={styles.viewalltxt} />
+                        <Entypo
+                          name='chevron-thin-right'
+                          size={15}
+                          color={Colors.CHLOROPHYL_GREEN}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                )
+              }}
+              renderItem={({ item }) => (
+                <>
+                  {item.day === dayName && (
+                    <CardComponent>
+                      <View style={styles.mealview}>
+                        <View style={styles.mealconatiner}>
+                          <LabelComponent label='BREAKFAST' style={styles.heading} />
+                          <LabelComponent
+                            label={`(${item.breakfast.calories}cal)`}
+                            style={styles.headingmd}
                           />
                         </View>
-                      </TouchableOpacity>
-                    </View>
-                  )
-                }}
-                renderItem={({ item }) => (
-                  <>
-                    {item.day === dayName && (
-                      <CardComponent>
-                        <View style={styles.mealview}>
-                          <View style={styles.mealconatiner}>
-                            <LabelComponent label='BREAKFAST' style={styles.heading} />
-                            <LabelComponent
-                              label={`(${item.breakfast.calories}cal)`}
-                              style={styles.headingmd}
-                            />
-                          </View>
-                          <View>
-                            <LabelComponent
-                              label={item.breakfast.meal}
-                              style={styles.subheading}
-                            />
-                          </View>
-                          <View style={styles.mealconatiner}>
-                            <LabelComponent label='LUNCH' style={styles.heading} />
-                            <LabelComponent
-                              label={`(${item.lunch.calories}cal)`}
-                              style={styles.headingmd}
-                            />
-                          </View>
-                          <View>
-                            <LabelComponent
-                              label={item.lunch.meal}
-                              style={styles.subheading}
-                            />
-                          </View>
-                          <View style={styles.mealconatiner}>
-                            <LabelComponent label='DINNER' style={styles.heading} />
-                            <LabelComponent
-                              label={`(${item.dinner.calories}cal)`}
-                              style={styles.headingmd}
-                            />
-                          </View>
-                          <View>
-                            <LabelComponent
-                              label={item.dinner.meal}
-                              style={styles.subheading}
-                            />
-                          </View>
+                        <View>
+                          <LabelComponent
+                            label={item.breakfast.meal}
+                            style={styles.subheading}
+                          />
                         </View>
-                      </CardComponent>
-                    )}
-                  </>
-                )}
-              />
-            </View>
+                        <View style={styles.mealconatiner}>
+                          <LabelComponent label='LUNCH' style={styles.heading} />
+                          <LabelComponent
+                            label={`(${item.lunch.calories}cal)`}
+                            style={styles.headingmd}
+                          />
+                        </View>
+                        <View>
+                          <LabelComponent
+                            label={item.lunch.meal}
+                            style={styles.subheading}
+                          />
+                        </View>
+                        <View style={styles.mealconatiner}>
+                          <LabelComponent label='DINNER' style={styles.heading} />
+                          <LabelComponent
+                            label={`(${item.dinner.calories}cal)`}
+                            style={styles.headingmd}
+                          />
+                        </View>
+                        <View>
+                          <LabelComponent
+                            label={item.dinner.meal}
+                            style={styles.subheading}
+                          />
+                        </View>
+                      </View>
+                    </CardComponent>
+                  )}
+                </>
+              )}
+            />
+            {/* </View> */}
 
             <>
               <Modal
@@ -477,6 +522,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                     <TextInputComponent
                       placeholder={Strings.HEIGHT}
                       style={styles.txtinput}
+                      onChangeText={text => setHeight(text)}
                       keyboardType='number-pad'
                     />
                   </View>
@@ -485,6 +531,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                     <TextInputComponent
                       placeholder={Strings.WEIGHT}
                       style={styles.txtinput}
+                      onChangeText={text => setWeight(text)}
                       keyboardType='number-pad'
                     />
                   </View>
@@ -492,6 +539,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                     <LabelComponent label={Strings.GOAL} style={styles.label} />
                     <TextInputComponent
                       placeholder={Strings.GOAL}
+                      onChangeText={text => setGoal(text)}
                       style={styles.txtinput}
                       keyboardType='number-pad'
                     />
@@ -499,12 +547,19 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
 
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <ButtonComponent
-                      onPress={() => setModalVisible(!modalVisible)}
+                      onPress={() => {
+                        setModalVisible(!modalVisible)
+                        clearInputs()
+                      }}
                       varient={ButtonVarient.cancelbutton}
                       labelVarient={TextVarient.cancel}
                       label={Strings.CANCEL}
                     />
                     <ButtonComponent
+                      onPress={() => {
+                        GoalUpdate()
+                        setModalVisible(false)
+                      }}
                       label={Strings.SAVE}
                       varient={ButtonVarient.savebutton}
                       labelVarient={TextVarient.save}
@@ -515,7 +570,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
             </>
           </View>
         )}
-        {/* {onCardView()} */}
       </ScrollView>
     </SafeAreaView>
   )
