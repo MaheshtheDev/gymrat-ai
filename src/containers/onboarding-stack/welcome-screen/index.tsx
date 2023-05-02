@@ -1,5 +1,5 @@
 import React from 'react'
-import {  View, SafeAreaView } from 'react-native'
+import { View, SafeAreaView } from 'react-native'
 
 import { OnboardingStackNavProps } from '@navigation'
 import { styles } from './style'

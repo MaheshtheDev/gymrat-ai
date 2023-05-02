@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native'
 import {
+  FONT_FAMILY_REGULAR,
   FONT_SIZE_12,
   FONT_SIZE_26,
   FONT_WEIGHT_OR_TEXT,
@@ -42,6 +43,11 @@ export const styles = StyleSheet.create({
     marginTop: hp('3%'),
     marginHorizontal: wp('9%'),
   },
+  label1: {
+    color: Colors.WHITE,
+    fontWeight: FONT_WEIGHT_OR_TEXT,
+    fontFamily: MONTSERRAT_REGULAR,
+  },
   txtinput: {
     backgroundColor: Colors.BLACK,
     borderRadius: 25,
@@ -57,5 +63,42 @@ export const styles = StyleSheet.create({
   },
   buttoncontainer: {
     marginTop: hp('5%'),
+  },
+  dropdown: {
+    flexDirection: 'row',
+
+    backgroundColor: Colors.BLACK,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: Colors.BORDERGREEN,
+    marginHorizontal: wp('5.5%'),
+    marginTop: hp('2%'),
+    paddingHorizontal: wp('3.5%'),
+    paddingVertical: hp('1.5%'),
+    opacity: 0.58,
+    color: Colors.WHITE,
+    fontFamily: FONT_FAMILY_REGULAR,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  optionsContainer: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '90%',
+
+    borderColor: Colors.BORDERGREEN,
+    opacity: 0.75,
+    borderRadius: 5,
+    borderWidth: 2,
+  },
+  option: {
+    backgroundColor: 'black',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
   },
 })

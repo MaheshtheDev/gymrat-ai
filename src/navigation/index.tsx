@@ -11,8 +11,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 const Stack = createNativeStackNavigator()
 
 export const AppNavigator = () => {
-  LogBox.ignoreLogs(['Warning: ...', 'Warning: Failed', 'Warning: Each']) // Ignore log notification by message
-  LogBox.ignoreAllLogs() //Ignore all log notifications
+  LogBox.ignoreLogs(['Warning: ...', 'Warning: Failed', 'Warning: Each'])
+  LogBox.ignoreAllLogs()
   const routeNameRef = React.useRef()
   const insets = useSafeAreaInsets()
 
