@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { AuthStackNavProps } from '@navigation'
-import { View, SafeAreaView, ScrollView } from 'react-native'
+import { View, SafeAreaView, ScrollView, Alert } from 'react-native'
 import { styles } from './style'
 import {
   ButtonComponent,
@@ -18,6 +18,7 @@ export const SignUpOtpScreen: React.FC<AuthStackNavProps<'SignUpOtpScreen'>> = (
   route,
 }) => {
   const [code, setCode] = useState('')
+  const [isCodeEntered, setIsCodeEntered] = useState(false)
 
   const { email } = route.params
 
@@ -29,7 +30,13 @@ export const SignUpOtpScreen: React.FC<AuthStackNavProps<'SignUpOtpScreen'>> = (
       })
     } catch (error) {
       console.log('error confirming sign up', error)
+      Alert.alert('', error.message)
     }
+  }
+
+  const handleCodeChange = (txt: string) => {
+    setCode(txt)
+    setIsCodeEntered(txt !== '')
   }
   return (
     <SafeAreaView style={styles.coinatiner}>
@@ -37,16 +44,18 @@ export const SignUpOtpScreen: React.FC<AuthStackNavProps<'SignUpOtpScreen'>> = (
       <LabelComponent label={Strings.OTP_DESCRIPTION_TEXT} style={styles.subtitle} />
       <View>
         <TextInputComponent
+          value={code}
           placeholder={Strings.ENTER_CODE}
           keyboardType='number-pad'
-          onChangeText={txt => setCode(txt)}
+          onChangeText={txt => handleCodeChange(txt)}
         />
         <View style={styles.buttoncontainer}>
           <ButtonComponent
             onPress={confirmSignUp}
-            varient={ButtonVarient.lightgreen}
+            varient={!isCodeEntered ? ButtonVarient.lightgreen : ButtonVarient.continue}
             label={Strings.CONFRIM}
             labelVarient={TextVarient.black}
+            disabled={!isCodeEntered}
           />
         </View>
       </View>

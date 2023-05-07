@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { AuthStackNavProps, NavigationService } from '@navigation'
 import { SafeAreaView, View, TouchableOpacity } from 'react-native'
@@ -7,6 +7,7 @@ import { styles } from './style'
 import { Header, LabelComponent, TextInputComponent } from '@components'
 import { Strings } from '@constants'
 import Google from '../../../assets/svg/google.svg'
+import { Auth } from 'aws-amplify'
 
 export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
   navigation,
@@ -19,10 +20,21 @@ export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
   const [disabled, setDisabled] = useState(false)
   const [visible, setVisible] = useState(true)
   const [showButton, setShowButton] = useState(false)
+  const [email, setEmail] = useState('')
 
   const handleIconPress = () => {
     setShowButton(true)
     setDisabled(true)
+  }
+
+  useEffect(() => {
+    fetchCurrentSessions()
+  }, [])
+
+  
+  const fetchCurrentSessions = async () => {
+    const userdata = await Auth.currentUserInfo()
+    setEmail(userdata?.attributes?.email)
   }
 
   return (
@@ -90,7 +102,7 @@ export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
       </View>
       <View style={styles.accountlinkcontainer}>
         <LabelComponent label={Strings.EMAIL_ADDRESS} style={styles.title} />
-        <LabelComponent label='mahesh.svmr@gmail.com' style={styles.subtitle} />
+        <LabelComponent label={email} style={styles.subtitle} />
         <View style={styles.linkconatiner}>
           <LabelComponent label={Strings.ACCOUNT_LINK} style={styles.title} />
           <View style={styles.ss}>

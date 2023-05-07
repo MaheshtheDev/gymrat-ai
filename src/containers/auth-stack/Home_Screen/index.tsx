@@ -21,6 +21,7 @@ import {
   ButtonVarient,
   CardComponent,
   LabelComponent,
+  ProfileHeader,
   TextInputComponent,
   TextVarient,
 } from '@components'
@@ -62,8 +63,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
     getMealData()
     getUserDetails()
   }, [])
-
-
 
   const clearInputs = () => {
     setHeight('')
@@ -126,7 +125,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   }
 
   const getUserDetails = async () => {
-    console.log(userid, 'userrrr')
     const attributes = await Auth.currentUserInfo()
 
     try {
@@ -141,7 +139,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
           },
         }
       )
-      console.log(response.data, 'ssasasa')
       setUserdata(response.data)
     } catch (error) {
       console.error(error)
@@ -163,7 +160,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
         age: 30,
         bmiValue: bmi,
       }
-      console.log(body, 'body')
       setLoading(true)
       const response = await axios.put(
         'https://gymrat-api.vercel.app/api/user/details',
@@ -177,7 +173,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
         }
       )
       // setUserdata(response.data)
-      console.log(response.data, 'update')
       getUserDetails()
     } catch (error) {
       console.error(error)
@@ -194,7 +189,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
           data={userdata}
           style={styles.flatlist}
           renderItem={({ item }) => {
-            console.log(item, 'item')
             return (
               <View style={{ flexDirection: 'row' }}>
                 <View style={styles.roundcontainer}>
@@ -244,6 +238,17 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   ) : (
     <SafeAreaView style={styles.container}>
       <ScrollView>
+        <ProfileHeader
+          onLogoutPress={() => {
+            Auth.signOut()
+            navigation.replace(ROUTES.AUTH_STACK)
+          }}
+          Profile={true}
+          onProfilePress={() =>
+            navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.PROFILE_SCREEN })
+          }
+          age={`Age: ${userdata[0]?.age}`}
+        />
         <View>
           {onCardView()}
 

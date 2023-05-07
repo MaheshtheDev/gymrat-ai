@@ -1,26 +1,36 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native'
 import styles from './style'
 import Colors from '@styles/colors'
 import { LabelComponent } from '@components/Label'
 import ProfileIcon from '../../assets/svg/profileicon.svg'
 import { Ionicons } from '@expo/vector-icons'
+import { Auth } from 'aws-amplify'
 
 interface ProfileHeaderProps {
   onProfilePress?: () => void
   onLogoutPress?: () => void
   Profile?: boolean
-  username: string
   age: string
 }
 
 export const ProfileHeader = ({
   Profile = false,
   onProfilePress,
-  username,
   onLogoutPress,
   age,
 }: ProfileHeaderProps) => {
+  useEffect(() => {
+    fetchCurrentSessions()
+  }, [])
+
+  const fetchCurrentSessions = async () => {
+    const userdata = await Auth.currentUserInfo()
+    setUsername(userdata?.attributes?.name)
+    console.log(userdata, 'sasa')
+  }
+
+  const [username, setUsername] = useState('')
   return (
     <SafeAreaView style={styles.container}>
       {Profile && (

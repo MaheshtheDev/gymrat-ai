@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { AuthStackNavProps } from '@navigation'
-import { SafeAreaView, View } from 'react-native'
+import { Alert, SafeAreaView, Text, View } from 'react-native'
 import { styles } from './style'
 import {
   ButtonComponent,
@@ -12,6 +12,7 @@ import {
 } from '@components'
 import { ROUTES, Strings } from '@constants'
 import { Auth } from 'aws-amplify'
+import { FONT_SIZE_10, FONT_SIZE_12 } from '@styles'
 
 export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
   navigation,
@@ -19,14 +20,25 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
 }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isValid, setIsValid] = useState(true)
+
+  const isCodeEntered = email && password
 
   const signIn = async () => {
     try {
       const user = await Auth.signIn(email, password)
+
       navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.HOME_SCREEN })
     } catch (error) {
+      Alert.alert('', error.message)
       console.log('error signing in', error)
     }
+  }
+
+  const handlePasswordChange = (password: string) => {
+    setPassword(password)
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    setIsValid(regex.test(password))
   }
 
   return (
@@ -41,19 +53,34 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
           <TextInputComponent
             placeholder={Strings.EMAIL}
             onChangeText={txt => setEmail(txt)}
+            value={email}
           />
           <TextInputComponent
             placeholder={Strings.PASSWORD}
+            value={password}
             secureTextEntry
-            onChangeText={txt => setPassword(txt)}
+            onChangeText={txt => {
+              setPassword(txt), handlePasswordChange(txt)
+            }}
           />
         </View>
+
+        {!isValid && (
+          <LabelComponent
+            label={
+              'Password must have at least 8 characters, at least one uppercase letter'
+            }
+            style={{ color: 'red', alignSelf: 'center', marginTop: 5 }}
+          />
+        )}
+
         <View style={styles.buttoncontainer}>
           <ButtonComponent
             label={Strings.LOGIN}
-            varient={ButtonVarient.lightgreen}
+            varient={!isCodeEntered ? ButtonVarient.lightgreen : ButtonVarient.continue}
             labelVarient={TextVarient.black}
             onPress={signIn}
+            disabled={!isCodeEntered}
           />
         </View>
       </View>

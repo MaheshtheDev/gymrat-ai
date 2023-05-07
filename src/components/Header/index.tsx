@@ -1,5 +1,5 @@
 import React from 'react'
-import {  TouchableOpacity, SafeAreaView } from 'react-native'
+import { TouchableOpacity, SafeAreaView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import styles from './style'
 import Colors from '@styles/colors'
@@ -10,6 +10,7 @@ interface HeaderProps {
   showLoginButton?: boolean
   showSignUpButton?: boolean
   onLoginPress?: () => void
+  onSignUpPress?: () => void
   onBackPress?: () => void
   Lebel?: boolean
   editICon?: boolean
@@ -22,8 +23,9 @@ export const Header = ({
   editICon = false,
   onLoginPress,
   onBackPress,
+  onSignUpPress,
   onIconPress,
-  Lebel=false,
+  Lebel = false,
 }: HeaderProps) => {
   return (
     <SafeAreaView style={styles.container}>
@@ -36,7 +38,7 @@ export const Header = ({
         <LabelComponent
           label='Profile'
           varient={TextVarient.title}
-          style={[styles.labeltitle,!editICon && styles.passs]}
+          style={[styles.labeltitle, !editICon && styles.passs]}
         />
       )}
       {editICon && (
@@ -51,7 +53,7 @@ export const Header = ({
       )}
 
       {showSignUpButton && (
-        <TouchableOpacity style={styles.loginButton} onPress={onLoginPress}>
+        <TouchableOpacity style={styles.loginButton} onPress={onSignUpPress}>
           <LabelComponent label='Sign Up' style={styles.logintxt} />
         </TouchableOpacity>
       )}

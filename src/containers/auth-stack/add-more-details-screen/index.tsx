@@ -47,12 +47,44 @@ export const AddMoreDetailsScreen: React.FC<
   const [goalid, setGoalid] = useState(0)
   const [genderid, setGenderid] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
+
+  useEffect(() => {
+    checkInputsFilled()
+  }, [height, weight, genderid, age, goalid])
+
+  const checkInputsFilled = () => {
+    if (
+      height &&
+      weight &&
+      age &&
+      genderid !== undefined &&
+      genderid !== null &&
+      goalid !== undefined &&
+      goalid !== null
+    ) {
+      setInputFilled(true)
+      setIsButtonDisabled(false)
+    } else {
+      setInputFilled(false)
+      setIsButtonDisabled(true)
+    }
+  }
 
   const handleContinueButtonPress = async () => {
     setIsLoading(true)
 
-    
-    if (height && weight && genderid && age && goalid) {
+    console.log(height, weight, genderid, age, goalid, 'sasas')
+
+    if (
+      height &&
+      weight &&
+      age &&
+      genderid !== undefined &&
+      genderid !== null &&
+      goalid !== undefined &&
+      goalid !== null
+    ) {
       setInputFilled(true)
 
       const bmi = weight / (height / 100) ** 2
@@ -271,10 +303,13 @@ export const AddMoreDetailsScreen: React.FC<
 
             <View style={styles.buttoncontainer}>
               <ButtonComponent
-                varient={ButtonVarient.lightgreen}
+                varient={
+                  isButtonDisabled ? ButtonVarient.lightgreen : ButtonVarient.continue
+                }
                 labelVarient={TextVarient.black}
                 label={Strings.CONTINUE}
                 onPress={handleContinueButtonPress}
+                disabled={isButtonDisabled}
               />
             </View>
           </View>

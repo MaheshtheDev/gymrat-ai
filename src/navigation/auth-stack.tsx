@@ -41,6 +41,9 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
             <Header
               onBackPress={() => NavigationService.goBack()}
               showLoginButton={true}
+              onLoginPress={() =>
+                navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.SIGN_IN_SCREEN })
+              }
             />
           ),
         }}
@@ -73,6 +76,9 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
               onBackPress={() => NavigationService.goBack()}
               showLoginButton={false}
               showSignUpButton={true}
+              onSignUpPress={() =>
+                navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.SIGN_UP_SCREEN })
+              }
             />
           ),
         }}
@@ -85,20 +91,9 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
       <Stack.Screen
         name={ROUTES.HOME_SCREEN}
         component={HomeScreen}
-        options={{
-          headerStyle: headerStyle,
-          header: () => (
-            <ProfileHeader
-              Profile={true}
-              onProfilePress={() =>
-                navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.PROFILE_SCREEN })
-              }
-              username='Nimesh Goel'
-              age='Age: 30'
-            />
-          ),
-        }}
+        options={{ headerShown: false, gestureEnabled: false }}
       />
+
       <Stack.Screen
         name={ROUTES.PROFILE_SCREEN}
         component={ProfileScreen}
@@ -108,12 +103,16 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
       <Stack.Screen
         name={ROUTES.WORKOUT_DETAILS}
         component={Workoutscreen}
-        options={{ headerShown: false, gestureEnabled: false }}
+        options={{
+          header: () => <Header onBackPress={() => NavigationService.goBack()} />,
+        }}
       />
       <Stack.Screen
         name={ROUTES.MEAL_DETAILS}
         component={MealScreen}
-        options={{ headerShown: false, gestureEnabled: false }}
+        options={{
+          header: () => <Header onBackPress={() => NavigationService.goBack()} />,
+        }}
       />
     </Stack.Navigator>
   )

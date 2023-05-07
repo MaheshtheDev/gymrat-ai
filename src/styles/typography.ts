@@ -1,5 +1,5 @@
 import { normalize, scaleFont } from './mixins'
-import { Dimensions, Platform, PixelRatio } from 'react-native';
+import { Dimensions, Platform, PixelRatio } from 'react-native'
 
 // FONT FAMILY
 export const FONT_FAMILY_REGULAR = 'OpenSans-Regular'
@@ -41,6 +41,8 @@ export const FONT_WEIGHT_700 = '700'
 export const FONT_SIZE_16 = scaleFont(16)
 export const FONT_SIZE_8 = scaleFont(8)
 export const FONT_SIZE_6 = scaleFont(6)
+
+export const FONT_SIZE_9 = scaleFont(9)
 
 export const FONT_SIZE_10 = scaleFont(10)
 

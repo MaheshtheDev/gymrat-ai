@@ -63,41 +63,40 @@ export const Workoutscreen: React.FC<AuthStackNavProps<'Workoutscreen'>> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <LabelComponent label='Workout Schedules' style={styles.title} />
-        <FlatList
-          data={workoutPlan}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              {item?.exercises?.map(v => {
-                return (
-                  <View>
-                    {v.sets == '4' && (
-                      <View style={styles.tablecontainer}>
-                        <LabelComponent
-                          style={[styles.tableitem, { color: Colors.SPRING_GREEN }]}
-                          label={item.day}
-                        />
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                          <LabelComponent style={styles.tableitem} label='Sets' />
-                          <LabelComponent style={styles.tableitem} label='Reps' />
-                        </View>
-                      </View>
-                    )}
+      <LabelComponent label='Workout Schedules' style={styles.title} />
+      <FlatList
+        data={workoutPlan}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            {item?.exercises?.map(v => {
+              return (
+                <View>
+                  {v.sets == '4' && (
                     <View style={styles.tablecontainer}>
-                      <LabelComponent style={styles.tableitem} label={v.name} />
+                      <LabelComponent
+                        style={[styles.tableitem, { color: Colors.SPRING_GREEN }]}
+                        label={item.day}
+                      />
                       <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <LabelComponent label={v.sets} style={styles.repsitem} />
-                        <LabelComponent label={v.reps} style={styles.repsitem} />
+                        <LabelComponent style={styles.tableitem} label='Sets' />
+                        <LabelComponent style={styles.tableitem} label='Reps' />
                       </View>
                     </View>
+                  )}
+                  <View style={styles.tablecontainer}>
+                    <LabelComponent style={styles.tableitem} label={v.name} />
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <LabelComponent label={v.sets} style={styles.repsitem} />
+                      <LabelComponent label={v.reps} style={styles.repsitem} />
+                    </View>
                   </View>
-                )
-              })}
-            </View>
-          )}
-        />
-      </ScrollView>
+                </View>
+              )
+            })}
+          </View>
+        )}
+        scrollEnabled={true}
+      />
     </SafeAreaView>
   )
 }

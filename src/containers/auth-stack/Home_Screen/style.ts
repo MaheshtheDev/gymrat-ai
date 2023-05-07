@@ -18,6 +18,7 @@ import {
   MONTSERRAT_REGULAR,
   MONTSERRAT_MEDIUM,
   MONTSERRAT_LIGHT,
+  FONT_SIZE_9,
 } from '@styles'
 import {
   widthPercentageToDP as wp,
@@ -163,7 +164,7 @@ export const styles = StyleSheet.create({
   },
   heading1: {
     fontWeight: FONT_WEIGHT_OR_TEXT,
-    fontSize: FONT_SIZE_10,
+    fontSize: FONT_SIZE_12,
     fontFamily: MONTSERRAT_REGULAR,
     color: Colors.WHITE,
     opacity: 0.4,
@@ -171,11 +172,12 @@ export const styles = StyleSheet.create({
     marginTop: hp('0.5%'),
   },
   headingmd: {
-    fontSize: FONT_SIZE_6,
+    fontSize: FONT_SIZE_9,
     fontFamily: MONTSERRAT_BOLD,
     fontWeight: FONT_WEIGHT_OR_TEXT,
-    marginTop: hp('0.8%'),
+    marginTop: hp('0.55%'),
     color: Colors.WHITE,
+    marginHorizontal: wp('0.2%'),
   },
   subheading: {
     fontSize: FONT_SIZE_14,
