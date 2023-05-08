@@ -22,7 +22,7 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
   const [password, setPassword] = useState('')
   const [isValid, setIsValid] = useState(true)
 
-  const isCodeEntered = email && password
+  const isCodeEntered = email && password.length >= 7
 
   const signIn = async () => {
     try {

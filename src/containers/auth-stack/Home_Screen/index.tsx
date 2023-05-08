@@ -15,7 +15,7 @@ import { styles } from './style'
 import Modal from 'react-native-modal'
 import axios from 'axios'
 
-import { Entypo } from '@expo/vector-icons'
+import { AntDesign, Entypo } from '@expo/vector-icons'
 import {
   ButtonComponent,
   ButtonVarient,
@@ -28,6 +28,15 @@ import {
 import { ROUTES, Strings } from '@constants'
 import Colors from '@styles/colors'
 import { Auth } from 'aws-amplify'
+import { FONT_SIZE_14 } from '@styles'
+
+const GOALDATA = [
+  { id: 0, label: 'Lose Weight' },
+  { id: 1, label: 'Gain Weight' },
+  { id: 2, label: 'Maintain Weight' },
+  { id: 3, label: 'Build Muscle' },
+  { id: 4, label: 'Get Fit' },
+]
 
 export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   navigation,
@@ -37,14 +46,23 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   const [mealPlan, setMealPlan] = useState([])
   const [isLoading, setLoading] = useState(true)
   const [userdata, setUserdata] = useState([])
-  const [update, setUpdate] = useState([])
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
   const [goal, setGoal] = useState('')
-  const [inputFilled, setInputFilled] = useState(false)
-  const [userid, setUserid] = useState('')
+
+  const [selectedgoal, setSelectedgoal] = useState('')
+  const [genderid, setGenderid] = useState(0)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [goalvisible, setGoalvisible] = useState(false)
+  const [goalid, setGoalid] = useState(0)
 
   const [dayName, setDayName] = useState('')
+  const [hide, setHide] = useState(false)
+
+  const handleSelectGoal = (label: string) => {
+    setSelectedgoal(label)
+    setHide(false)
+  }
 
   useEffect(() => {
     let daysArray = [
@@ -62,6 +80,9 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
     getWorkoutData()
     getMealData()
     getUserDetails()
+    // height == ''
+    // weight == ''
+    // goalid !== undefined && goalid !== null
   }, [])
 
   const clearInputs = () => {
@@ -140,6 +161,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
         }
       )
       setUserdata(response.data)
+      console.log(response.data, 'hguhuhu')
     } catch (error) {
       console.error(error)
     } finally {
@@ -154,13 +176,14 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
     try {
       let body = {
         userId: attributes.id,
-        height: parseInt(height),
-        weight: parseInt(weight),
-        goal: parseInt(goal, 10),
-        age: 30,
+        height: parseInt(height, 10),
+        weight: parseInt(weight, 10),
+        goal: goalid,
+        age: userdata[0]?.age,
         bmiValue: bmi,
       }
       setLoading(true)
+      // console.log(body, 'goall2')
       const response = await axios.put(
         'https://gymrat-api.vercel.app/api/user/details',
         body,
@@ -173,14 +196,13 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
         }
       )
       // setUserdata(response.data)
-      getUserDetails()
+      await getUserDetails()
     } catch (error) {
-      console.error(error)
+      console.error(error, 'errrrr')
     } finally {
       setLoading(false)
     }
   }
-  const [modalVisible, setModalVisible] = useState(false)
 
   const onCardView = () => {
     return (
@@ -528,6 +550,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                 <View>
                   <LabelComponent label={Strings.HEIGHT_CMS} style={styles.label} />
                   <TextInputComponent
+                    value={height}
                     placeholder={Strings.HEIGHT}
                     style={styles.txtinput}
                     onChangeText={text => setHeight(text)}
@@ -537,6 +560,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                 <View>
                   <LabelComponent label={Strings.WEIGHT_LBS} style={styles.label} />
                   <TextInputComponent
+                    value={weight}
                     placeholder={Strings.WEIGHT}
                     style={styles.txtinput}
                     onChangeText={text => setWeight(text)}
@@ -545,12 +569,52 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                 </View>
                 <View>
                   <LabelComponent label={Strings.GOAL} style={styles.label} />
-                  <TextInputComponent
-                    placeholder={Strings.GOAL}
-                    onChangeText={text => setGoal(text)}
-                    style={styles.txtinput}
-                    keyboardType='number-pad'
-                  />
+
+                  <View>
+                    <TouchableOpacity
+                      style={styles.dropdown}
+                      onPress={() => setGoalvisible(true)}>
+                      <Text style={styles.label2}>
+                        {selectedgoal ? selectedgoal : 'Select Goal'}
+                      </Text>
+                      <AntDesign name='down' size={20} color='white' />
+                    </TouchableOpacity>
+                  </View>
+                  <View>
+                    <Modal
+                      isVisible={goalvisible}
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flex: 1,
+                      }}
+                      onBackdropPress={() => {
+                        setGoalvisible(false)
+                      }}>
+                      <View style={styles.optionsContainer}>
+                        {GOALDATA.map(option => (
+                          <TouchableOpacity
+                            key={option.id}
+                            style={styles.option}
+                            onPress={() => {
+                              handleSelectGoal(option.label)
+                              setGoalid(option?.id)
+                              setGoalvisible(false)
+                            }}>
+                            <LabelComponent
+                              label={option.label}
+                              style={{
+                                color: Colors.WHITE,
+                                fontSize: FONT_SIZE_14,
+                                marginHorizontal: 12,
+                                paddingVertical: 6,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </Modal>
+                  </View>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -571,6 +635,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                     label={Strings.SAVE}
                     varient={ButtonVarient.savebutton}
                     labelVarient={TextVarient.save}
+                    disabled={height == '' && weight == '' && goal == ''}
                   />
                 </View>
               </View>

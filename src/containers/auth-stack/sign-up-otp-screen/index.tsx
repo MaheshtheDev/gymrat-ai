@@ -36,7 +36,7 @@ export const SignUpOtpScreen: React.FC<AuthStackNavProps<'SignUpOtpScreen'>> = (
 
   const handleCodeChange = (txt: string) => {
     setCode(txt)
-    setIsCodeEntered(txt !== '')
+    setIsCodeEntered(code.length >= 5)
   }
   return (
     <SafeAreaView style={styles.coinatiner}>

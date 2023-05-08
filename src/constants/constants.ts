@@ -42,5 +42,6 @@ export const Strings = {
   SAVE: 'Save',
   CANCEL: 'Cancel',
   EMAIL_ADDRESS: 'Email Address',
-  ACCOUNT_LINK:'Account Linked'
+  ACCOUNT_LINK: 'Account Linked',
+  LOG_OUT: 'Logout',
 }

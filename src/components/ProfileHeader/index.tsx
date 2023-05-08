@@ -27,7 +27,7 @@ export const ProfileHeader = ({
   const fetchCurrentSessions = async () => {
     const userdata = await Auth.currentUserInfo()
     setUsername(userdata?.attributes?.name)
-    console.log(userdata, 'sasa')
+    // console.log(userdata, 'sasa')
   }
 
   const [username, setUsername] = useState('')

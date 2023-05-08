@@ -19,7 +19,8 @@ export enum ButtonVarient {
   lightgreen = 'lightgreen',
   savebutton = 'savebutton',
   cancelbutton = 'cancelbutton',
-  continue='continue'
+  continue = 'continue',
+  logoutbutton = 'logoutbutton',
 }
 
 export const ButtonComponent: React.FC<ButtonComponentProps> = ({
@@ -45,6 +46,8 @@ export const ButtonComponent: React.FC<ButtonComponentProps> = ({
 
       case ButtonVarient.cancelbutton:
         return styles.cancelbutton
+      case ButtonVarient.logoutbutton:
+        return styles.logoutbutton
 
       case ButtonVarient.savebutton:
         return styles.savebutton

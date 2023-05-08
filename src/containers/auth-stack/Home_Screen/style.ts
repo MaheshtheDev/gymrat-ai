@@ -19,6 +19,7 @@ import {
   MONTSERRAT_MEDIUM,
   MONTSERRAT_LIGHT,
   FONT_SIZE_9,
+  FONT_FAMILY_REGULAR,
 } from '@styles'
 import {
   widthPercentageToDP as wp,
@@ -47,6 +48,11 @@ export const styles = StyleSheet.create({
     color: Colors.GUMBO,
     fontSize: FONT_SIZE_12,
     textAlign: 'center',
+    fontFamily: MONTSERRAT_REGULAR,
+  },
+  label2: {
+    color: Colors.WHITE,
+    fontWeight: FONT_WEIGHT_OR_TEXT,
     fontFamily: MONTSERRAT_REGULAR,
   },
   roundcontainer: {
@@ -293,5 +299,32 @@ export const styles = StyleSheet.create({
   },
   mealview: {
     marginVertical: hp('1%'),
+  },
+  dropdown: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.BLACK,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: Colors.BORDERGREEN,
+    paddingHorizontal: wp('3.5%'),
+    paddingVertical: hp('1%'),
+    marginTop: hp('1%'),
+    marginRight: wp('8%'),
+    color: Colors.WHITE,
+    marginBottom: hp('3%'),
+    marginLeft: wp('3%'),
+  },
+  optionsContainer: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '90%',
+    borderColor: Colors.BORDERGREEN,
+    opacity: 0.75,
+    borderRadius: 5,
+    borderWidth: 2,
+  },
+  option: {
+    backgroundColor: 'black',
   },
 })

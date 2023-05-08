@@ -76,6 +76,14 @@ const styles = StyleSheet.create({
     marginRight: wp('9.5%'),
     borderRadius: 25,
   },
+  logoutbutton: {
+    backgroundColor: ' rgba(73, 255, 9, 0.15)',
+    marginLeft: wp('4.4%'),
+    paddingVertical: hp('1.5%'),
+    paddingHorizontal: hp('7.35%'),
+    borderRadius: 25,
+    alignSelf:'center'
+  },
 })
 
 export default styles

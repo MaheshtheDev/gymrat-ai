@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { AuthStackNavProps } from '@navigation'
-import { View, SafeAreaView, ScrollView } from 'react-native'
+import { View, SafeAreaView, ScrollView, Alert } from 'react-native'
 import { styles } from './style'
 import {
   ButtonComponent,
@@ -32,7 +32,7 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
         lastName !== '' &&
         email !== '' &&
         password !== '' &&
-        confirmPassword !== ''
+        confirmPassword.length >= 7
     )
   }, [firstName, lastName, email, password, confirmPassword])
 
@@ -67,10 +67,9 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
         await Auth.signIn(email, password)
         setUserexits(false)
         console.log('user is already sign up')
-        // handle the case where the user has already signed up
+        Alert.alert('', error.message)
       } catch (error) {
         if (error.code === 'UserNotFoundException') {
-          // the user is not signed up, so sign them up
           signUp(firstName, lastName, password, email)
           navigation.push(ROUTES.AUTH_STACK, {
             screen: ROUTES.SIGN_UP_OTP_SCREEN,
@@ -82,6 +81,7 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
       }
     } else {
       console.log('passwords are not same')
+      Alert.alert('passwords and confirm password are not same')
     }
   }
 

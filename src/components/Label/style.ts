@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 
     alignSelf: 'center',
   },
-  signuptitle:{
+  signuptitle: {
     color: Colors.WHITE,
     fontSize: FONT_SIZE_20,
     fontWeight: FONT_WEIGHT_700,
@@ -92,6 +92,13 @@ const styles = StyleSheet.create({
   cancel: {
     fontSize: FONT_SIZE_13,
     fontWeight: FONT_WEIGHT_TITLE,
+    fontFamily: MONTSERRAT,
+    textAlign: 'center',
+    color: Colors.WHITE,
+  },
+  logout: {
+    fontSize: FONT_SIZE_13,
+    fontWeight: FONT_WEIGHT_700,
     fontFamily: MONTSERRAT,
     textAlign: 'center',
     color: Colors.WHITE,

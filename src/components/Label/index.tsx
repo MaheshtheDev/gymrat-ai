@@ -12,10 +12,11 @@ export enum TextVarient {
   whitebutton = 'whitebutton',
   black = 'black',
   cancel = 'cancel',
+  LogOut = 'LogOut',
   save = 'save',
   title = 'title',
   signuptitle = 'signuptitle',
-  signupbutton='signupbutton'
+  signupbutton = 'signupbutton',
 }
 
 export const LabelComponent: React.FC<LabelProps> = ({ label, varient, ...props }) => {
@@ -23,8 +24,8 @@ export const LabelComponent: React.FC<LabelProps> = ({ label, varient, ...props 
     switch (varient) {
       case TextVarient.greenbutton:
         return styles.greenbutton
-        case TextVarient.signupbutton:
-          return styles.signupbutton
+      case TextVarient.signupbutton:
+        return styles.signupbutton
       case TextVarient.whitebutton:
         return styles.whitebutton
       case TextVarient.description:
@@ -35,6 +36,8 @@ export const LabelComponent: React.FC<LabelProps> = ({ label, varient, ...props 
         return styles.black
       case TextVarient.cancel:
         return styles.cancel
+      case TextVarient.LogOut:
+        return styles.logout
       case TextVarient.save:
         return styles.save
       case TextVarient.signuptitle:
