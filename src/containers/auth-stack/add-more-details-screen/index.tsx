@@ -1,21 +1,14 @@
-import React, { useEffect, useState } from 'react'
-
-import { AuthStackNavProps } from '@navigation'
 import {
+  ActivityIndicator,
+  Dimensions,
   FlatList,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
-  Dimensions,
-  ActivityIndicator,
 } from 'react-native'
-import { styles } from './style'
-import Modal from 'react-native-modal'
-
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import { AntDesign, Entypo } from '@expo/vector-icons'
 import {
   ButtonComponent,
   ButtonVarient,
@@ -23,12 +16,18 @@ import {
   TextInputComponent,
   TextVarient,
 } from '@components'
-import { ROUTES, Strings } from '@constants'
-import axios from 'axios'
-import { Auth } from 'aws-amplify'
-import { AntDesign, Entypo } from '@expo/vector-icons'
-import Colors from '@styles/colors'
 import { FONT_SIZE_13, FONT_SIZE_14 } from '@styles'
+import { ROUTES, Strings } from '@constants'
+import React, { useEffect, useState } from 'react'
+
+import { Auth } from 'aws-amplify'
+import { AuthStackNavProps } from '@navigation'
+import Colors from '@styles/colors'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import Modal from 'react-native-modal'
+import axios from 'axios'
+import { styles } from './style'
+
 export const AddMoreDetailsScreen: React.FC<
   AuthStackNavProps<'AddMoreDetailsScreen'>
 > = ({ navigation, route }) => {
@@ -136,11 +135,11 @@ export const AddMoreDetailsScreen: React.FC<
     { id: 2, label: 'Others' },
   ]
   const GOALDATA = [
-    { id: 0, label: 'LoseWeight' },
-    { id: 1, label: 'GAINWEIGHT' },
-    { id: 2, label: 'MAINTAINWEIGHT' },
-    { id: 3, label: 'BUILDMUSCLE' },
-    { id: 4, label: 'GETFIT' },
+    { id: 0, label: 'Lose Weight' },
+    { id: 1, label: 'Gain Weight' },
+    { id: 2, label: 'Maintain Weight' },
+    { id: 3, label: 'Build Muscle' },
+    { id: 4, label: 'Get Fit' },
   ]
 
   const handleSelectOption = (label: string) => {
