@@ -1,8 +1,4 @@
-import React, { useState } from 'react'
-
-import { AuthStackNavProps } from '@navigation'
 import { Alert, SafeAreaView, Text, View } from 'react-native'
-import { styles } from './style'
 import {
   ButtonComponent,
   ButtonVarient,
@@ -10,9 +6,13 @@ import {
   TextInputComponent,
   TextVarient,
 } from '@components'
-import { ROUTES, Strings } from '@constants'
-import { Auth } from 'aws-amplify'
 import { FONT_SIZE_10, FONT_SIZE_12 } from '@styles'
+import { ROUTES, Strings } from '@constants'
+import React, { useState } from 'react'
+
+import { Auth } from 'aws-amplify'
+import { AuthStackNavProps } from '@navigation'
+import { styles } from './style'
 
 export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
   navigation,
@@ -30,7 +30,7 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
 
       navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.HOME_SCREEN })
     } catch (error) {
-      Alert.alert('', error.message)
+      Alert.alert('', error?.message)
       console.log('error signing in', error)
     }
   }
@@ -65,14 +65,14 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
           />
         </View>
 
-        {!isValid && (
+        {/* {!isValid && (
           <LabelComponent
             label={
               'Password must have at least 8 characters, at least one uppercase letter'
             }
             style={{ color: 'red', alignSelf: 'center', marginTop: 5 }}
           />
-        )}
+        )} */}
 
         <View style={styles.buttoncontainer}>
           <ButtonComponent
