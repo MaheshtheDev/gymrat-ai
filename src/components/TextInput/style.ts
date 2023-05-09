@@ -1,5 +1,5 @@
 
-import { FONT_FAMILY_REGULAR } from '@styles'
+import { FONT_FAMILY_REGULAR, MONTSERRAT_BLACK, MONTSERRAT_EXTRA_LIGHT, MONTSERRAT_MEDIUM } from '@styles'
 import Colors from '@styles/colors'
 import { StyleSheet } from 'react-native'
 import {
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     marginTop:hp('2%'),
     opacity:0.75,
     color:Colors.WHITE,
-    fontFamily:FONT_FAMILY_REGULAR
+    fontFamily:MONTSERRAT_MEDIUM
   },
 })
 

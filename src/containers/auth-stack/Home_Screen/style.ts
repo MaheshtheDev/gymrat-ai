@@ -209,7 +209,7 @@ export const styles = StyleSheet.create({
   },
   goalcontainer: {
     justifyContent: 'center',
-    marginHorizontal: wp('11%'),
+    marginHorizontal: wp('7%'),
   },
   viewalltxt: {
     color: Colors.SELECTIVE_YELLOW,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { AuthStackNavProps, NavigationService } from '@navigation'
-import { SafeAreaView, View, TouchableOpacity } from 'react-native'
+import { SafeAreaView, View, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 
 import {
@@ -16,6 +16,7 @@ import { ROUTES, Strings } from '@constants'
 import Google from '../../../assets/svg/google.svg'
 import { Auth } from 'aws-amplify'
 import axios from 'axios'
+import Colors from '@styles/colors'
 
 export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
   navigation,
@@ -31,7 +32,7 @@ export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
   const [showButton, setShowButton] = useState(false)
   const [userdetails, setUserdetails] = useState('')
   const [name, setName] = useState([])
-  const [genderdata, setGenderdata] = useState('')
+  const [isLoading, setLoading] = useState(true)
 
   const handleIconPress = () => {
     setShowButton(true)
@@ -41,12 +42,14 @@ export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
   useEffect(() => {
     fetchCurrentSessions()
     getUserDetails()
-    handleGender()
   }, [])
-  
 
+  useEffect(() => {
+    handleGender()
+  }, [gender, userdata])
   const getUserDetails = async () => {
     const attributes = await Auth.currentUserInfo()
+    setLoading(true)
 
     try {
       const response = await axios.get(
@@ -60,10 +63,12 @@ export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
         }
       )
       setUserdata(response?.data[0])
-      console.log(userdata?.gender, 'hiiiii')
+      // console.log(userdata?.gender, 'hiiiii')
       handleGender()
     } catch (error) {
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -75,17 +80,28 @@ export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
   }
   const handleGender = () => {
     if (userdata?.gender === 0) {
-      setGenderdata('Male')
+      setGender('Male')
     } else if (userdata?.gender === 1) {
-      setGenderdata('Female')
+      setGender('Female')
     } else if (userdata?.gender === 2) {
-      setGenderdata('Others')
+      setGender('Others')
     } else {
-      setGenderdata('')
+      setGender('')
     }
   }
 
-  return (
+  return isLoading ? (
+    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
+      <ActivityIndicator
+        size={'large'}
+        style={{
+          alignSelf: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <Header
         Lebel={true}
@@ -137,13 +153,13 @@ export const ProfileScreen: React.FC<AuthStackNavProps<'ProfileScreen'>> = ({
           <View style={styles.titlecontainer}>
             <LabelComponent label={Strings.GENDER} style={styles.title} />
             <TextInputComponent
-              placeholder={genderdata}
+              placeholder={gender}
               maxLength={6}
               value={gender}
               editable={disabled}
               onBlur={() => (disabled ? setDisabled(false) : setDisabled(true))}
               onChangeText={txt => setGender(txt)}
-              style={styles.subtitle}
+              style={[styles.subtitle,{opacity:0.6}]}
             />
           </View>
         </View>

@@ -51,18 +51,23 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   const [goal, setGoal] = useState('')
 
   const [selectedgoal, setSelectedgoal] = useState('')
-  const [genderid, setGenderid] = useState(0)
   const [modalVisible, setModalVisible] = useState(false)
   const [goalvisible, setGoalvisible] = useState(false)
   const [goalid, setGoalid] = useState(0)
 
   const [dayName, setDayName] = useState('')
   const [hide, setHide] = useState(false)
+  const [goallabel, setGoallabel] = useState('')
 
   const handleSelectGoal = (label: string) => {
     setSelectedgoal(label)
     setHide(false)
   }
+
+  useEffect(() => {
+    getUserDetails()
+    handlegoalchange()
+  }, [goallabel])
 
   useEffect(() => {
     let daysArray = [
@@ -90,6 +95,10 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
     setWeight('')
     setGoal('')
   }
+
+  // useEffect(() => {
+  //   goalid !== null ? handlegoalchange() : Loadgoalchange()
+  // }, [])
 
   const getWorkoutData = async () => {
     try {
@@ -160,8 +169,11 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
           },
         }
       )
-      setUserdata(response.data)
-      console.log(response.data, 'hguhuhu')
+      setUserdata(response?.data)
+      // goalid !== null && goalid !== undefined
+      //   ? await handlegoalchange()
+      await Loadgoalchange()
+      // console.log(response?.data, 'hekllkjl')
     } catch (error) {
       console.error(error)
     } finally {
@@ -230,7 +242,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
         />
         <View style={styles.goalcontainer}>
           <LabelComponent label='GOAL' style={styles.goaltxt} />
-          <LabelComponent label='Gain Muscle' style={styles.gaintxt} />
+          <LabelComponent label={goallabel} style={styles.gaintxt} />
           <TouchableOpacity onPress={() => setModalVisible(true)}>
             <LabelComponent label='what to update goal?' style={styles.goalchangetxt} />
           </TouchableOpacity>
@@ -246,6 +258,38 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   ]
   const User = [{ title: 'Workout Schedules', data: userdata, subtitle: 'Workout' }]
 
+  const handlegoalchange = async () => {
+    // console.log(goalid, 'new data')
+    if (goalid === 0) {
+      setGoallabel('Lose Weight')
+    } else if (goalid === 1) {
+      setGoallabel('Gain Weight')
+    } else if (goalid === 2) {
+      setGoallabel('Maintain Weight')
+    } else if (goalid === 3) {
+      setGoallabel('Build Muscle')
+    } else if (goalid === 4) {
+      setGoallabel('Get Fit')
+    } else {
+      setGoallabel('')
+    }
+  }
+  const Loadgoalchange = async () => {
+    // console.log(userdata[0]?.goal, 'new dataaaaaaaa')
+    if (userdata[0]?.goal === 0) {
+      setGoallabel('Lose Weight')
+    } else if (userdata[0]?.goal === 1) {
+      setGoallabel('Gain Weight')
+    } else if (userdata[0]?.goal === 2) {
+      setGoallabel('Maintain Weight')
+    } else if (userdata[0]?.goal === 3) {
+      setGoallabel('Build Muscle')
+    } else if (userdata[0]?.goal === 4) {
+      setGoallabel('Get Fit')
+    } else {
+      setGoallabel('')
+    }
+  }
   return isLoading ? (
     <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
       <ActivityIndicator
@@ -598,6 +642,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                             style={styles.option}
                             onPress={() => {
                               handleSelectGoal(option.label)
+
                               setGoalid(option?.id)
                               setGoalvisible(false)
                             }}>

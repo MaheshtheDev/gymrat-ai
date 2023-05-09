@@ -29,6 +29,9 @@ export const styles = StyleSheet.create({
     fontSize: FONT_SIZE_13,
     fontFamily: MONTSERRAT_LIGHT,
     fontWeight: FONT_WEIGHT_REGULAR,
+
+
+    
   },
   titlecontainer: {
     marginTop: hp('1.5%'),
