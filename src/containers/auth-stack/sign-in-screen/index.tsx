@@ -1,4 +1,6 @@
-import { Alert, SafeAreaView, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, SafeAreaView, Text, View } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import {
   ButtonComponent,
   ButtonVarient,
@@ -13,6 +15,7 @@ import React, { useState } from 'react'
 import { Auth } from 'aws-amplify'
 import { AuthStackNavProps } from '@navigation'
 import { styles } from './style'
+import Colors from '@styles/colors'
 
 export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
   navigation,
@@ -21,18 +24,26 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isValid, setIsValid] = useState(true)
+  // const [isloading, setIsLoading] = useState(false)
 
   const isCodeEntered = email && password.length >= 7
 
   const signIn = async () => {
+    // setIsLoading(true)
+
     try {
       const user = await Auth.signIn(email, password)
 
-      navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.HOME_SCREEN })
+      navigation.replace(ROUTES.HOME_STACK)
+      console.log(user?.signInUserSession?.accessToken?.jwtToken, 'ggghghg')
+      AsyncStorage.setItem('Token', user?.signInUserSession?.accessToken?.jwtToken)
     } catch (error) {
       Alert.alert('', error?.message)
       console.log('error signing in', error)
     }
+    //  finally {
+    //   setIsLoading(false)
+    // }
   }
 
   const handlePasswordChange = (password: string) => {
@@ -65,13 +76,17 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
           />
         </View>
 
-        {/* {!isValid && (
-          <LabelComponent
-            label={
-              'Password must have at least 8 characters, at least one uppercase letter'
-            }
-            style={{ color: 'red', alignSelf: 'center', marginTop: 5 }}
-          />
+        {/* {isloading && (
+          <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
+            <ActivityIndicator
+              size={'large'}
+              style={{
+                alignSelf: 'center',
+                justifyContent: 'center',
+                flex: 1,
+              }}
+            />
+          </View>
         )} */}
 
         <View style={styles.buttoncontainer}>

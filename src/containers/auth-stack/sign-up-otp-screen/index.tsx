@@ -24,10 +24,11 @@ export const SignUpOtpScreen: React.FC<AuthStackNavProps<'SignUpOtpScreen'>> = (
 
   const confirmSignUp = async () => {
     try {
-      await Auth.confirmSignUp(email, code)
+      const user = await Auth.confirmSignUp(email, code)
       navigation.push(ROUTES.AUTH_STACK, {
         screen: ROUTES.SIGN_UP_CONFIRM_SCREEN,
       })
+      console.log(user, 'sasajsnajsbjsb')
     } catch (error) {
       console.log('error confirming sign up', error)
       Alert.alert('', error.message)

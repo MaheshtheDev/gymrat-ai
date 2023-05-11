@@ -12,6 +12,7 @@ import {
   AddMoreDetailsScreen,
   HomeScreen,
   ProfileScreen,
+  WelcomeScreen,
 } from '@containers'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Header, ProfileHeader } from '@components'
@@ -26,7 +27,13 @@ type AuthStackProps = {
 
 export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName='WelcomeScreen'>
+      <Stack.Screen
+        name={ROUTES.WELCOME_SCREEN}
+        component={WelcomeScreen}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
+
       <Stack.Screen
         name={ROUTES.SIGN_UP_OPTIONS_SCREEN}
         component={SignUpOptionsScreen}
@@ -87,32 +94,6 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
         name={ROUTES.ADD_MORE_DETAILS_SCREEN}
         component={AddMoreDetailsScreen}
         options={{ headerShown: false, gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name={ROUTES.HOME_SCREEN}
-        component={HomeScreen}
-        options={{ headerShown: false, gestureEnabled: false }}
-      />
-
-      <Stack.Screen
-        name={ROUTES.PROFILE_SCREEN}
-        component={ProfileScreen}
-        options={{ headerShown: false, gestureEnabled: false }}
-      />
-
-      <Stack.Screen
-        name={ROUTES.WORKOUT_DETAILS}
-        component={Workoutscreen}
-        options={{
-          header: () => <Header onBackPress={() => NavigationService.goBack()} />,
-        }}
-      />
-      <Stack.Screen
-        name={ROUTES.MEAL_DETAILS}
-        component={MealScreen}
-        options={{
-          header: () => <Header onBackPress={() => NavigationService.goBack()} />,
-        }}
       />
     </Stack.Navigator>
   )

@@ -57,6 +57,7 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
         },
       })
     } catch (error) {
+      Alert.alert('', error.message)
       console.log('error signing up:', error)
     }
   }
@@ -76,7 +77,7 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
             params: { email },
           })
         } else {
-          // handle other errors
+          Alert.alert('', error.message)
         }
       }
     } else {

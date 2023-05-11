@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { AuthStackNavProps } from '@navigation'
+import { AuthStackNavProps, HomeStackNavProps } from '@navigation'
 import {
   SafeAreaView,
   SectionList,
@@ -29,6 +29,7 @@ import { ROUTES, Strings } from '@constants'
 import Colors from '@styles/colors'
 import { Auth } from 'aws-amplify'
 import { FONT_SIZE_14 } from '@styles'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const GOALDATA = [
   { id: 0, label: 'Lose Weight' },
@@ -38,7 +39,7 @@ const GOALDATA = [
   { id: 4, label: 'Get Fit' },
 ]
 
-export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
+export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
   navigation,
   route,
 }) => {
@@ -66,7 +67,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
 
   useEffect(() => {
     getUserDetails()
-    handlegoalchange()
   }, [goallabel])
 
   useEffect(() => {
@@ -95,10 +95,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
     setWeight('')
     setGoal('')
   }
-
-  // useEffect(() => {
-  //   goalid !== null ? handlegoalchange() : Loadgoalchange()
-  // }, [])
 
   const getWorkoutData = async () => {
     try {
@@ -170,10 +166,10 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
         }
       )
       setUserdata(response?.data)
-      // goalid !== null && goalid !== undefined
-      //   ? await handlegoalchange()
-      await Loadgoalchange()
-      // console.log(response?.data, 'hekllkjl')
+      console.log(response?.data, 'sasassasas')
+      setTimeout(async () => {
+        await Loadgoalchange(response?.data[0]?.goal)
+      }, 2000)
     } catch (error) {
       console.error(error)
     } finally {
@@ -195,7 +191,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
         bmiValue: bmi,
       }
       setLoading(true)
-      // console.log(body, 'goall2')
       const response = await axios.put(
         'https://gymrat-api.vercel.app/api/user/details',
         body,
@@ -207,7 +202,8 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
           },
         }
       )
-      // setUserdata(response.data)
+      await handlegoalchange()
+
       await getUserDetails()
     } catch (error) {
       console.error(error, 'errrrr')
@@ -259,7 +255,6 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
   const User = [{ title: 'Workout Schedules', data: userdata, subtitle: 'Workout' }]
 
   const handlegoalchange = async () => {
-    // console.log(goalid, 'new data')
     if (goalid === 0) {
       setGoallabel('Lose Weight')
     } else if (goalid === 1) {
@@ -274,17 +269,16 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
       setGoallabel('')
     }
   }
-  const Loadgoalchange = async () => {
-    // console.log(userdata[0]?.goal, 'new dataaaaaaaa')
-    if (userdata[0]?.goal === 0) {
+  const Loadgoalchange = async (goal: number) => {
+    if (goal === 0) {
       setGoallabel('Lose Weight')
-    } else if (userdata[0]?.goal === 1) {
+    } else if (goal === 1) {
       setGoallabel('Gain Weight')
-    } else if (userdata[0]?.goal === 2) {
+    } else if (goal === 2) {
       setGoallabel('Maintain Weight')
-    } else if (userdata[0]?.goal === 3) {
+    } else if (goal === 3) {
       setGoallabel('Build Muscle')
-    } else if (userdata[0]?.goal === 4) {
+    } else if (goal === 4) {
       setGoallabel('Get Fit')
     } else {
       setGoallabel('')
@@ -306,12 +300,13 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
       <ScrollView>
         <ProfileHeader
           onLogoutPress={() => {
+            AsyncStorage.clear()
             Auth.signOut()
-            navigation.replace(ROUTES.AUTH_STACK)
+            navigation.replace(ROUTES.AUTH_STACK, { screen: ROUTES.WELCOME_SCREEN })
           }}
           Profile={true}
           onProfilePress={() =>
-            navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.PROFILE_SCREEN })
+            navigation.navigate(ROUTES.HOME_STACK, { screen: ROUTES.PROFILE_SCREEN })
           }
           age={`Age: ${userdata[0]?.age}`}
         />
@@ -457,7 +452,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                     <LabelComponent label={title} style={styles.title} />
                     <TouchableOpacity
                       onPress={() =>
-                        navigation.navigate(ROUTES.AUTH_STACK, {
+                        navigation.navigate(ROUTES.HOME_STACK, {
                           screen: ROUTES.WORKOUT_DETAILS,
                         })
                       }>
@@ -517,7 +512,7 @@ export const HomeScreen: React.FC<AuthStackNavProps<'HomeScreen'>> = ({
                   <LabelComponent label={title} style={styles.title} />
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate(ROUTES.AUTH_STACK, {
+                      navigation.navigate(ROUTES.HOME_STACK, {
                         screen: ROUTES.MEAL_DETAILS,
                       })
                     }>

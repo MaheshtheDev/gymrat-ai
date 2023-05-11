@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { AuthStackNavProps } from '@navigation'
+import { AuthStackNavProps, HomeStackNavProps } from '@navigation'
 import {
   SafeAreaView,
   SectionList,
@@ -27,7 +27,7 @@ import { Strings } from '@constants'
 import Colors from '@styles/colors'
 import { StatusBar } from 'expo-status-bar'
 
-export const MealScreen: React.FC<AuthStackNavProps<'MealScreen'>> = ({
+export const MealScreen: React.FC<HomeStackNavProps<'MealScreen'>> = ({
   navigation,
   route,
 }) => {

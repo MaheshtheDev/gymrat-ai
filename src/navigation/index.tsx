@@ -3,10 +3,12 @@ import { LogBox, Text } from 'react-native'
 
 import { NavigationContainer } from '@react-navigation/native'
 import { ROUTES } from '@constants'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { navigationRef } from '@navigation'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { HomeStack } from './home-stack'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Stack = createNativeStackNavigator()
 
@@ -16,6 +18,18 @@ export const AppNavigator = () => {
   const routeNameRef = React.useRef()
   const insets = useSafeAreaInsets()
 
+  const [token, setToken] = useState('')
+
+  useEffect(() => {
+    userToken()
+  }, [])
+
+  const userToken = async () => {
+    const token = await AsyncStorage.getItem('Token')
+    console.log(JSON.stringify(token), 'sasasaA', token)
+    setToken(JSON.stringify(token))
+  }
+
   return (
     <NavigationContainer
       ref={navigationRef}
@@ -24,8 +38,12 @@ export const AppNavigator = () => {
       }}
       fallback={<Text>Loading...</Text>}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={ROUTES.ONBOARDING_STACK} component={OnboardingStack} />
+        {/* {token !== null && token !== undefined ? ( */}
         <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
+
+        <Stack.Screen name={ROUTES.HOME_STACK} component={HomeStack} />
+        {/* ) : ( */}
+        {/* )} */}
       </Stack.Navigator>
     </NavigationContainer>
   )
@@ -33,5 +51,5 @@ export const AppNavigator = () => {
 
 export * from './stack-param-list'
 export * from './auth-stack'
-export * from './onboarding-stack'
+export * from './home-stack'
 export * from './NavigationService'

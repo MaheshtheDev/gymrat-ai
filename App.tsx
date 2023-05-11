@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font'
 import { Amplify, Auth } from 'aws-amplify'
 import awsconfig from './src/aws-exports'
 import * as WebBrowser from 'expo-web-browser'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 Amplify.configure(awsconfig)
 

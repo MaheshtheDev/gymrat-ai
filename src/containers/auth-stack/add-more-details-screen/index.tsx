@@ -100,6 +100,7 @@ export const AddMoreDetailsScreen: React.FC<
           goal: goalid,
           bmiValue: bmi,
         })
+        console.log(body, 'ghghghgh')
 
         const response = await axios.post(
           'https://gymrat-api.vercel.app/api/user/details',
@@ -112,8 +113,8 @@ export const AddMoreDetailsScreen: React.FC<
           }
         )
         // console.log(response.data, 'sasa')
-        navigation.navigate(ROUTES.AUTH_STACK, {
-          screen: ROUTES.HOME_SCREEN,
+        navigation.replace(ROUTES.AUTH_STACK, {
+          screen: ROUTES.SIGN_IN_SCREEN,
         })
       } catch (error) {
         console.log(error, 'err')
