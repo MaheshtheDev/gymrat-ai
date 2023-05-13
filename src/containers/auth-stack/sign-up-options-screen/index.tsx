@@ -52,14 +52,14 @@ export const SignUpOptionsScreen: React.FC<AuthStackNavProps<'SignUpOptionsScree
               labelVarient={TextVarient.whitebutton}
             />
           </View>
-          <View style={styles.ortxt}>
+          {/* <View style={styles.ortxt}>
             <LabelComponent
               label={Strings.OR}
               varient={TextVarient.title}
               style={styles.orlabeltxt}
             />
-          </View>
-          <View style={styles.googlebtncoinatiner}>
+          </View> */}
+          {/* <View style={styles.googlebtncoinatiner}>
             <ButtonComponent
               onPress={() =>
                 Auth.federatedSignIn({
@@ -82,7 +82,7 @@ export const SignUpOptionsScreen: React.FC<AuthStackNavProps<'SignUpOptionsScree
               labelVarient={TextVarient.whitebutton}
               AppleIcon={true}
             />
-          </View>
+          </View> */}
         </View>
       </ImageBackgroundComponent>
     </SafeAreaView>

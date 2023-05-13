@@ -35,7 +35,6 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
       const user = await Auth.signIn(email, password)
 
       navigation.replace(ROUTES.HOME_STACK)
-      console.log(user?.signInUserSession?.accessToken?.jwtToken, 'ggghghg')
       AsyncStorage.setItem('Token', user?.signInUserSession?.accessToken?.jwtToken)
     } catch (error) {
       Alert.alert('', error?.message)

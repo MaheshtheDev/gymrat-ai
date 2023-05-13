@@ -168,7 +168,7 @@ export const ProfileScreen: React.FC<HomeStackNavProps<'ProfileScreen'>> = ({
       <View style={styles.accountlinkcontainer}>
         <LabelComponent label={Strings.EMAIL_ADDRESS} style={styles.title} />
         <LabelComponent label={userdetails?.email} style={styles.subtitle} />
-        <View style={styles.linkconatiner}>
+        {/* <View style={styles.linkconatiner}>
           <LabelComponent label={Strings.ACCOUNT_LINK} style={styles.title} />
           <View style={styles.ss}>
             <View style={styles.linkemailcontainer}>
@@ -180,7 +180,7 @@ export const ProfileScreen: React.FC<HomeStackNavProps<'ProfileScreen'>> = ({
               />
             </View>
           </View>
-        </View>
+        </View> */}
 
         {showButton && (
           <TouchableOpacity

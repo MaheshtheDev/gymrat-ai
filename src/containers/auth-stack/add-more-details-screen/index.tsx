@@ -43,8 +43,8 @@ export const AddMoreDetailsScreen: React.FC<
   const [inputFilled, setInputFilled] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [genderModal, setGenderModal] = useState(false)
-  const [goalid, setGoalid] = useState(0)
-  const [genderid, setGenderid] = useState(0)
+  const [goalid, setGoalid] = useState(null)
+  const [genderid, setGenderid] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 

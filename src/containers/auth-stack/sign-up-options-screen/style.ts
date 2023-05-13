@@ -1,9 +1,5 @@
 import { StyleSheet } from 'react-native'
-import {
-  FONT_SIZE_20,
-  FONT_WEIGHT_OR_TEXT,
-  MONTSERRAT_LIGHT,
-} from '@styles'
+import { FONT_SIZE_20, FONT_WEIGHT_OR_TEXT, MONTSERRAT_LIGHT } from '@styles'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -32,6 +28,8 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderTopColor: Colors.YELLOW,
     justifyContent: 'center',
+    alignContent:'center',
+    
   },
 
   loginbtncontainer: {

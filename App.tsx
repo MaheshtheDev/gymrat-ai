@@ -28,6 +28,7 @@ export default function App() {
   })
 
   const [isReady, setIsReady] = useState(false)
+  // const [token, setToken] = useState('')
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -38,13 +39,27 @@ export default function App() {
   if (!isReady) {
     return null
   }
+
+  // const userToken = async () => {
+  //   const token = await AsyncStorage.getItem('Token')
+  //   console.log(JSON.stringify(token), 'sasasaA', token)
+  //   setToken(JSON.stringify(token))
+  //   return JSON.stringify(token)
+  // }
+
+  // const isSignedIn = userToken()
+  // console.log(isSignedIn,"isSignedIn")
+
   return (
     <SafeAreaProvider
       initialMetrics={{
         frame: { x: 0, y: 0, width: 0, height: 0 },
         insets: { top: 0, left: 0, right: 0, bottom: 0 },
       }}>
-      <AppNavigator />
+      <AppNavigator
+
+      // token={isSignedIn}
+      />
     </SafeAreaProvider>
   )
 }
