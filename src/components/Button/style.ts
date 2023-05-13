@@ -10,14 +10,14 @@ const styles = StyleSheet.create({
   green: {
     backgroundColor: Colors.CHLOROPHYL_GREEN,
     marginHorizontal: wp('6.25%'),
-    borderRadius: 25,
+    borderRadius: 50,
   },
   withBorder: {
     backgroundColor: Colors.TRANSPARENT,
     borderColor: Colors.YELLOW,
     borderWidth: 1,
     marginHorizontal: wp('5.4%'),
-    borderRadius: 25,
+    borderRadius: 50,
     alignItems: 'center',
     flexDirection: 'row',
     display: 'flex',
@@ -26,20 +26,20 @@ const styles = StyleSheet.create({
   lightgreen: {
     backgroundColor: Colors.CHLOROPHYL_GREEN,
     marginHorizontal: wp('5.4%'),
-    borderRadius: 25,
+    borderRadius: 50,
     opacity: 0.5,
   },
   continue: {
     backgroundColor: Colors.CHLOROPHYL_GREEN,
     marginHorizontal: wp('5.4%'),
-    borderRadius: 25,
+    borderRadius: 50,
   },
   imageButtonContainer: {
     backgroundColor: Colors.TRANSPARENT,
     borderColor: Colors.YELLOW,
     borderWidth: 1,
     marginHorizontal: wp('5.4%'),
-    borderRadius: 25,
+    borderRadius: 50,
     flexDirection: 'row',
   },
   image: {
