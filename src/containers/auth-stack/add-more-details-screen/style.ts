@@ -94,6 +94,9 @@ export const styles = StyleSheet.create({
   },
   option: {
     backgroundColor: 'black',
+    borderWidth: 1,
+    borderColor: Colors.BORDERGREEN,
+    paddingVertical: 5,
   },
   centeredView: {
     flex: 1,
