@@ -12,7 +12,7 @@ import {
 } from '@components'
 import { ROUTES, Strings } from '@constants'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { Auth } from 'aws-amplify'
+import { Auth, Hub } from 'aws-amplify'
 
 export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
   navigation,
@@ -35,6 +35,10 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
         confirmPassword.length >= 7
     )
   }, [firstName, lastName, email, password, confirmPassword])
+
+  useEffect(() => {
+    listenToAutoSignInEvent()
+  }, [])
 
   const signUp = async (
     firstname: string,
@@ -84,6 +88,20 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
       console.log('passwords are not same')
       Alert.alert('passwords and confirm password are not same')
     }
+  }
+
+  function listenToAutoSignInEvent() {
+    Hub.listen('auth', ({ payload }) => {
+      const { event } = payload
+      if (event === 'autoSignIn') {
+        const user = payload.data
+     
+      } else if (event === 'autoSignIn_failure') {
+        navigation.push(ROUTES.AUTH_STACK, {
+          screen: ROUTES.SIGN_IN_SCREEN,
+        })
+      }
+    })
   }
 
   const handlePasswordChange = (password: string, confirmPassword?: string) => {

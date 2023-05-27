@@ -24,25 +24,18 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isValid, setIsValid] = useState(true)
-  // const [isloading, setIsLoading] = useState(false)
 
   const isCodeEntered = email && password.length >= 7
 
   const signIn = async () => {
-    // setIsLoading(true)
-
     try {
       const user = await Auth.signIn(email, password)
 
       navigation.replace(ROUTES.HOME_STACK)
-      AsyncStorage.setItem('Token', user?.signInUserSession?.accessToken?.jwtToken)
     } catch (error) {
       Alert.alert('', error?.message)
       console.log('error signing in', error)
     }
-    //  finally {
-    //   setIsLoading(false)
-    // }
   }
 
   const handlePasswordChange = (password: string) => {
@@ -74,19 +67,6 @@ export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
             }}
           />
         </View>
-
-        {/* {isloading && (
-          <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
-            <ActivityIndicator
-              size={'large'}
-              style={{
-                alignSelf: 'center',
-                justifyContent: 'center',
-                flex: 1,
-              }}
-            />
-          </View>
-        )} */}
 
         <View style={styles.buttoncontainer}>
           <ButtonComponent

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native'
+import { View, TouchableOpacity, SafeAreaView } from 'react-native'
 import styles from './style'
 import Colors from '@styles/colors'
 import { LabelComponent } from '@components/Label'
@@ -27,7 +27,6 @@ export const ProfileHeader = ({
   const fetchCurrentSessions = async () => {
     const userdata = await Auth.currentUserInfo()
     setUsername(userdata?.attributes?.name)
-    // console.log(userdata, 'sasa')
   }
 
   const [username, setUsername] = useState('')

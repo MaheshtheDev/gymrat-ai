@@ -139,7 +139,6 @@ export const styles = StyleSheet.create({
     fontWeight: FONT_WEIGHT_OR_TEXT,
     color: Colors.WHITE,
     fontFamily: MONTSERRAT_BOLD,
-    marginVertical: hp('1.2%'),
     marginLeft: wp('4%'),
   },
   mealconatiner: {

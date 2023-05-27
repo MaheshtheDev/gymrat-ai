@@ -19,7 +19,6 @@ import {
   MONTSERRAT_MEDIUM,
   MONTSERRAT_LIGHT,
   FONT_SIZE_9,
-  FONT_FAMILY_REGULAR,
 } from '@styles'
 import {
   widthPercentageToDP as wp,

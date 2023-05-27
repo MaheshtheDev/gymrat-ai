@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, SafeAreaView } from 'react-native'
 
-import { OnboardingStackNavProps } from '@navigation'
+import { AuthStackNavProps } from '@navigation'
 import { styles } from './style'
 import {
   ButtonComponent,
@@ -12,9 +12,8 @@ import {
 } from '@components'
 import { Images, ROUTES, Strings } from '@constants'
 
-export const WelcomeScreen: React.FC<OnboardingStackNavProps<'WelcomeScreen'>> = ({
+export const WelcomeScreen: React.FC<AuthStackNavProps<'WelcomeScreen'>> = ({
   navigation,
-  route,
 }) => {
   return (
     <SafeAreaView style={styles.container}>

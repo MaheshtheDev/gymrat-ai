@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { AuthStackNavProps, HomeStackNavProps, NavigationService } from '@navigation'
+import { HomeStackNavProps, NavigationService } from '@navigation'
 import { SafeAreaView, View, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 
@@ -13,7 +13,6 @@ import {
   TextVarient,
 } from '@components'
 import { ROUTES, Strings } from '@constants'
-import Google from '../../../assets/svg/google.svg'
 import { Auth } from 'aws-amplify'
 import axios from 'axios'
 import Colors from '@styles/colors'
@@ -64,7 +63,6 @@ export const ProfileScreen: React.FC<HomeStackNavProps<'ProfileScreen'>> = ({
         }
       )
       setUserdata(response?.data[0])
-      // console.log(userdata?.gender, 'hiiiii')
       handleGender()
     } catch (error) {
       console.error(error)

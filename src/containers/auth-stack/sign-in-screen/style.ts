@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native'
 import {
-  MONTSERRAT_BOLD,
   FONT_SIZE_12,
   FONT_SIZE_26,
   FONT_WEIGHT_OR_TEXT,

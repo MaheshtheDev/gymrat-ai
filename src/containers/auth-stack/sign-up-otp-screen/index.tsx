@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { AuthStackNavProps } from '@navigation'
-import { View, SafeAreaView, ScrollView, Alert } from 'react-native'
+import { View, SafeAreaView, Alert } from 'react-native'
 import { styles } from './style'
 import {
   ButtonComponent,

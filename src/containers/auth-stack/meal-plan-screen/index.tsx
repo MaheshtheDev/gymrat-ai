@@ -1,43 +1,25 @@
 import React, { useEffect, useState } from 'react'
 
-import { AuthStackNavProps, HomeStackNavProps } from '@navigation'
-import {
-  SafeAreaView,
-  SectionList,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Text,
-  ScrollView,
-} from 'react-native'
+import { HomeStackNavProps, NavigationService } from '@navigation'
+import { SafeAreaView, View, FlatList, ScrollView, ActivityIndicator } from 'react-native'
 import { styles } from './style'
-import Modal from 'react-native-modal'
 import axios from 'axios'
 
-import { Entypo } from '@expo/vector-icons'
-import {
-  ButtonComponent,
-  ButtonVarient,
-  CardComponent,
-  LabelComponent,
-  TextInputComponent,
-  TextVarient,
-} from '@components'
-import { Strings } from '@constants'
+import { CardComponent, Header, LabelComponent } from '@components'
 import Colors from '@styles/colors'
-import { StatusBar } from 'expo-status-bar'
 
 export const MealScreen: React.FC<HomeStackNavProps<'MealScreen'>> = ({
-  navigation,
-  route,
 }) => {
   const [mealPlan, setMealPlan] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     getMealData()
   }, [])
 
   const getMealData = async () => {
+    setIsLoading(true)
+
     try {
       const response = await axios.post(
         'https://gymrat-api.vercel.app//api/gpt/meal',
@@ -53,17 +35,34 @@ export const MealScreen: React.FC<HomeStackNavProps<'MealScreen'>> = ({
             Authorization: 'Bearer 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',
             'Content-Type': 'application/json',
           },
+          timeout: 120000,
         }
       )
       setMealPlan(response?.data?.mealPlan)
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
-  return (
+  return isLoading ? (
+    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
+      <ActivityIndicator
+        size={'large'}
+        style={{
+          alignSelf: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}>
+        <Header onBackPress={() => NavigationService.goBack()} />
         <LabelComponent label='Meal Plan Schedules' style={styles.title} />
+      </View>
+      <ScrollView>
         <FlatList
           data={mealPlan}
           renderItem={({ item }) => (

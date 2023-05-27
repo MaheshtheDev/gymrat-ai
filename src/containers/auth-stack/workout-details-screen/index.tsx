@@ -1,43 +1,27 @@
 import React, { useEffect, useState } from 'react'
 
-import { AuthStackNavProps, HomeStackNavProps } from '@navigation'
-import {
-  SafeAreaView,
-  SectionList,
-  View,
-  FlatList,
-  TouchableOpacity,
-  Text,
-  ScrollView,
-} from 'react-native'
+import { HomeStackNavProps, NavigationService } from '@navigation'
+import { SafeAreaView, View, FlatList, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 import Modal from 'react-native-modal'
 import axios from 'axios'
 
-import { Entypo } from '@expo/vector-icons'
-import {
-  ButtonComponent,
-  ButtonVarient,
-  CardComponent,
-  LabelComponent,
-  TextInputComponent,
-  TextVarient,
-} from '@components'
-import { Strings } from '@constants'
+import { Header, LabelComponent } from '@components'
 import Colors from '@styles/colors'
-import { StatusBar } from 'expo-status-bar'
 
 export const Workoutscreen: React.FC<HomeStackNavProps<'Workoutscreen'>> = ({
-  navigation,
-  route,
+
 }) => {
   const [workoutPlan, setWorkoutPlan] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     getWorkoutData()
   }, [])
 
   const getWorkoutData = async () => {
+    setIsLoading(true)
+
     try {
       const response = await axios.post(
         'https://gymrat-api.vercel.app/api/gpt/workout',
@@ -47,6 +31,7 @@ export const Workoutscreen: React.FC<HomeStackNavProps<'Workoutscreen'>> = ({
           gender: 2,
           age: 24,
           goal: 1,
+          partOfWeek: 1,
         },
         {
           headers: {
@@ -56,14 +41,32 @@ export const Workoutscreen: React.FC<HomeStackNavProps<'Workoutscreen'>> = ({
         }
       )
       setWorkoutPlan(response?.data?.workoutPlan)
+      console.log(response?.data, 'shajshjahsjahsjhasjhasjj')
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  return (
+  return isLoading ? (
+    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
+      <ActivityIndicator
+        size={'large'}
+        style={{
+          alignSelf: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
-      <LabelComponent label='Workout Schedules' style={styles.title} />
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}>
+        <Header onBackPress={() => NavigationService.goBack()} />
+        <LabelComponent label='Workout Schedules' style={styles.title} />
+      </View>
+
       <FlatList
         data={workoutPlan}
         renderItem={({ item }) => (

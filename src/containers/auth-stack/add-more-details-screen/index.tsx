@@ -1,14 +1,11 @@
 import {
   ActivityIndicator,
-  Dimensions,
-  FlatList,
   SafeAreaView,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native'
-import { AntDesign, Entypo } from '@expo/vector-icons'
+import { AntDesign } from '@expo/vector-icons'
 import {
   ButtonComponent,
   ButtonVarient,
@@ -16,7 +13,7 @@ import {
   TextInputComponent,
   TextVarient,
 } from '@components'
-import { FONT_SIZE_13, FONT_SIZE_14 } from '@styles'
+import { FONT_SIZE_14 } from '@styles'
 import { ROUTES, Strings } from '@constants'
 import React, { useEffect, useState } from 'react'
 
@@ -33,9 +30,7 @@ export const AddMoreDetailsScreen: React.FC<
 > = ({ navigation, route }) => {
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
-  const [gender, setGender] = useState('')
   const [age, setAge] = useState('')
-  const [goal, setGoal] = useState('')
   const [hide, setHide] = useState(false)
   const [selectedLabel, setSelectedLabel] = useState('')
   const [selectedgoal, setSelectedgoal] = useState('')
@@ -112,9 +107,8 @@ export const AddMoreDetailsScreen: React.FC<
             },
           }
         )
-        // console.log(response.data, 'sasa')
-        navigation.replace(ROUTES.AUTH_STACK, {
-          screen: ROUTES.SIGN_IN_SCREEN,
+        navigation.replace(ROUTES.HOME_STACK, {
+          screen: ROUTES.HOME_SCREEN,
         })
       } catch (error) {
         console.log(error, 'err')

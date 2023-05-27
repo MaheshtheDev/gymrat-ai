@@ -1,4 +1,4 @@
-import { AuthStack, OnboardingStack } from '@navigation'
+import { AuthStack } from '@navigation'
 import { ActivityIndicator, LogBox, Text } from 'react-native'
 
 import { NavigationContainer } from '@react-navigation/native'
@@ -8,7 +8,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { navigationRef } from '@navigation'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { HomeStack } from './home-stack'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Auth } from 'aws-amplify'
 
 const Stack = createNativeStackNavigator()
@@ -19,16 +18,35 @@ export const AppNavigator = ({ token }) => {
   const routeNameRef = React.useRef()
   const insets = useSafeAreaInsets()
 
-  const [userexits, setUserExist] = useState('')
-
   useEffect(() => {
-    console.log(token, 'sasasasasas')
-  }, [])
+    handleUser()
+  }, [token])
 
-  const handeluser = async () => {
-    const token = await Auth.currentSession()
-    setUserExist(token)
-    console.log(token, 'sasasasasas')
+  const [userExists, setUserExists] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const handleUser = async () => {
+    try {
+      const token = await Auth.currentSession()
+      setUserExists(true)
+    } catch (error) {
+      setUserExists(false)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        size={'large'}
+        style={{
+          alignSelf: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      />
+    )
   }
 
   return (
@@ -39,21 +57,19 @@ export const AppNavigator = ({ token }) => {
       }}
       fallback={<Text>Loading...</Text>}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* {!userexits ? (
-          
-            {console.log('1111')} */}
-        <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
+        {!userExists ? (
+          <>
+            <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
 
-        <Stack.Screen name={ROUTES.HOME_STACK} component={HomeStack} />
-
-        {/* ) : ( */}
-        {/* <>
-            {console.log('22222')}
+            <Stack.Screen name={ROUTES.HOME_STACK} component={HomeStack} />
+          </>
+        ) : (
+          <>
             <Stack.Screen name={ROUTES.HOME_STACK} component={HomeStack} />
 
             <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
           </>
-        )} */}
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   )

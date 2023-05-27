@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { AuthStackNavProps, HomeStackNavProps } from '@navigation'
+import { HomeStackNavProps } from '@navigation'
 import {
   SafeAreaView,
   SectionList,
@@ -85,15 +85,12 @@ export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
     getWorkoutData()
     getMealData()
     getUserDetails()
-    // height == ''
-    // weight == ''
-    // goalid !== undefined && goalid !== null
   }, [])
 
   const clearInputs = () => {
     setHeight('')
     setWeight('')
-    setGoal('')
+    setSelectedgoal('')
   }
 
   const getWorkoutData = async () => {
@@ -107,6 +104,7 @@ export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
           gender: 2,
           age: 24,
           goal: 1,
+          partOfWeek: 1,
         },
         {
           headers: {
@@ -152,6 +150,7 @@ export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
 
   const getUserDetails = async () => {
     const attributes = await Auth.currentUserInfo()
+    console.log(attributes?.id, 'sfagfsgafasgv')
 
     try {
       setLoading(true)
@@ -166,7 +165,7 @@ export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
         }
       )
       setUserdata(response?.data)
-      console.log(response?.data, 'sasassasas')
+      console.log(response?.data[0], 'sasassasas')
       setTimeout(async () => {
         await Loadgoalchange(response?.data[0]?.goal)
       }, 2000)
@@ -239,7 +238,10 @@ export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
         <View style={styles.goalcontainer}>
           <LabelComponent label='GOAL' style={styles.goaltxt} />
           <LabelComponent label={goallabel} style={styles.gaintxt} />
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <TouchableOpacity
+            onPress={() => {
+              setModalVisible(true), clearInputs()
+            }}>
             <LabelComponent label='what to update goal?' style={styles.goalchangetxt} />
           </TouchableOpacity>
         </View>
@@ -675,7 +677,7 @@ export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
                     label={Strings.SAVE}
                     varient={ButtonVarient.savebutton}
                     labelVarient={TextVarient.save}
-                    disabled={height == '' && weight == '' && goal == ''}
+                    disabled={height == '' || weight == '' || selectedgoal == ''}
                   />
                 </View>
               </View>

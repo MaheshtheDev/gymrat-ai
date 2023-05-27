@@ -1,10 +1,8 @@
 import { StyleSheet } from 'react-native'
 import {
-  MONTSERRAT_BOLD,
   FONT_SIZE_12,
   FONT_SIZE_26,
   FONT_WEIGHT_OR_TEXT,
-  MONTSERRAT_LIGHT,
   MONTSERRAT_REGULAR,
 } from '@styles'
 import {
@@ -26,7 +24,7 @@ export const styles = StyleSheet.create({
     marginHorizontal: wp('8%'),
   },
   subtitle: {
-    fontFamily:MONTSERRAT_REGULAR,
+    fontFamily: MONTSERRAT_REGULAR,
     fontSize: FONT_SIZE_12,
     fontWeight: FONT_WEIGHT_OR_TEXT,
     color: Colors.WHITE,
@@ -34,7 +32,7 @@ export const styles = StyleSheet.create({
     opacity: 0.5,
     marginVertical: hp('1.2%'),
   },
-  buttoncontainer:{
-    marginVertical:hp('3%')
-  }
+  buttoncontainer: {
+    marginVertical: hp('3%'),
+  },
 })

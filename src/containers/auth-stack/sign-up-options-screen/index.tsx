@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { AuthStackNavProps } from '@navigation'
 import { SafeAreaView, View, Linking, Platform, Text, Button, Alert } from 'react-native'
 import { styles } from './style'
-import { Amplify, Auth, Hub } from 'aws-amplify'
-import * as WebBrowser from 'expo-web-browser'
 
 import {
   ButtonComponent,
@@ -13,17 +11,11 @@ import {
   TextVarient,
 } from '@components'
 import { Images, ROUTES, Strings } from '@constants'
-import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth'
 
 export const SignUpOptionsScreen: React.FC<AuthStackNavProps<'SignUpOptionsScreen'>> = ({
   navigation,
   route,
 }) => {
-  const [user, setUser] = useState(null)
-  const [customState, setCustomState] = useState(null)
-
- 
-   
   return (
     <SafeAreaView style={styles.parentContainer}>
       <View style={styles.titlecontainer}>

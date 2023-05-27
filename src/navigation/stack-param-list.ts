@@ -1,4 +1,3 @@
-import { MXWidgetResultType } from '@types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteProp } from '@react-navigation/native'
 

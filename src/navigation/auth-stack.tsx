@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { ROUTES, Strings } from '@constants'
+import { ROUTES } from '@constants'
 
 import { AuthStackParamList } from './stack-param-list'
 import {
@@ -10,15 +10,11 @@ import {
   SignUpConfirmScreen,
   SignInScreen,
   AddMoreDetailsScreen,
-  HomeScreen,
-  ProfileScreen,
   WelcomeScreen,
 } from '@containers'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { Header, ProfileHeader } from '@components'
+import { Header } from '@components'
 import { NavigationService, navigationRef } from './NavigationService'
-import { Workoutscreen } from '@containers/auth-stack/workout-details-screen'
-import { MealScreen } from '@containers/auth-stack/meal-plan-screen'
 
 const Stack = createNativeStackNavigator<AuthStackParamList>()
 type AuthStackProps = {

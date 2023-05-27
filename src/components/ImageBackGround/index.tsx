@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImageBackground, ImageResizeMode, ImageSourcePropType} from 'react-native'
+import { ImageBackground, ImageResizeMode} from 'react-native'
 import styles from './style'
 
 interface CustomImageBackgroundProps {
