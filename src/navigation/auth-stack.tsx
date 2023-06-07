@@ -12,31 +12,35 @@ import {
   AddMoreDetailsScreen,
   WelcomeScreen,
 } from '@containers'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack'
 import { Header } from '@components'
-import { NavigationService, navigationRef } from './NavigationService'
+import { NavigationService } from './NavigationService'
 
 const Stack = createNativeStackNavigator<AuthStackParamList>()
 type AuthStackProps = {
   onPress?: () => void
+  navigation: NativeStackNavigationProp<AuthStackParamList>
 }
 
-export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => {
+export const AuthStack: React.FC<AuthStackProps> = ({ navigation }) => {
   return (
     <Stack.Navigator initialRouteName='WelcomeScreen'>
       <Stack.Screen
-        name={ROUTES.WELCOME_SCREEN}
+        name={'WelcomeScreen'}
         component={WelcomeScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
 
       <Stack.Screen
-        name={ROUTES.SIGN_UP_OPTIONS_SCREEN}
+        name={'SignUpOptionsScreen'}
         component={SignUpOptionsScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen
-        name={ROUTES.SIGN_UP_SCREEN}
+        name={'SignUpScreen'}
         component={SignUpScreen}
         options={{
           headerStyle: headerStyle,
@@ -45,14 +49,14 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
               onBackPress={() => NavigationService.goBack()}
               showLoginButton={true}
               onLoginPress={() =>
-                navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.SIGN_IN_SCREEN })
+                navigation.navigate('AuthStack', { screen: 'SignInScreen' })
               }
             />
           ),
         }}
       />
       <Stack.Screen
-        name={ROUTES.SIGN_UP_OTP_SCREEN}
+        name={'SignUpOtpScreen'}
         component={SignUpOtpScreen}
         options={{
           headerStyle: headerStyle,
@@ -65,12 +69,12 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
         }}
       />
       <Stack.Screen
-        name={ROUTES.SIGN_UP_CONFIRM_SCREEN}
+        name={'SignUpConfirmScreen'}
         component={SignUpConfirmScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen
-        name={ROUTES.SIGN_IN_SCREEN}
+        name={'SignInScreen'}
         component={SignInScreen}
         options={{
           headerStyle: headerStyle,
@@ -80,14 +84,14 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation, onPress }) => 
               showLoginButton={false}
               showSignUpButton={true}
               onSignUpPress={() =>
-                navigation.navigate(ROUTES.AUTH_STACK, { screen: ROUTES.SIGN_UP_SCREEN })
+                navigation.navigate('AuthStack', { screen: 'SignUpScreen' })
               }
             />
           ),
         }}
       />
       <Stack.Screen
-        name={ROUTES.ADD_MORE_DETAILS_SCREEN}
+        name={'AddMoreDetailsScreen'}
         component={AddMoreDetailsScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />

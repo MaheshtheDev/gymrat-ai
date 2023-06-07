@@ -3,15 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { HomeStackNavProps, NavigationService } from '@navigation'
 import { SafeAreaView, View, FlatList, ActivityIndicator } from 'react-native'
 import { styles } from './style'
-import Modal from 'react-native-modal'
 import axios from 'axios'
 
 import { Header, LabelComponent } from '@components'
 import Colors from '@styles/colors'
 
-export const Workoutscreen: React.FC<HomeStackNavProps<'Workoutscreen'>> = ({
-
-}) => {
+export const Workoutscreen: React.FC<HomeStackNavProps<'Workoutscreen'>> = ({}) => {
   const [workoutPlan, setWorkoutPlan] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 

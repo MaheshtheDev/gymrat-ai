@@ -1,9 +1,5 @@
 import * as React from 'react'
-
-import { ROUTES } from '@constants'
-
 import {  HomeStackParamList } from './stack-param-list'
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { HomeScreen, MealScreen, ProfileScreen, Workoutscreen } from '@containers'
 
@@ -16,24 +12,24 @@ export const HomeStack: React.FC<HomeStackProps> = ({ }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name={ROUTES.HOME_SCREEN}
+        name={'HomeScreen'}
         component={HomeScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
 
       <Stack.Screen
-        name={ROUTES.PROFILE_SCREEN}
+        name={'ProfileScreen'}
         component={ProfileScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
 
       <Stack.Screen
-        name={ROUTES.WORKOUT_DETAILS}
+        name={'Workoutscreen'}
         component={Workoutscreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen
-        name={ROUTES.MEAL_DETAILS}
+        name={'MealScreen'}
         component={MealScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />

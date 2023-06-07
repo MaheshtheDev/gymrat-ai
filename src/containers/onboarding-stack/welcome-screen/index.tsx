@@ -31,8 +31,8 @@ export const WelcomeScreen: React.FC<AuthStackNavProps<'WelcomeScreen'>> = ({
       </ImageBackgroundComponent>
       <ButtonComponent
         onPress={() =>
-          navigation.navigate(ROUTES.AUTH_STACK, {
-            screen: ROUTES.SIGN_UP_OPTIONS_SCREEN,
+          navigation.navigate('AuthStack', {
+            screen: 'SignUpOptionsScreen',
           })
         }
         label={Strings.LETS_GO}

@@ -12,7 +12,7 @@ import { Auth } from 'aws-amplify'
 
 const Stack = createNativeStackNavigator()
 
-export const AppNavigator = ({ token }) => {
+export const AppNavigator = () => {
   LogBox.ignoreLogs(['Warning: ...', 'Warning: Failed', 'Warning: Each'])
   LogBox.ignoreAllLogs()
   const routeNameRef = React.useRef()
@@ -20,7 +20,7 @@ export const AppNavigator = ({ token }) => {
 
   useEffect(() => {
     handleUser()
-  }, [token])
+  }, [])
 
   const [userExists, setUserExists] = useState(false)
   const [isLoading, setIsLoading] = useState(true)

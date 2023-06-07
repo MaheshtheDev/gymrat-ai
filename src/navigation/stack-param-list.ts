@@ -2,7 +2,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteProp } from '@react-navigation/native'
 
 export type AuthStackParamList = {
-  WelcomeScreen: undefined
+  AuthStack: {
+    screen: keyof AuthStackParamList
+    params?: AuthStackParamList[keyof AuthStackParamList]
+  }
+  WelcomeScreen: {
+    state: string | undefined
+    access_token: string | undefined
+  }
   SignInScreen: {
     code: string | undefined
     state: string | undefined
@@ -32,11 +39,6 @@ export type AuthStackParamList = {
     weight: string | undefined
     gender: string | undefined
   }
-  HomeScreen: {
-    state: string | undefined
-    access_token: string | undefined
-    token_type: string | undefined
-  }
 }
 
 export type AuthStackNavProps<T extends keyof AuthStackParamList> = {
@@ -44,7 +46,16 @@ export type AuthStackNavProps<T extends keyof AuthStackParamList> = {
   route: RouteProp<AuthStackParamList, T>
 }
 
+export type HomeStackNavProps<T extends keyof HomeStackParamList> = {
+  navigation: NativeStackNavigationProp<HomeStackParamList, T>
+  route: RouteProp<HomeStackParamList, T>
+}
+
 export type HomeStackParamList = {
+  HomeStack: {
+    screen: keyof HomeStackParamList
+    params?: HomeStackParamList[keyof HomeStackParamList]
+  }
   HomeScreen: {
     state: string | undefined
     access_token: string | undefined
@@ -57,9 +68,4 @@ export type HomeStackParamList = {
   }
   Workoutscreen: undefined
   MealScreen: undefined
-}
-
-export type HomeStackNavProps<T extends keyof HomeStackParamList> = {
-  navigation: NativeStackNavigationProp<HomeStackParamList, T>
-  route: RouteProp<HomeStackParamList, T>
 }
