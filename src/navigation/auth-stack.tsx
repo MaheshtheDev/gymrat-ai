@@ -1,7 +1,5 @@
 import * as React from 'react'
 
-import { ROUTES } from '@constants'
-
 import { AuthStackParamList } from './stack-param-list'
 import {
   SignUpOptionsScreen,
