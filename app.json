@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "gymrat-ai",
+    "name": "GymRat AI",
     "slug": "gymrat-ai",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/assets/splash.png",
+      "image": "./src/assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
