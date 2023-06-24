@@ -8,8 +8,7 @@ import axios from 'axios'
 import { CardComponent, Header, LabelComponent } from '@components'
 import Colors from '@styles/colors'
 
-export const MealScreen: React.FC<HomeStackNavProps<'MealScreen'>> = ({
-}) => {
+export const MealScreen: React.FC = ({}) => {
   const [mealPlan, setMealPlan] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 

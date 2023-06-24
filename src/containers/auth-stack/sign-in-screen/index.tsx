@@ -17,10 +17,7 @@ import { AuthStackNavProps } from '@navigation'
 import { styles } from './style'
 import Colors from '@styles/colors'
 
-export const SignInScreen: React.FC<AuthStackNavProps<'SignInScreen'>> = ({
-  navigation,
-  route,
-}) => {
+export const SignInScreen: React.FC = ({ navigation, route }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isValid, setIsValid] = useState(true)

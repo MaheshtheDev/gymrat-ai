@@ -7,10 +7,7 @@ import { ButtonComponent, ButtonVarient, LabelComponent, TextVarient } from '@co
 import { ROUTES, Strings } from '@constants'
 import Verifyicon from '../../../assets/svg/Verified Account.svg'
 
-export const SignUpConfirmScreen: React.FC<AuthStackNavProps<'SignUpConfirmScreen'>> = ({
-  navigation,
-  route,
-}) => {
+export const SignUpConfirmScreen: React.FC = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.coinatiner}>
       <View style={styles.iconcontainer}>

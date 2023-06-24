@@ -13,10 +13,7 @@ import {
 import { ROUTES, Strings } from '@constants'
 import { Auth } from 'aws-amplify'
 
-export const SignUpOtpScreen: React.FC<AuthStackNavProps<'SignUpOtpScreen'>> = ({
-  navigation,
-  route,
-}) => {
+export const SignUpOtpScreen: React.FC = ({ navigation, route }) => {
   const [code, setCode] = useState('')
   const [isCodeEntered, setIsCodeEntered] = useState(false)
 

@@ -12,10 +12,7 @@ import {
 } from '@components'
 import { Images, ROUTES, Strings } from '@constants'
 
-export const SignUpOptionsScreen: React.FC<AuthStackNavProps<'SignUpOptionsScreen'>> = ({
-  navigation,
-  route,
-}) => {
+export const SignUpOptionsScreen: React.FC = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.parentContainer}>
       <View style={styles.titlecontainer}>

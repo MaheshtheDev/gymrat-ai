@@ -12,9 +12,7 @@ import {
 } from '@components'
 import { Images, ROUTES, Strings } from '@constants'
 
-export const WelcomeScreen: React.FC<AuthStackNavProps<'WelcomeScreen'>> = ({
-  navigation,
-}) => {
+export const WelcomeScreen: React.FC = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titlecontainer}>

@@ -60,6 +60,7 @@ type EagerSuggestedPlan = {
   readonly bmiValue: number;
   readonly mealPlan?: string | null;
   readonly workoutPlan?: string | null;
+  readonly isDefaultPlan?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -78,6 +79,7 @@ type LazySuggestedPlan = {
   readonly bmiValue: number;
   readonly mealPlan?: string | null;
   readonly workoutPlan?: string | null;
+  readonly isDefaultPlan?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

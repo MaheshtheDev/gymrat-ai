@@ -30,6 +30,7 @@ import Colors from '@styles/colors'
 import { Auth } from 'aws-amplify'
 import { FONT_SIZE_14 } from '@styles'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { WorkOutComponent } from '@components/workout'
 
 const GOALDATA = [
   { id: 0, label: 'Lose Weight' },
@@ -39,10 +40,7 @@ const GOALDATA = [
   { id: 4, label: 'Get Fit' },
 ]
 
-export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
-  navigation,
-  route,
-}) => {
+export const HomeScreen: React.FC = ({ navigation, route }) => {
   const [workoutPlan, setWorkoutPlan] = useState([])
   const [mealPlan, setMealPlan] = useState([])
   const [isLoading, setLoading] = useState(true)
@@ -496,6 +494,11 @@ export const HomeScreen: React.FC<HomeStackNavProps<'HomeScreen'>> = ({
                               <LabelComponent label={v.reps} style={styles.repsitem} />
                             </View>
                           </View>
+                          {/* <WorkOutComponent
+                                  setslabel={v.name}
+                                  repslabel={v.sets}
+                                  tablelabel={v.reps}
+                                /> */}
                         </View>
                       )
                     })}

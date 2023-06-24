@@ -19,5 +19,6 @@ type SuggestedPlan @model @auth(rules: [{allow: public}]) {
   bmiValue: Float!
   mealPlan: AWSJSON
   workoutPlan: AWSJSON
+  isDefaultPlan: Boolean
 }
  

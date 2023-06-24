@@ -18,10 +18,7 @@ import axios from 'axios'
 import Colors from '@styles/colors'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export const ProfileScreen: React.FC<HomeStackNavProps<'ProfileScreen'>> = ({
-  navigation,
-  route,
-}) => {
+export const ProfileScreen: React.FC = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState('')
   const [age, setAge] = useState('')
   const [lastName, setLastName] = useState('')

@@ -25,9 +25,7 @@ import Modal from 'react-native-modal'
 import axios from 'axios'
 import { styles } from './style'
 
-export const AddMoreDetailsScreen: React.FC<
-  AuthStackNavProps<'AddMoreDetailsScreen'>
-> = ({ navigation, route }) => {
+export const AddMoreDetailsScreen: React.FC = ({ navigation, route }) => {
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
   const [age, setAge] = useState('')
@@ -111,7 +109,7 @@ export const AddMoreDetailsScreen: React.FC<
           screen: ROUTES.HOME_SCREEN,
         })
       } catch (error) {
-        console.log(error, 'err')
+        console.log(error, 'errrr')
         console.error(error)
         setIsLoading(false)
       } finally {

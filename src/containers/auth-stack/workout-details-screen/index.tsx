@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Header, LabelComponent } from '@components'
 import Colors from '@styles/colors'
 
-export const Workoutscreen: React.FC<HomeStackNavProps<'Workoutscreen'>> = ({}) => {
+export const Workoutscreen: React.FC = ({}) => {
   const [workoutPlan, setWorkoutPlan] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 

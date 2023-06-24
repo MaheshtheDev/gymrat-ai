@@ -14,10 +14,7 @@ import { ROUTES, Strings } from '@constants'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Auth, Hub } from 'aws-amplify'
 
-export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
-  navigation,
-  route,
-}) => {
+export const SignUpScreen: React.FC = ({ navigation, route }) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
@@ -95,7 +92,6 @@ export const SignUpScreen: React.FC<AuthStackNavProps<'SignUpScreen'>> = ({
       const { event } = payload
       if (event === 'autoSignIn') {
         const user = payload.data
-     
       } else if (event === 'autoSignIn_failure') {
         navigation.push(ROUTES.AUTH_STACK, {
           screen: ROUTES.SIGN_IN_SCREEN,

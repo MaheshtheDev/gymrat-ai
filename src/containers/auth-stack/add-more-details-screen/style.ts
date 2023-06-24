@@ -77,7 +77,7 @@ export const styles = StyleSheet.create({
     paddingVertical: hp('1.5%'),
     opacity: 0.58,
     color: Colors.WHITE,
-    fontFamily: FONT_FAMILY_REGULAR,
+    fontFamily: MONTSERRAT_REGULAR,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
