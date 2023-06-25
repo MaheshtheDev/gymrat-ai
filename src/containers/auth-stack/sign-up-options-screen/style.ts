@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: '53%',
+    height: '25%',
     backgroundColor: 'black',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
