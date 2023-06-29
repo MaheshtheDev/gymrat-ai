@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 
-import { HomeStackNavProps } from '@navigation'
 import {
   SafeAreaView,
   SectionList,
@@ -24,13 +23,12 @@ import {
   ProfileHeader,
   TextInputComponent,
   TextVarient,
-} from '@components'
-import { ROUTES, Strings } from '@constants'
-import Colors from '@styles/colors'
+} from '../../../components'
+import { ROUTES, Strings } from '../../../constants'
+import Colors from '../../../styles/colors'
 import { Auth } from 'aws-amplify'
-import { FONT_SIZE_14 } from '@styles'
+import { FONT_SIZE_14 } from '../../../styles'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { WorkOutComponent } from '@components/workout'
 
 const GOALDATA = [
   { id: 0, label: 'Lose Weight' },
@@ -40,14 +38,13 @@ const GOALDATA = [
   { id: 4, label: 'Get Fit' },
 ]
 
-export const HomeScreen: React.FC = ({ navigation, route }) => {
+export function HomeScreen({ navigation }: any) {
   const [workoutPlan, setWorkoutPlan] = useState([])
   const [mealPlan, setMealPlan] = useState([])
   const [isLoading, setLoading] = useState(true)
-  const [userdata, setUserdata] = useState([])
-  const [height, setHeight] = useState('')
-  const [weight, setWeight] = useState('')
-  const [goal, setGoal] = useState('')
+  const [userdata, setUserdata] = useState<any>([])
+  const [height, setHeight] = useState<number>(0)
+  const [weight, setWeight] = useState<number>(0)
 
   const [selectedgoal, setSelectedgoal] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
@@ -86,8 +83,8 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
   }, [])
 
   const clearInputs = () => {
-    setHeight('')
-    setWeight('')
+    setHeight(0)
+    setWeight(0)
     setSelectedgoal('')
   }
 
@@ -181,8 +178,8 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
     try {
       let body = {
         userId: attributes.id,
-        height: parseInt(height, 10),
-        weight: parseInt(weight, 10),
+        height: height,
+        weight: weight,
         goal: goalid,
         age: userdata[0]?.age,
         bmiValue: bmi,
@@ -320,57 +317,61 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
             renderItem={({ item }) => {
               return (
                 <CardComponent>
-                  <SectionList
-                    sections={work}
-                    renderSectionHeader={({ section: { title, subtitle } }) => {
-                      return (
-                        <View>
-                          <LabelComponent label={subtitle} style={styles.workout} />
-                        </View>
-                      )
-                    }}
-                    renderItem={({ item }) =>
-                      item.day === dayName && (
-                        <View>
-                          <View style={styles.tablecontainer}>
-                            <View
-                              style={{
-                                flex: 1,
-                                flexDirection: 'row',
-                                justifyContent: 'flex-end',
-                              }}>
-                              <View></View>
-
-                              <LabelComponent style={styles.table1} label='Sets' />
-                              <LabelComponent style={styles.table1} label='Reps' />
-                            </View>
+                  <View>
+                    <SectionList
+                      sections={work}
+                      renderSectionHeader={({ section: { title, subtitle } }) => {
+                        return (
+                          <View>
+                            <LabelComponent label={subtitle} style={styles.workout} />
                           </View>
-                          {item?.exercises?.map(v => {
-                            return (
-                              <View>
-                                <View style={styles.tablecontainer}>
-                                  <LabelComponent
-                                    style={styles.tableitem}
-                                    label={v.name}
-                                  />
-                                  <View style={{ flex: 1, flexDirection: 'row' }}>
-                                    <LabelComponent
-                                      label={v.sets}
-                                      style={styles.repsitem}
-                                    />
-                                    <LabelComponent
-                                      label={v.reps}
-                                      style={styles.repsitem}
-                                    />
-                                  </View>
+                        )
+                      }}
+                      renderItem={({ item }: any) => (
+                        <>
+                          {item.day === dayName && (
+                            <View>
+                              <View style={styles.tablecontainer}>
+                                <View
+                                  style={{
+                                    flex: 1,
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-end',
+                                  }}>
+                                  <View></View>
+
+                                  <LabelComponent style={styles.table1} label='Sets' />
+                                  <LabelComponent style={styles.table1} label='Reps' />
                                 </View>
                               </View>
-                            )
-                          })}
-                        </View>
-                      )
-                    }
-                  />
+                              {item?.exercises?.map((v: any) => {
+                                return (
+                                  <View>
+                                    <View style={styles.tablecontainer}>
+                                      <LabelComponent
+                                        style={styles.tableitem}
+                                        label={v.name}
+                                      />
+                                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                                        <LabelComponent
+                                          label={v.sets}
+                                          style={styles.repsitem}
+                                        />
+                                        <LabelComponent
+                                          label={v.reps}
+                                          style={styles.repsitem}
+                                        />
+                                      </View>
+                                    </View>
+                                  </View>
+                                )
+                              })}
+                            </View>
+                          )}
+                        </>
+                      )}
+                    />
+                  </View>
                   <View>
                     <SectionList
                       sections={Meal}
@@ -381,7 +382,7 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
                           </View>
                         )
                       }}
-                      renderItem={({ item }) => (
+                      renderItem={({ item }: any) => (
                         <>
                           {item.day === dayName && (
                             <View>
@@ -471,43 +472,44 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
                   </View>
                 )
               }}
-              renderItem={({ item }) =>
-                item.day === dayName && (
-                  <View style={styles.card}>
-                    <View style={styles.tablecontainer}>
-                      <LabelComponent
-                        style={[styles.tableitem, { color: Colors.SPRING_GREEN }]}
-                        label={item.day}
-                      />
-                      <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <LabelComponent style={styles.tableitem} label='Sets' />
-                        <LabelComponent style={styles.tableitem} label='Reps' />
+              renderItem={({ item }: any) => (
+                <>
+                  {item.day === dayName && (
+                    <View style={styles.card}>
+                      <View style={styles.tablecontainer}>
+                        <LabelComponent
+                          style={[styles.tableitem, { color: Colors.SPRING_GREEN }]}
+                          label={item.day}
+                        />
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                          <LabelComponent style={styles.tableitem} label='Sets' />
+                          <LabelComponent style={styles.tableitem} label='Reps' />
+                        </View>
                       </View>
-                    </View>
-                    {item?.exercises?.map(v => {
-                      return (
-                        <View>
-                          <View style={styles.tablecontainer}>
-                            <LabelComponent style={styles.tableitem} label={v.name} />
-                            <View style={{ flex: 1, flexDirection: 'row' }}>
-                              <LabelComponent label={v.sets} style={styles.repsitem} />
-                              <LabelComponent label={v.reps} style={styles.repsitem} />
+                      {item?.exercises?.map((v: any) => {
+                        return (
+                          <View>
+                            <View style={styles.tablecontainer}>
+                              <LabelComponent style={styles.tableitem} label={v.name} />
+                              <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <LabelComponent label={v.sets} style={styles.repsitem} />
+                                <LabelComponent label={v.reps} style={styles.repsitem} />
+                              </View>
                             </View>
-                          </View>
-                          {/* <WorkOutComponent
+                            {/* <WorkOutComponent
                                   setslabel={v.name}
                                   repslabel={v.sets}
                                   tablelabel={v.reps}
                                 /> */}
-                        </View>
-                      )
-                    })}
-                  </View>
-                )
-              }
+                          </View>
+                        )
+                      })}
+                    </View>
+                  )}
+                </>
+              )}
             />
           </View>
-          {/* <View> */}
           <SectionList
             sections={Meal}
             scrollEnabled
@@ -533,7 +535,7 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
                 </View>
               )
             }}
-            renderItem={({ item }) => (
+            renderItem={({ item }: any) => (
               <>
                 {item.day === dayName && (
                   <CardComponent>
@@ -583,7 +585,6 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
               </>
             )}
           />
-          {/* </View> */}
 
           <>
             <Modal
@@ -594,20 +595,20 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
                 <View>
                   <LabelComponent label={Strings.HEIGHT_CMS} style={styles.label} />
                   <TextInputComponent
-                    value={height}
+                    value={height.toString()}
                     placeholder={Strings.HEIGHT}
                     style={styles.txtinput}
-                    onChangeText={text => setHeight(text)}
+                    onChangeText={value => setHeight(parseInt(value,10))}
                     keyboardType='number-pad'
                   />
                 </View>
                 <View>
                   <LabelComponent label={Strings.WEIGHT_LBS} style={styles.label} />
                   <TextInputComponent
-                    value={weight}
+                    value={weight.toString()}
                     placeholder={Strings.WEIGHT}
                     style={styles.txtinput}
-                    onChangeText={text => setWeight(text)}
+                    onChangeText={value => setWeight(parseInt(value, 10))}
                     keyboardType='number-pad'
                   />
                 </View>
@@ -680,7 +681,7 @@ export const HomeScreen: React.FC = ({ navigation, route }) => {
                     label={Strings.SAVE}
                     varient={ButtonVarient.savebutton}
                     labelVarient={TextVarient.save}
-                    disabled={height == '' || weight == '' || selectedgoal == ''}
+                    disabled={height == 0 || weight == 0 || selectedgoal == ''}
                   />
                 </View>
               </View>
