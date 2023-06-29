@@ -18,6 +18,7 @@ export const TextInputComponent: React.FC<TextInputcomponentProps> = ({
       placeholder={placeholder}
       placeholderTextColor={Colors.HARLEQUIN}
       style={styles.textInput}
+      keyboardAppearance='dark'
       {...props}
     />
 
