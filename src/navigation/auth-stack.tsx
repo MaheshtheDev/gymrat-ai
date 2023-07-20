@@ -9,12 +9,12 @@ import {
   SignInScreen,
   AddMoreDetailsScreen,
   WelcomeScreen,
-} from '@containers'
+} from '../containers'
 import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack'
-import { Header } from '@components'
+import { Header } from '../components'
 import { NavigationService } from './NavigationService'
 
 const Stack = createNativeStackNavigator<AuthStackParamList>()
@@ -25,7 +25,7 @@ type AuthStackProps = {
 
 export const AuthStack: React.FC<AuthStackProps> = ({ navigation }) => {
   return (
-    <Stack.Navigator initialRouteName='WelcomeScreen'>
+    <Stack.Navigator initialRouteName='SignUpOptionsScreen'>
       <Stack.Screen
         name={'WelcomeScreen'}
         component={WelcomeScreen}
@@ -37,7 +37,7 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation }) => {
         component={SignUpOptionsScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
-      <Stack.Screen
+      {/*<Stack.Screen
         name={'SignUpScreen'}
         component={SignUpScreen}
         options={{
@@ -70,8 +70,8 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation }) => {
         name={'SignUpConfirmScreen'}
         component={SignUpConfirmScreen}
         options={{ headerShown: false, gestureEnabled: false }}
-      />
-      <Stack.Screen
+      />*/}
+      {/*<Stack.Screen
         name={'SignInScreen'}
         component={SignInScreen}
         options={{
@@ -87,7 +87,7 @@ export const AuthStack: React.FC<AuthStackProps> = ({ navigation }) => {
             />
           ),
         }}
-      />
+      />*/}
       <Stack.Screen
         name={'AddMoreDetailsScreen'}
         component={AddMoreDetailsScreen}

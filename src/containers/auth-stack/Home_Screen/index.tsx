@@ -7,12 +7,12 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
-  ScrollView,
   ActivityIndicator,
+  ScrollView,
+  Pressable,
 } from 'react-native'
 import { styles } from './style'
 import Modal from 'react-native-modal'
-import axios from 'axios'
 
 import { AntDesign, Entypo } from '@expo/vector-icons'
 import {
@@ -26,42 +26,46 @@ import {
 } from '../../../components'
 import { ROUTES, Strings } from '../../../constants'
 import Colors from '../../../styles/colors'
-import { Auth } from 'aws-amplify'
-import { FONT_SIZE_14 } from '../../../styles'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import Toast from 'react-native-toast-message'
+import {
+  FONT_SIZE_10,
+  FONT_SIZE_12,
+  FONT_SIZE_14,
+  FONT_SIZE_16,
+  MONTSERRAT_MEDIUM,
+  MONTSERRAT_REGULAR,
+} from '../../../styles'
+import { User } from '../../../models/api'
+
+import { API } from '../../../helpers/api'
+import { wp } from '../../../helpers'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import * as Sentry from 'sentry-expo'
 
 const GOALDATA = [
-  { id: 0, label: 'Lose Weight' },
-  { id: 1, label: 'Gain Weight' },
-  { id: 2, label: 'Maintain Weight' },
-  { id: 3, label: 'Build Muscle' },
-  { id: 4, label: 'Get Fit' },
+  { value: 0, label: 'Lose Weight' },
+  { value: 1, label: 'Gain Weight' },
+  { value: 2, label: 'Maintain Weight' },
+  { value: 3, label: 'Build Muscle' },
+  { value: 4, label: 'Get Fit' },
 ]
 
 export function HomeScreen({ navigation }: any) {
-  const [workoutPlan, setWorkoutPlan] = useState([])
-  const [mealPlan, setMealPlan] = useState([])
-  const [isLoading, setLoading] = useState(true)
-  const [userdata, setUserdata] = useState<any>([])
+  const [workoutPlan, setWorkoutPlan] = useState<any>()
+  const [mealPlan, setMealPlan] = useState<any>()
+  const [isLoading, setLoading] = useState(false)
   const [height, setHeight] = useState<number>(0)
   const [weight, setWeight] = useState<number>(0)
 
   const [selectedgoal, setSelectedgoal] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
-  const [goalvisible, setGoalvisible] = useState(false)
   const [goalid, setGoalid] = useState(0)
-
+  const [userDetails, setUserDetails] = useState<User>()
   const [dayName, setDayName] = useState('')
-  const [hide, setHide] = useState(false)
   const [goallabel, setGoallabel] = useState('')
 
-  const handleSelectGoal = (label: string) => {
-    setSelectedgoal(label)
-    setHide(false)
-  }
-
   useEffect(() => {
-    getUserDetails()
+    //getUserDetails()
   }, [goallabel])
 
   useEffect(() => {
@@ -77,8 +81,6 @@ export function HomeScreen({ navigation }: any) {
     let day = new Date().getDay()
     let dayName = daysArray[day]
     setDayName(dayName)
-    getWorkoutData()
-    getMealData()
     getUserDetails()
   }, [])
 
@@ -88,198 +90,156 @@ export function HomeScreen({ navigation }: any) {
     setSelectedgoal('')
   }
 
-  const getWorkoutData = async () => {
+  const getPlan = async () => {
     try {
       setLoading(true)
-      const response = await axios.post(
-        'https://gymrat-api.vercel.app/api/gpt/workout',
-        {
-          height: 155,
-          weight: 160,
-          gender: 2,
-          age: 24,
-          goal: 1,
-          partOfWeek: 1,
-        },
-        {
-          headers: {
-            Authorization: 'Bearer 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',
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      setWorkoutPlan(response?.data?.workoutPlan)
+      if (userDetails) {
+        await API.getPlanDetails(userDetails.suggestedPlanId, userDetails.bmiValue).then(
+          (res: any) => {
+            if (res?.status === 200) {
+              setWorkoutPlan([
+                {
+                  title: 'Workout Schedules',
+                  data: res?.workoutPlan,
+                  subtitle: 'Workout',
+                },
+              ])
+              setMealPlan([
+                {
+                  title: 'Meal Plan Schedules',
+                  data: res?.mealPlan,
+                  subtitle: 'Meal for the day',
+                },
+              ])
+              console.log('Workout Plan')
+              console.log(JSON.parse(res?.workoutPlan))
+              console.log('Meal Plan')
+              console.log(JSON.parse(res?.mealPlan))
+              if (res.workoutPlan.length > 0 && res.mealPlan.length > 0) {
+                setLoading(false)
+              }
+            }
+          }
+        )
+      }
     } catch (error) {
       console.error(error)
     } finally {
-      setLoading(false)
-    }
-  }
-
-  const getMealData = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.post(
-        'https://gymrat-api.vercel.app//api/gpt/meal',
-        {
-          height: 155,
-          weight: 160,
-          gender: 2,
-          age: 24,
-          goal: 1,
-        },
-        {
-          headers: {
-            Authorization: 'Bearer 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',
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      setMealPlan(response?.data?.mealPlan)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
     }
   }
 
   const getUserDetails = async () => {
-    const attributes = await Auth.currentUserInfo()
-    console.log(attributes?.id, 'sfagfsgafasgv')
-
     try {
       setLoading(true)
-      const response = await axios.get(
-        `https://gymrat-api.vercel.app/api/user/details?userId=${attributes?.id}`,
+      const userdata = await API.getUserDetails()
+      if (userdata?.data !== null && userdata?.data !== undefined) {
+        const userDetails: User = userdata?.data
+        console.log('User Details -- in get user details')
+        console.log(userDetails)
+        console.log('plans in user details')
 
-        {
-          headers: {
-            Authorization: 'Bearer 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',
-            'Content-Type': 'application/json',
+        console.log(JSON.parse(userDetails?.workoutPlan || '[]'))
+        console.log(JSON.parse(userDetails?.mealPlan || '[]'))
+        const goalLabel =
+          GOALDATA.find(item => item.value === userDetails?.goal)?.label || ''
+        setGoallabel(goalLabel)
+        setGoalid(userDetails?.goal)
+        setWorkoutPlan([
+          {
+            title: 'Workout Schedule',
+            data: JSON.parse(userDetails.workoutPlan || '[]').days,
+            subtitle: 'Workout',
           },
+        ])
+        setMealPlan([
+          {
+            title: 'Meal Plan Schedule',
+            data: JSON.parse(userDetails.mealPlan || '[]').days,
+            subtitle: 'Meal for the day',
+          },
+        ])
+        console.log('Workout Plan')
+        console.log(workoutPlan)
+        console.log('Meal Plan')
+        console.log(mealPlan)
+        //getPlan()
+        setUserDetails(userDetails)
+        setLoading(false)
+        if (userDetails?.workoutPlan == null || userDetails?.workoutPlan == undefined) {
+          await API.getPlanDetails(
+            userDetails.suggestedPlanId,
+            userDetails.bmiValue
+          ).then(res => {
+            if (res?.status === 200) {
+              setWorkoutPlan([
+                {
+                  title: 'Workout Schedule',
+                  data: JSON.parse(res?.workoutPlan || '[]').days,
+                  subtitle: 'Workout',
+                },
+              ])
+              setMealPlan([
+                {
+                  title: 'Meal Plan Schedule',
+                  data: JSON.parse(res?.mealPlan || '[]').days,
+                  subtitle: 'Meal for the day',
+                },
+              ])
+              console.log('Workout Plan in if')
+              console.log(workoutPlan)
+              console.log('Meal Plan in if')
+              console.log(mealPlan)
+              if (res.workoutPlan.length > 0 && res.mealPlan.length > 0) {
+                setLoading(false)
+              }
+            }
+          })
         }
-      )
-      setUserdata(response?.data)
-      console.log(response?.data[0], 'sasassasas')
-      setTimeout(async () => {
-        await Loadgoalchange(response?.data[0]?.goal)
-      }, 2000)
+      }
     } catch (error) {
+      Sentry.Native.captureException(error)
       console.error(error)
     } finally {
       setLoading(false)
     }
+    //throw new Error('Function not implemented.')
   }
 
   const GoalUpdate = async () => {
-    const attributes = await Auth.currentUserInfo()
-    const bmi = weight / (height / 100) ** 2
+    setGoallabel(GOALDATA.find(item => item.value === goalid)?.label || '')
+    var body = {
+      goal: goalid,
+      height: userDetails?.height,
+      weight: userDetails?.weight,
+      bmiValue: userDetails?.bmiValue,
+      age: userDetails?.age,
+      userId: userDetails?.userId,
+    }
+
+    console.log('goal id', goalid)
+    console.log('goal label', goallabel)
 
     try {
-      let body = {
-        userId: attributes.id,
-        height: height,
-        weight: weight,
-        goal: goalid,
-        age: userdata[0]?.age,
-        bmiValue: bmi,
-      }
-      setLoading(true)
-      const response = await axios.put(
-        'https://gymrat-api.vercel.app/api/user/details',
-        body,
-
-        {
-          headers: {
-            Authorization: 'Bearer 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',
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      await handlegoalchange()
-
-      await getUserDetails()
+      await API.UpdateUser(body)
     } catch (error) {
       console.error(error, 'errrrr')
     } finally {
-      setLoading(false)
     }
   }
 
-  const onCardView = () => {
-    return (
-      <CardComponent cardStyle={styles.cardcontainer}>
-        <FlatList
-          data={userdata}
-          style={styles.flatlist}
-          renderItem={({ item }) => {
-            return (
-              <View style={{ flexDirection: 'row' }}>
-                <View style={styles.roundcontainer}>
-                  <LabelComponent label={item.height} style={styles.txt} />
-                  <LabelComponent label='lbs' style={styles.subtxt} />
-                </View>
-                <View style={styles.roundcontainer}>
-                  <LabelComponent label={item.weight} style={styles.txt} />
-                  <LabelComponent label='cm' style={styles.subtxt} />
-                </View>
-                <View style={styles.roundcontainer}>
-                  <LabelComponent label={item.bmiValue.toFixed(2)} style={styles.txt} />
-                </View>
-              </View>
-            )
-          }}
-        />
-        <View style={styles.goalcontainer}>
-          <LabelComponent label='GOAL' style={styles.goaltxt} />
-          <LabelComponent label={goallabel} style={styles.gaintxt} />
-          <TouchableOpacity
-            onPress={() => {
-              setModalVisible(true), clearInputs()
-            }}>
-            <LabelComponent label='what to update goal?' style={styles.goalchangetxt} />
-          </TouchableOpacity>
-        </View>
-      </CardComponent>
-    )
-  }
   const combinedSections = [{ title: 'Workout', subtitle: 'Meal for the day' }]
 
-  const work = [{ title: 'Workout Schedules', data: workoutPlan, subtitle: 'Workout' }]
-  const Meal = [
-    { title: 'Meal Plan Schedules', data: mealPlan, subtitle: 'Meal for the day' },
-  ]
-  const User = [{ title: 'Workout Schedules', data: userdata, subtitle: 'Workout' }]
+  const User = [{ title: 'Workout Schedules', data: userDetails, subtitle: 'Workout' }]
 
-  const handlegoalchange = async () => {
-    if (goalid === 0) {
-      setGoallabel('Lose Weight')
-    } else if (goalid === 1) {
-      setGoallabel('Gain Weight')
-    } else if (goalid === 2) {
-      setGoallabel('Maintain Weight')
-    } else if (goalid === 3) {
-      setGoallabel('Build Muscle')
-    } else if (goalid === 4) {
-      setGoallabel('Get Fit')
-    } else {
-      setGoallabel('')
-    }
-  }
-  const Loadgoalchange = async (goal: number) => {
-    if (goal === 0) {
-      setGoallabel('Lose Weight')
-    } else if (goal === 1) {
-      setGoallabel('Gain Weight')
-    } else if (goal === 2) {
-      setGoallabel('Maintain Weight')
-    } else if (goal === 3) {
-      setGoallabel('Build Muscle')
-    } else if (goal === 4) {
-      setGoallabel('Get Fit')
-    } else {
-      setGoallabel('')
-    }
+  const showToast = () => {
+    Toast.show({
+      type: 'tomatoToast',
+      props: {
+        text: 'New Plan Requested!',
+        msg: 'We will mail you once your new plan is ready.',
+      },
+    })
+    if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
   }
   return isLoading ? (
     <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
@@ -294,159 +254,257 @@ export function HomeScreen({ navigation }: any) {
     </View>
   ) : (
     <SafeAreaView style={styles.container}>
+      <ProfileHeader
+        onLogoutPress={async () => {
+          await API.logOut().then(res => {
+            console.log('logout response', res)
+            navigation.replace(ROUTES.AUTH_STACK, {
+              screen: ROUTES.SIGN_UP_OPTIONS_SCREEN,
+            })
+          })
+        }}
+        Profile={true}
+        onProfilePress={() =>
+          navigation.navigate(ROUTES.HOME_STACK, { screen: ROUTES.PROFILE_SCREEN })
+        }
+      />
       <ScrollView>
-        <ProfileHeader
-          onLogoutPress={() => {
-            AsyncStorage.clear()
-            Auth.signOut()
-            navigation.replace(ROUTES.AUTH_STACK, { screen: ROUTES.WELCOME_SCREEN })
-          }}
-          Profile={true}
-          onProfilePress={() =>
-            navigation.navigate(ROUTES.HOME_STACK, { screen: ROUTES.PROFILE_SCREEN })
-          }
-          age={`Age: ${userdata[0]?.age}`}
-        />
-        <View>
-          {onCardView()}
-
-          <LabelComponent label='Today’s Plan' style={styles.title} />
-          <FlatList
-            data={combinedSections}
-            scrollEnabled={false}
-            renderItem={({ item }) => {
-              return (
-                <CardComponent>
-                  <View>
-                    <SectionList
-                      sections={work}
-                      renderSectionHeader={({ section: { title, subtitle } }) => {
-                        return (
+        <CardComponent cardStyle={styles.cardcontainer}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <View
+              style={{
+                alignContent: 'center',
+                alignItems: 'center',
+                paddingHorizontal: 10,
+              }}>
+              <View style={styles.roundcontainer}>
+                <LabelComponent label={userDetails?.weight} style={styles.txt} />
+                <LabelComponent label='lbs' style={styles.subtxt} />
+              </View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: MONTSERRAT_REGULAR,
+                  fontSize: FONT_SIZE_10,
+                }}>
+                Weight
+              </Text>
+            </View>
+            <View
+              style={{
+                alignContent: 'center',
+                alignItems: 'center',
+                paddingHorizontal: 10,
+              }}>
+              <View style={styles.roundcontainer}>
+                <LabelComponent label={userDetails?.height} style={styles.txt} />
+                <LabelComponent label='cm' style={styles.subtxt} />
+              </View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: MONTSERRAT_REGULAR,
+                  fontSize: FONT_SIZE_10,
+                }}>
+                Height
+              </Text>
+            </View>
+            <View
+              style={{
+                alignContent: 'center',
+                alignItems: 'center',
+                paddingHorizontal: 10,
+              }}>
+              <View style={styles.roundcontainer}>
+                <LabelComponent
+                  label={userDetails?.bmiValue?.toFixed(2)}
+                  style={styles.txt}
+                />
+              </View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: MONTSERRAT_REGULAR,
+                  fontSize: FONT_SIZE_10,
+                }}>
+                BMI
+              </Text>
+            </View>
+          </View>
+          <View>
+            <ButtonComponent
+              label='Update Metrics'
+              varient={ButtonVarient.lightgreen}
+              labelVarient={TextVarient.signuptitle}
+            />
+          </View>
+        </CardComponent>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            alignContent: 'center',
+          }}>
+          <LabelComponent label='Today Plan' style={styles.title} />
+          <Pressable
+            style={{
+              borderWidth: 1,
+              borderColor: Colors.LIGHT_GREEN,
+              borderRadius: 25,
+              marginRight: wp(5),
+            }}
+            onPress={showToast}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: MONTSERRAT_MEDIUM,
+                fontSize: 10,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+              }}>
+              Request New Plan
+            </Text>
+          </Pressable>
+        </View>
+        {/*<FlatList
+          data={combinedSections}
+          scrollEnabled={false}
+          renderItem={({ item }) => {
+            return (
+              <CardComponent>
+                <View>
+                  <SectionList
+                    sections={workoutPlan}
+                    renderSectionHeader={({ section: { title, subtitle } }) => {
+                      return (
+                        <View>
+                          <LabelComponent label={subtitle} style={styles.workout} />
+                        </View>
+                      )
+                    }}
+                    renderItem={({ item }: any) => (
+                      <>
+                        {item.day === dayName && (
                           <View>
-                            <LabelComponent label={subtitle} style={styles.workout} />
-                          </View>
-                        )
-                      }}
-                      renderItem={({ item }: any) => (
-                        <>
-                          {item.day === dayName && (
-                            <View>
-                              <View style={styles.tablecontainer}>
-                                <View
-                                  style={{
-                                    flex: 1,
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-end',
-                                  }}>
+                            <View style={styles.tablecontainer}>
+                              <View
+                                style={{
+                                  flex: 1,
+                                  flexDirection: 'row',
+                                  justifyContent: 'space-around',
+                                }}>
+                                <>
                                   <View></View>
-
                                   <LabelComponent style={styles.table1} label='Sets' />
                                   <LabelComponent style={styles.table1} label='Reps' />
-                                </View>
+                                </>
                               </View>
-                              {item?.exercises?.map((v: any) => {
-                                return (
-                                  <View>
-                                    <View style={styles.tablecontainer}>
-                                      <LabelComponent
-                                        style={styles.tableitem}
-                                        label={v.name}
-                                      />
-                                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                            </View>
+                            {item?.exercises?.map((v: any) => {
+                              return (
+                                <View>
+                                  <View style={styles.tablecontainer}>
+                                    <LabelComponent
+                                      style={styles.tableitem}
+                                      label={v.name}
+                                    />
+                                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                                      {v.sets && (
                                         <LabelComponent
                                           label={v.sets}
                                           style={styles.repsitem}
                                         />
-                                        <LabelComponent
-                                          label={v.reps}
-                                          style={styles.repsitem}
-                                        />
-                                      </View>
+                                      )}
+                                      <LabelComponent
+                                        label={v.reps}
+                                        style={styles.repsitem}
+                                      />
                                     </View>
                                   </View>
-                                )
-                              })}
-                            </View>
-                          )}
-                        </>
-                      )}
-                    />
-                  </View>
-                  <View>
-                    <SectionList
-                      sections={Meal}
-                      renderSectionHeader={({ section: { title, subtitle } }) => {
-                        return (
-                          <View>
-                            <LabelComponent label={subtitle} style={styles.subheading1} />
+                                </View>
+                              )
+                            })}
                           </View>
-                        )
-                      }}
-                      renderItem={({ item }: any) => (
-                        <>
-                          {item.day === dayName && (
-                            <View>
-                              <View style={[styles.mealview, { marginTop: -0.5 }]}>
-                                <View style={styles.mealconatiner}>
-                                  <LabelComponent
-                                    label='BREAKFAST'
-                                    style={styles.heading1}
-                                  />
-                                  <LabelComponent
-                                    label={`(${item.breakfast.calories}cal)`}
-                                    style={styles.headingmd}
-                                  />
-                                </View>
-                                <View>
-                                  <LabelComponent
-                                    label={item.breakfast.meal}
-                                    style={styles.subheading}
-                                  />
-                                </View>
-                                <View style={styles.mealconatiner}>
-                                  <LabelComponent label='LUNCH' style={styles.heading1} />
-                                  <LabelComponent
-                                    label={`(${item.lunch.calories}cal)`}
-                                    style={styles.headingmd}
-                                  />
-                                </View>
-                                <View>
-                                  <LabelComponent
-                                    label={item.lunch.meal}
-                                    style={styles.subheading}
-                                  />
-                                </View>
-                                <View style={styles.mealconatiner}>
-                                  <LabelComponent
-                                    label='DINNER'
-                                    style={styles.heading1}
-                                  />
-                                  <LabelComponent
-                                    label={`(${item.dinner.calories}cal)`}
-                                    style={styles.headingmd}
-                                  />
-                                </View>
-                                <View>
-                                  <LabelComponent
-                                    label={item.dinner.meal}
-                                    style={styles.subheading}
-                                  />
-                                </View>
+                        )}
+                      </>
+                    )}
+                  />
+                </View>
+                <View>
+                  <SectionList
+                    sections={mealPlan}
+                    renderSectionHeader={({ section: { title, subtitle } }) => {
+                      return (
+                        <View>
+                          <LabelComponent label={subtitle} style={styles.subheading1} />
+                        </View>
+                      )
+                    }}
+                    renderItem={({ item }: any) => (
+                      <>
+                        {item.day === dayName && (
+                          <View>
+                            <View style={[styles.mealview, { marginTop: -0.5 }]}>
+                              <View style={styles.mealconatiner}>
+                                <LabelComponent
+                                  label='BREAKFAST'
+                                  style={styles.heading1}
+                                />
+                                <LabelComponent
+                                  label={`(${item.breakfast.calories}cal)`}
+                                  style={styles.headingmd}
+                                />
+                              </View>
+                              <View>
+                                <LabelComponent
+                                  label={item.breakfast.meal}
+                                  style={styles.subheading}
+                                />
+                              </View>
+                              <View style={styles.mealconatiner}>
+                                <LabelComponent label='LUNCH' style={styles.heading1} />
+                                <LabelComponent
+                                  label={`(${item.lunch.calories}cal)`}
+                                  style={styles.headingmd}
+                                />
+                              </View>
+                              <View>
+                                <LabelComponent
+                                  label={item.lunch.meal}
+                                  style={styles.subheading}
+                                />
+                              </View>
+                              <View style={styles.mealconatiner}>
+                                <LabelComponent label='DINNER' style={styles.heading1} />
+                                <LabelComponent
+                                  label={`(${item.dinner.calories}cal)`}
+                                  style={styles.headingmd}
+                                />
+                              </View>
+                              <View>
+                                <LabelComponent
+                                  label={item.dinner.meal}
+                                  style={styles.subheading}
+                                />
                               </View>
                             </View>
-                          )}
-                        </>
-                      )}
-                    />
-                  </View>
-                </CardComponent>
-              )
-            }}
-          />
+                          </View>
+                        )}
+                      </>
+                    )}
+                  />
+                </View>
+              </CardComponent>
+            )
+          }}
+        />*/}
 
+        {workoutPlan && (
           <View>
             <SectionList
-              sections={work}
+              sections={workoutPlan}
+              scrollEnabled={false}
               renderSectionHeader={({ section: { title } }) => {
                 return (
                   <View style={styles.headercontainer}>
@@ -475,7 +533,7 @@ export function HomeScreen({ navigation }: any) {
               renderItem={({ item }: any) => (
                 <>
                   {item.day === dayName && (
-                    <View style={styles.card}>
+                    <View style={styles.card} key={item.day}>
                       <View style={styles.tablecontainer}>
                         <LabelComponent
                           style={[styles.tableitem, { color: Colors.SPRING_GREEN }]}
@@ -492,15 +550,15 @@ export function HomeScreen({ navigation }: any) {
                             <View style={styles.tablecontainer}>
                               <LabelComponent style={styles.tableitem} label={v.name} />
                               <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <LabelComponent label={v.sets} style={styles.repsitem} />
+                                {v.sets && (
+                                  <LabelComponent
+                                    label={v.sets}
+                                    style={styles.repsitem}
+                                  />
+                                )}
                                 <LabelComponent label={v.reps} style={styles.repsitem} />
                               </View>
                             </View>
-                            {/* <WorkOutComponent
-                                  setslabel={v.name}
-                                  repslabel={v.sets}
-                                  tablelabel={v.reps}
-                                /> */}
                           </View>
                         )
                       })}
@@ -508,11 +566,15 @@ export function HomeScreen({ navigation }: any) {
                   )}
                 </>
               )}
+              key='workout'
             />
           </View>
+        )}
+
+        {mealPlan && (
           <SectionList
-            sections={Meal}
-            scrollEnabled
+            sections={mealPlan}
+            scrollEnabled={false}
             renderSectionHeader={({ section: { title, subtitle } }) => {
               return (
                 <View style={styles.headercontainer}>
@@ -584,110 +646,97 @@ export function HomeScreen({ navigation }: any) {
                 )}
               </>
             )}
+            key='meal'
           />
+        )}
 
-          <>
-            <Modal
-              isVisible={modalVisible}
-              onBackdropPress={() => setModalVisible(!modalVisible)}>
-              <View style={styles.modalcontainer}>
-                <LabelComponent label={Strings.UPDATE_GOAL} style={styles.modaltitle} />
+        <>
+          <Modal
+            isVisible={modalVisible}
+            onBackdropPress={() => setModalVisible(!modalVisible)}>
+            <View style={styles.modalcontainer}>
+              <Text
+                style={{
+                  color: 'white',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: MONTSERRAT_REGULAR,
+                  fontSize: FONT_SIZE_16,
+                  textAlign: 'center',
+                }}>
+                What's your new Goal?
+              </Text>
+              <KeyboardAwareScrollView style={{}}>
                 <View>
-                  <LabelComponent label={Strings.HEIGHT_CMS} style={styles.label} />
-                  <TextInputComponent
-                    value={height.toString()}
-                    placeholder={Strings.HEIGHT}
-                    style={styles.txtinput}
-                    onChangeText={value => setHeight(parseInt(value,10))}
-                    keyboardType='number-pad'
-                  />
-                </View>
-                <View>
-                  <LabelComponent label={Strings.WEIGHT_LBS} style={styles.label} />
-                  <TextInputComponent
-                    value={weight.toString()}
-                    placeholder={Strings.WEIGHT}
-                    style={styles.txtinput}
-                    onChangeText={value => setWeight(parseInt(value, 10))}
-                    keyboardType='number-pad'
-                  />
-                </View>
-                <View>
-                  <LabelComponent label={Strings.GOAL} style={styles.label} />
-
-                  <View>
-                    <TouchableOpacity
-                      style={styles.dropdown}
-                      onPress={() => setGoalvisible(true)}>
-                      <Text style={styles.label2}>
-                        {selectedgoal ? selectedgoal : 'Select Goal'}
-                      </Text>
-                      <AntDesign name='down' size={20} color='white' />
-                    </TouchableOpacity>
-                  </View>
-                  <View>
-                    <Modal
-                      isVisible={goalvisible}
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flex: 1,
-                      }}
-                      onBackdropPress={() => {
-                        setGoalvisible(false)
-                      }}>
-                      <View style={styles.optionsContainer}>
-                        {GOALDATA.map(option => (
-                          <TouchableOpacity
-                            key={option.id}
-                            style={styles.option}
-                            onPress={() => {
-                              handleSelectGoal(option.label)
-
-                              setGoalid(option?.id)
-                              setGoalvisible(false)
-                            }}>
-                            <LabelComponent
-                              label={option.label}
-                              style={{
-                                color: Colors.WHITE,
-                                fontSize: FONT_SIZE_14,
-                                marginHorizontal: 12,
-                                paddingVertical: 6,
-                              }}
-                            />
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    </Modal>
+                  <View
+                    style={{
+                      paddingHorizontal: 25,
+                      paddingVertical: 10,
+                    }}>
+                    {GOALDATA.map(({ label, value }) => (
+                      <Pressable
+                        style={
+                          value === goalid ? styles.selectedOption : styles.regularOption
+                        }
+                        key={value}
+                        onPress={() => {
+                          setGoalid(value)
+                        }}>
+                        <Text
+                          style={
+                            value === goalid
+                              ? styles.selectedOptionText
+                              : styles.optionText
+                          }>
+                          {label}
+                        </Text>
+                      </Pressable>
+                    ))}
                   </View>
                 </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <ButtonComponent
-                    onPress={() => {
-                      setModalVisible(!modalVisible)
-                      clearInputs()
-                    }}
-                    varient={ButtonVarient.cancelbutton}
-                    labelVarient={TextVarient.cancel}
-                    label={Strings.CANCEL}
-                  />
-                  <ButtonComponent
-                    onPress={() => {
-                      GoalUpdate()
-                      setModalVisible(false)
-                    }}
-                    label={Strings.SAVE}
-                    varient={ButtonVarient.savebutton}
-                    labelVarient={TextVarient.save}
-                    disabled={height == 0 || weight == 0 || selectedgoal == ''}
-                  />
-                </View>
+              </KeyboardAwareScrollView>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                <Pressable
+                  style={{
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    paddingVertical: 4,
+                    paddingHorizontal: 20,
+                    borderRadius: 25,
+                  }}
+                  onPress={() => setModalVisible(!modalVisible)}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontFamily: MONTSERRAT_REGULAR,
+                      fontSize: FONT_SIZE_16,
+                    }}>
+                    Cancel
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={{
+                    paddingVertical: 4,
+                    paddingHorizontal: 20,
+                    borderRadius: 25,
+                    backgroundColor: Colors.SPRING_GREEN,
+                  }}
+                  onPress={() => {
+                    GoalUpdate(), setModalVisible(!modalVisible)
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontFamily: MONTSERRAT_REGULAR,
+                      fontSize: FONT_SIZE_16,
+                    }}>
+                    Save
+                  </Text>
+                </Pressable>
               </View>
-            </Modal>
-          </>
-        </View>
+            </View>
+          </Modal>
+        </>
       </ScrollView>
     </SafeAreaView>
   )

@@ -1,7 +1,7 @@
 import React from 'react'
 import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native'
 import styles from './style'
-import { LabelComponent } from '@components/Label'
+import { LabelComponent } from '../../components/Label'
 import Google from '../../assets/svg/google.svg'
 import Apple from '../../assets/svg/apple.svg'
 

@@ -1,5 +1,5 @@
-import { MONTSERRAT_BOLD, FONT_WEIGHT_600 } from '@styles'
-import Colors from '@styles/colors'
+import { MONTSERRAT_BOLD, FONT_WEIGHT_600 } from '../../styles'
+import Colors from '../../styles/colors'
 import { StyleSheet } from 'react-native'
 import {
   widthPercentageToDP as wp,

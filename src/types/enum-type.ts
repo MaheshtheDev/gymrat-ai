@@ -1,3 +1,11 @@
+export const GOALDATA = [
+  { value: 0, label: 'Lose Weight' },
+  { value: 1, label: 'Gain Weight' },
+  { value: 2, label: 'Maintain Weight' },
+  { value: 3, label: 'Build Muscle' },
+  { value: 4, label: 'Get Fit' },
+]
+
 export enum TextFormat {
   HEADER = 'header',
   TITLE = 'title',

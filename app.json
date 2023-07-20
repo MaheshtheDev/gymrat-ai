@@ -11,15 +11,13 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-       "bundleIdentifier": "com.gymrat.ai"
+      "bundleIdentifier": "com.gymrat.ai"
     },
     "android": {
-      "package":"com.gymrat.ai",
+      "package": "com.gymrat.ai",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,6 +25,12 @@
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
+    },
+    "plugins": ["sentry-expo"],
+    "extra": {
+      "eas": {
+        "projectId": "7a26df6e-bd0b-4749-839c-f73997a36066"
+      }
     }
   }
 }

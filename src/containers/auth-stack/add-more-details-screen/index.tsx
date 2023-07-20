@@ -1,147 +1,129 @@
 import {
   ActivityIndicator,
+  Button,
+  Pressable,
   SafeAreaView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import { Ionicons, Octicons } from '@expo/vector-icons'
 import {
   ButtonComponent,
   ButtonVarient,
   LabelComponent,
   TextInputComponent,
   TextVarient,
-} from '@components'
-import { FONT_SIZE_14 } from '@styles'
-import { ROUTES, Strings } from '@constants'
+} from '../../../components'
+import {
+  FONT_SIZE_14,
+  MONTSERRAT_LIGHT,
+  MONTSERRAT_MEDIUM,
+  MONTSERRAT_REGULAR,
+} from '../../../styles'
+import { ROUTES, Strings } from '../../../constants'
 import React, { useEffect, useState } from 'react'
 
-import { Auth } from 'aws-amplify'
-import { AuthStackNavProps } from '@navigation'
-import Colors from '@styles/colors'
+import Colors from '../../../styles/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import Modal from 'react-native-modal'
-import axios from 'axios'
-import { styles } from './style'
 
-export const AddMoreDetailsScreen: React.FC = ({ navigation, route }) => {
-  const [height, setHeight] = useState('')
-  const [weight, setWeight] = useState('')
-  const [age, setAge] = useState('')
-  const [hide, setHide] = useState(false)
-  const [selectedLabel, setSelectedLabel] = useState('')
-  const [selectedgoal, setSelectedgoal] = useState('')
-  const [showOptions, setShowOptions] = useState(false)
-  const [inputFilled, setInputFilled] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [genderModal, setGenderModal] = useState(false)
-  const [goalid, setGoalid] = useState(null)
-  const [genderid, setGenderid] = useState(null)
+import { styles } from './style'
+import { API } from '../../../helpers/api'
+import { User } from '../../../models/api'
+import * as SecureStore from 'expo-secure-store'
+import { TempStorage, TempStorageKeys } from '../../../helpers/tempStorage'
+
+export function AddMoreDetailsScreen({ navigation }: any) {
+  const [height, setHeight] = useState<number>(0)
+  const [weight, setWeight] = useState<number>(0)
+  const [name, setName] = useState('')
+  const [age, setAge] = useState<number>(0)
+  const [goalid, setGoalid] = useState<number>(-1)
+  const [genderid, setGenderid] = useState<number>(-1)
   const [isLoading, setIsLoading] = useState(false)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
+  const [step, setStep] = useState(1)
 
   useEffect(() => {
     checkInputsFilled()
   }, [height, weight, genderid, age, goalid])
 
+  useEffect(() => {
+    const checkUserExistence = async () => {
+      const credentialJson = await TempStorage.getItem(TempStorageKeys.APPLE_CREDENTIALS)
+      const userId = JSON.parse(credentialJson || '').user
+      console.log('userId ' + userId)
+      const isUserExist = await API.getUserDetails(userId)
+      console.log('isUserExist')
+      console.log(isUserExist)
+      if (isUserExist && isUserExist.status == 200) {
+        console.log('user exist')
+        console.log(isUserExist)
+        navigation.navigate(ROUTES.HOME_STACK, {
+          screen: ROUTES.HOME_SCREEN,
+        })
+      }
+    }
+    checkUserExistence()
+  }, [])
+
   const checkInputsFilled = () => {
     if (
-      height &&
-      weight &&
-      age &&
-      genderid !== undefined &&
-      genderid !== null &&
-      goalid !== undefined &&
-      goalid !== null
+      (age && genderid !== undefined && genderid !== null && name && height && weight) ||
+      (goalid !== undefined && goalid !== null && goalid !== -1)
     ) {
-      setInputFilled(true)
       setIsButtonDisabled(false)
     } else {
-      setInputFilled(false)
       setIsButtonDisabled(true)
     }
   }
 
-  const handleContinueButtonPress = async () => {
-    setIsLoading(true)
+  const handleFirstContinueButtonPress = () => {
+    setStep(2)
+    goalid !== -1 ? setIsButtonDisabled(false) : setIsButtonDisabled(true)
+  }
 
-    console.log(height, weight, genderid, age, goalid, 'sasas')
-
-    if (
-      height &&
-      weight &&
-      age &&
-      genderid !== undefined &&
-      genderid !== null &&
-      goalid !== undefined &&
-      goalid !== null
-    ) {
-      setInputFilled(true)
-
-      const bmi = weight / (height / 100) ** 2
-
-      const attributes = await Auth.currentUserInfo()
-
-      try {
-        const body = JSON.stringify({
-          userId: attributes.id,
-          height: parseInt(height, 10),
-          weight: parseInt(weight, 10),
-          gender: genderid,
-          age: parseInt(age, 10),
-          goal: goalid,
-          bmiValue: bmi,
-        })
-        console.log(body, 'ghghghgh')
-
-        const response = await axios.post(
-          'https://gymrat-api.vercel.app/api/user/details',
-          body,
-          {
-            headers: {
-              Authorization: 'Bearer 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',
-              'Content-Type': 'application/json',
-            },
-          }
-        )
-        navigation.replace(ROUTES.HOME_STACK, {
+  const onSaveProfile = async () => {
+    const userIDNow = await SecureStore.getItemAsync('userId')
+    const bmi = weight / (height / 100) ** 2
+    const userDetails: User = {
+      userId: userIDNow ? userIDNow : '',
+      fullName: name,
+      height: height,
+      weight: weight,
+      gender: genderid,
+      age: age,
+      goal: goalid,
+      bmiValue: bmi,
+      suggestedPlanId: "1",
+    }
+    console.log(userDetails)
+    API.User(userDetails)
+      .then(res => {
+        console.log('res', res)
+        console.log('pressed')
+        navigation.navigate(ROUTES.HOME_STACK, {
           screen: ROUTES.HOME_SCREEN,
         })
-      } catch (error) {
-        console.log(error, 'errrr')
-        console.error(error)
-        setIsLoading(false)
-      } finally {
-        setIsLoading(false)
-      }
-    } else {
-      setInputFilled(false)
-      setIsLoading(false)
-    }
+      })
+      .catch(err => {
+        console.log('err', err)
+      })
   }
 
   const GENDER = [
-    { id: 0, label: 'Male' },
-    { id: 1, label: 'Female' },
-    { id: 2, label: 'Others' },
-  ]
-  const GOALDATA = [
-    { id: 0, label: 'Lose Weight' },
-    { id: 1, label: 'Gain Weight' },
-    { id: 2, label: 'Maintain Weight' },
-    { id: 3, label: 'Build Muscle' },
-    { id: 4, label: 'Get Fit' },
+    { value: 0, label: 'Male' },
+    { value: 1, label: 'Female' },
+    { value: 2, label: 'Others' },
   ]
 
-  const handleSelectOption = (label: string) => {
-    setSelectedLabel(label)
-    setShowOptions(false)
-  }
-  const handleSelectGoal = (label: string) => {
-    setSelectedgoal(label)
-    setHide(false)
-  }
+  const GOALDATA = [
+    { value: 0, label: 'Lose Weight' },
+    { value: 1, label: 'Gain Weight' },
+    { value: 2, label: 'Maintain Weight' },
+    { value: 3, label: 'Build Muscle' },
+    { value: 4, label: 'Get Fit' },
+  ]
 
   return isLoading ? (
     <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
@@ -156,156 +138,250 @@ export const AddMoreDetailsScreen: React.FC = ({ navigation, route }) => {
     </View>
   ) : (
     <SafeAreaView style={styles.container}>
-      <View style={styles.titlecontainer}>
-        <LabelComponent style={styles.title} label={Strings.ADD_GOAL_AND_METRICS} />
-      </View>
-      <View>
-        <LabelComponent
-          label={Strings.ADD_GOAL_SCREEN_DESCRIPTION_TEXT}
-          style={styles.subtitle}
-        />
-        <KeyboardAwareScrollView>
-          <View>
-            <View>
-              <LabelComponent label={Strings.HEIGHT_CMS} style={styles.label} />
-              <TextInputComponent
-                placeholder={Strings.HEIGHT}
-                style={styles.txtinput}
-                keyboardType='number-pad'
-                onChangeText={text => setHeight(text)}
-              />
-            </View>
-            <View>
-              <LabelComponent label={Strings.WEIGHT_LBS} style={styles.label} />
-              <TextInputComponent
-                placeholder={Strings.WEIGHT}
-                style={styles.txtinput}
-                keyboardType='number-pad'
-                onChangeText={text => setWeight(text)}
-              />
-            </View>
-            <View>
-              <LabelComponent label={Strings.GENDER} style={styles.label} />
-              <View>
-                <TouchableOpacity
-                  style={styles.dropdown}
-                  onPress={() => setGenderModal(true)}>
-                  <Text style={styles.label1}>
-                    {selectedLabel ? selectedLabel : 'Select gender'}
-                  </Text>
-                  <AntDesign name='down' size={20} color='white' />
-                </TouchableOpacity>
-              </View>
-              <>
-                <Modal
-                  isVisible={genderModal}
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flex: 1,
-                  }}
-                  onBackdropPress={() => {
-                    setGenderModal(false)
-                  }}>
-                  <View style={styles.optionsContainer}>
-                    {GENDER.map(option => (
-                      <TouchableOpacity
-                        key={option.id}
-                        style={styles.option}
-                        onPress={() => {
-                          handleSelectOption(option.label),
-                            setGenderModal(false),
-                            setGenderid(option?.id)
-                        }}>
-                        <LabelComponent
-                          label={option.label}
-                          style={{
-                            color: Colors.WHITE,
-                            fontSize: FONT_SIZE_14,
-                            marginHorizontal: 12,
-                            paddingVertical: 6,
-                          }}
-                        />
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </Modal>
-              </>
-            </View>
-            <View>
-              <LabelComponent label={Strings.AGE} style={styles.label} />
-              <TextInputComponent
-                placeholder={'23'}
-                style={styles.txtinput}
-                keyboardType='number-pad'
-                onChangeText={text => setAge(text)}
-              />
-            </View>
-
-            <View>
-              <LabelComponent label={Strings.GOAL} style={styles.label} />
-
-              <View>
-                <TouchableOpacity
-                  style={styles.dropdown}
-                  onPress={() => setModalVisible(true)}>
-                  <Text style={styles.label1}>
-                    {selectedgoal ? selectedgoal : 'Select Goal'}
-                  </Text>
-                  <AntDesign name='down' size={20} color='white' />
-                </TouchableOpacity>
-              </View>
-              <View>
-                <Modal
-                  isVisible={modalVisible}
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flex: 1,
-                  }}
-                  onBackdropPress={() => {
-                    setModalVisible(false)
-                  }}>
-                  <View style={styles.optionsContainer}>
-                    {GOALDATA.map(option => (
-                      <TouchableOpacity
-                        key={option.id}
-                        style={styles.option}
-                        onPress={() => {
-                          handleSelectGoal(option.label)
-                          setGoalid(option?.id)
-                          setModalVisible(false)
-                        }}>
-                        <LabelComponent
-                          label={option.label}
-                          style={{
-                            color: Colors.WHITE,
-                            fontSize: FONT_SIZE_14,
-                            marginHorizontal: 12,
-                            paddingVertical: 6,
-                          }}
-                        />
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </Modal>
-              </View>
-            </View>
-
-            <View style={styles.buttoncontainer}>
-              <ButtonComponent
-                varient={
-                  isButtonDisabled ? ButtonVarient.lightgreen : ButtonVarient.continue
-                }
-                labelVarient={TextVarient.black}
-                label={Strings.CONTINUE}
-                onPress={handleContinueButtonPress}
-                disabled={isButtonDisabled}
-              />
-            </View>
+      {step === 1 ? (
+        <>
+          <View style={styles.titlecontainer}>
+            <LabelComponent style={styles.title} label='Setup your profile' />
           </View>
-        </KeyboardAwareScrollView>
-      </View>
+          <View>
+            <LabelComponent
+              label={'Enter your personal details to get started'}
+              style={styles.subtitle}
+            />
+            <KeyboardAwareScrollView style={{ height: '75%' }}>
+              <View>
+                <View>
+                  <LabelComponent label='Name*' style={styles.label} />
+                  <TextInputComponent
+                    placeholder={'Enter your name'}
+                    style={styles.txtinput}
+                    onChangeText={text => setName(text)}
+                    defaultValue={name ? name : ''}
+                  />
+                </View>
+                <View>
+                  <LabelComponent label={'Age*'} style={styles.label} />
+                  <TextInputComponent
+                    placeholder={'Enter your age'}
+                    style={styles.txtinput}
+                    keyboardType='number-pad'
+                    onChangeText={text => setAge(parseInt(text, 10))}
+                    defaultValue={age ? age.toString() : ''}
+                  />
+                </View>
+
+                <View>
+                  <LabelComponent label='Height*' style={styles.label} />
+                  <TextInputComponent
+                    placeholder={'Enter your height in cms'}
+                    style={styles.txtinput}
+                    keyboardType='number-pad'
+                    onChangeText={text => setHeight(parseInt(text, 10))}
+                    defaultValue={height ? height.toString() : ''}
+                  />
+                </View>
+                <View>
+                  <LabelComponent label='Weight*' style={styles.label} />
+                  <TextInputComponent
+                    placeholder={'Enter your weight in pounds'}
+                    style={styles.txtinput}
+                    keyboardType='number-pad'
+                    onChangeText={text => setWeight(parseInt(text, 10))}
+                    defaultValue={weight ? weight.toString() : ''}
+                  />
+                </View>
+                <View>
+                  <LabelComponent label={Strings.GENDER} style={styles.label} />
+                  <View
+                    style={{
+                      paddingHorizontal: 25,
+                      paddingVertical: 10,
+                      flexDirection: 'row',
+                    }}>
+                    {GENDER.map(({ label, value }) => (
+                      <Pressable
+                        key={value}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          paddingHorizontal: 10,
+                        }}
+                        onPress={() => setGenderid(value)}>
+                        {genderid === value ? (
+                          <Octicons name='dot-fill' size={28} color='#49FF09BF' />
+                        ) : (
+                          <Octicons name='dot' size={28} color='#49FF09BF' />
+                        )}
+                        <Text
+                          style={{
+                            color: 'white',
+                            paddingHorizontal: 5,
+                            fontFamily: MONTSERRAT_MEDIUM,
+                          }}>
+                          {label}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+                <View style={styles.buttoncontainer}>
+                  <ButtonComponent
+                    varient={
+                      isButtonDisabled ? ButtonVarient.lightgreen : ButtonVarient.continue
+                    }
+                    labelVarient={TextVarient.black}
+                    label={'Next'}
+                    onPress={handleFirstContinueButtonPress}
+                    disabled={isButtonDisabled}
+                  />
+                </View>
+              </View>
+            </KeyboardAwareScrollView>
+          </View>
+        </>
+      ) : (
+        <View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingHorizontal: 25,
+              paddingTop: 15,
+              alignItems: 'center',
+            }}>
+            <Ionicons
+              name='arrow-back-sharp'
+              size={24}
+              color='white'
+              onPress={() => {
+                setStep(1)
+                setIsButtonDisabled(true)
+                checkInputsFilled()
+              }}
+            />
+            <Pressable
+              style={isButtonDisabled ? styles.disabledButton : styles.button}
+              disabled={isButtonDisabled}
+              onPress={() => {
+                onSaveProfile()
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  fontFamily: MONTSERRAT_REGULAR,
+                }}>
+                Get my plan
+              </Text>
+            </Pressable>
+          </View>
+          <View style={styles.titlecontainer}>
+            <LabelComponent style={styles.title} label="What's your Goal?" />
+          </View>
+          <View>
+            <LabelComponent
+              label={'Enter your goal to get your personalized diet plan'}
+              style={styles.subtitle}
+            />
+            <KeyboardAwareScrollView style={{ height: '75%' }}>
+              <View>
+                <View
+                  style={{
+                    paddingHorizontal: 25,
+                    paddingVertical: 10,
+                  }}>
+                  {GOALDATA.map(({ label, value }) => (
+                    <Pressable
+                      style={
+                        value === goalid ? styles.selectedOption : styles.regularOption
+                      }
+                      key={value}
+                      onPress={() => setGoalid(value)}>
+                      <Text
+                        style={
+                          value === goalid ? styles.selectedOptionText : styles.optionText
+                        }>
+                        {label}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            </KeyboardAwareScrollView>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   )
 }
+
+//function secondStep() {
+//  return (
+//    <>
+//      <View>
+//        <LabelComponent label={Strings.HEIGHT_CMS} style={styles.label} />
+//        <TextInputComponent
+//          placeholder={Strings.HEIGHT}
+//          style={styles.txtinput}
+//          keyboardType='number-pad'
+//          onChangeText={text => setHeight(parseInt(text, 10))}
+//        />
+//      </View>
+//      <View>
+//        <LabelComponent label={Strings.WEIGHT_LBS} style={styles.label} />
+//        <TextInputComponent
+//          placeholder={Strings.WEIGHT}
+//          style={styles.txtinput}
+//          keyboardType='number-pad'
+//          onChangeText={text => setWeight(parseInt(text, 10))}
+//        />
+//      </View>
+//      <View>
+//        <LabelComponent label={Strings.GOAL} style={styles.label} />
+
+//        <View>
+//          <TouchableOpacity style={styles.dropdown} onPress={() => setModalVisible(true)}>
+//            <Text style={styles.label1}>
+//              {selectedgoal ? selectedgoal : 'Select Goal'}
+//            </Text>
+//            <AntDesign name='down' size={20} color='white' />
+//          </TouchableOpacity>
+//        </View>
+//        <View>
+//          <Modal
+//            isVisible={modalVisible}
+//            style={{
+//              alignItems: 'center',
+//              justifyContent: 'center',
+//              flex: 1,
+//            }}
+//            onBackdropPress={() => {
+//              setModalVisible(false)
+//            }}>
+//            <View style={styles.optionsContainer}>
+//              {GOALDATA.map(option => (
+//                <TouchableOpacity
+//                  key={option.id}
+//                  style={styles.option}
+//                  onPress={() => {
+//                    handleSelectGoal(option.label)
+//                    setGoalid(option?.id)
+//                    setModalVisible(false)
+//                  }}>
+//                  <LabelComponent
+//                    label={option.label}
+//                    style={{
+//                      color: Colors.WHITE,
+//                      fontSize: FONT_SIZE_14,
+//                      marginHorizontal: 12,
+//                      paddingVertical: 6,
+//                    }}
+//                  />
+//                </TouchableOpacity>
+//              ))}
+//            </View>
+//          </Modal>
+//        </View>
+//      </View>
+//    </>
+//  )
+//}

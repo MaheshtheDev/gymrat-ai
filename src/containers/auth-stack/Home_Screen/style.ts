@@ -19,12 +19,13 @@ import {
   MONTSERRAT_MEDIUM,
   MONTSERRAT_LIGHT,
   FONT_SIZE_9,
-} from '@styles'
+  MONTSERRAT_SEMIBOLD,
+} from '../../../styles'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen'
-import Colors from '@styles/colors'
+import Colors from '../../../styles/colors'
 
 export const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,6 @@ export const styles = StyleSheet.create({
   },
   cardcontainer: {
     paddingVertical: hp('1%'),
-    flexDirection: 'row',
     backgroundColor: Colors.SHARK,
   },
 
@@ -59,6 +59,7 @@ export const styles = StyleSheet.create({
     width: 50,
     borderRadius: 50,
     borderWidth: 1,
+    marginBottom: hp('0.5%'),
     backgroundColor: Colors.BLACK,
     marginHorizontal: wp('1%'),
     alignItems: 'center',
@@ -118,7 +119,7 @@ export const styles = StyleSheet.create({
   table1: {
     fontSize: FONT_SIZE_16,
     fontWeight: FONT_WEIGHT_OR_TEXT,
-    fontFamily: MONTSERRAT_MEDIUM,
+    fontFamily: MONTSERRAT_SEMIBOLD,
     color: Colors.WHITE,
     paddingRight: wp('12.4%'),
   },
@@ -208,7 +209,7 @@ export const styles = StyleSheet.create({
   },
   goalcontainer: {
     justifyContent: 'center',
-    marginHorizontal: wp('7%'),
+    marginHorizontal: wp('2%'),
   },
   viewalltxt: {
     color: Colors.SELECTIVE_YELLOW,
@@ -280,9 +281,10 @@ export const styles = StyleSheet.create({
   modalcontainer: {
     backgroundColor: Colors.BLACK,
     alignSelf: 'center',
-    height: WINDOW_HEIGHT * 0.52,
+    height: WINDOW_HEIGHT * 0.45,
     width: WINDOW_WIDTH * 0.9,
     borderRadius: 7,
+    paddingVertical: hp('2%'),
   },
   savebutton: {
     backgroundColor: Colors.CHLOROPHYL_GREEN,
@@ -325,5 +327,35 @@ export const styles = StyleSheet.create({
   },
   option: {
     backgroundColor: 'black',
+  },
+
+  regularOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#49FF09BF',
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  selectedOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#49FF09BF',
+    borderRadius: 5,
+    marginVertical: 10,
+    backgroundColor: Colors.CHLOROPHYL_GREEN,
+  },
+  optionText: {
+    color: 'white',
+    paddingHorizontal: 5,
+    fontFamily: MONTSERRAT_REGULAR,
+  },
+  selectedOptionText: {
+    color: 'black',
+    paddingHorizontal: 5,
+    fontFamily: MONTSERRAT_REGULAR,
   },
 })

@@ -1,14 +1,14 @@
-import { AuthStack } from '@navigation'
+import { AuthStack } from './auth-stack'
 import { ActivityIndicator, LogBox, Text } from 'react-native'
 
 import { NavigationContainer } from '@react-navigation/native'
-import { ROUTES } from '@constants'
+import { ROUTES } from '../constants'
 import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { navigationRef } from '@navigation'
+import { navigationRef } from './NavigationService'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { HomeStack } from './home-stack'
-import { Auth } from 'aws-amplify'
+import { API } from '../helpers/api'
 
 const Stack = createNativeStackNavigator()
 
@@ -27,8 +27,12 @@ export const AppNavigator = () => {
 
   const handleUser = async () => {
     try {
-      const token = await Auth.currentSession()
-      setUserExists(true)
+      const isUserExist = await API.getUserDetails()
+      if (isUserExist.data.length > 0) {
+        setUserExists(true)
+      } else {
+        setUserExists(false)
+      }
     } catch (error) {
       setUserExists(false)
     } finally {

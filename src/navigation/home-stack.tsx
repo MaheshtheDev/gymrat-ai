@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {  HomeStackParamList } from './stack-param-list'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { HomeScreen, MealScreen, ProfileScreen, Workoutscreen } from '@containers'
+import { HomeScreen, MealScreen, ProfileScreen, Workoutscreen } from '../containers'
 
 const Stack = createNativeStackNavigator<HomeStackParamList>()
 type HomeStackProps = {

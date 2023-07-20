@@ -1,35 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import { View, TouchableOpacity, SafeAreaView } from 'react-native'
 import styles from './style'
-import Colors from '@styles/colors'
-import { LabelComponent } from '@components/Label'
+import Colors from '../../styles/colors'
+import { LabelComponent } from '../../components/Label'
 import ProfileIcon from '../../assets/svg/profileicon.svg'
 import { Ionicons } from '@expo/vector-icons'
-import { Auth } from 'aws-amplify'
+import * as SecureStore from 'expo-secure-store'
+import { User } from '../../models/api'
+import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
 
 interface ProfileHeaderProps {
   onProfilePress?: () => void
   onLogoutPress?: () => void
   Profile?: boolean
-  age: string
 }
 
 export const ProfileHeader = ({
   Profile = false,
   onProfilePress,
   onLogoutPress,
-  age,
 }: ProfileHeaderProps) => {
   useEffect(() => {
     fetchCurrentSessions()
   }, [])
 
   const fetchCurrentSessions = async () => {
-    const userdata = await Auth.currentUserInfo()
-    setUsername(userdata?.attributes?.name)
+    //const userdata = await SecureStore.getItemAsync('userDetails')
+    const userdata = await TempStorage.getItem(TempStorageKeys.USER_PROFILE)
+    if (userdata) {
+      const userDetails: User = JSON.parse(userdata)
+      console.log(userDetails)
+      setUsername(userDetails.fullName)
+      setUserDetails(userDetails)
+    }
   }
 
   const [username, setUsername] = useState('')
+  const [userDetails, setUserDetails] = useState<User | null>(null)
   return (
     <SafeAreaView style={styles.container}>
       {Profile && (
@@ -40,7 +47,7 @@ export const ProfileHeader = ({
       <View style={styles.profilecontainer}>
         <View>
           <LabelComponent label={username} style={styles.username} />
-          <LabelComponent label={age} style={styles.agenumber} />
+          <LabelComponent label={'Age: ' + userDetails?.age} style={styles.agenumber} />
         </View>
         <View style={styles.iconcontainer}>
           <TouchableOpacity onPress={onLogoutPress}>

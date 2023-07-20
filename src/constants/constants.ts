@@ -34,7 +34,7 @@ export const Strings = {
   WEIGHT_LBS: 'Weight (lbs)',
   WEIGHT: 'Weight',
   GENDER: 'Gender',
-  AGE: 'Age',
+  AGE: 'Age*',
   GOAL: 'Goal',
   SIGN_IN_TITLE: 'Login into Gymrat AI',
   SIGN_IN_DESCRIPTION_TEXT: `Enter your login credentials to access your\naccount`,

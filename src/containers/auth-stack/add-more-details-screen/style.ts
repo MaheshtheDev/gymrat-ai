@@ -2,15 +2,17 @@ import { StyleSheet } from 'react-native'
 import {
   FONT_FAMILY_REGULAR,
   FONT_SIZE_12,
+  FONT_SIZE_14,
+  FONT_SIZE_16,
   FONT_SIZE_26,
   FONT_WEIGHT_OR_TEXT,
   MONTSERRAT_REGULAR,
-} from '@styles'
+} from '../../../styles'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen'
-import Colors from '@styles/colors'
+import Colors from '../../../styles/colors'
 
 export const styles = StyleSheet.create({
   container: {
@@ -18,7 +20,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.BLACK,
   },
   titlecontainer: {
-    marginTop: hp('5%'),
+    marginTop: hp('2%'),
   },
   title: {
     fontSize: FONT_SIZE_26,
@@ -39,6 +41,7 @@ export const styles = StyleSheet.create({
   label: {
     color: Colors.WHITE,
     fontWeight: FONT_WEIGHT_OR_TEXT,
+    fontSize: FONT_SIZE_16,
     fontFamily: MONTSERRAT_REGULAR,
     marginTop: hp('3%'),
     marginHorizontal: wp('9%'),
@@ -57,12 +60,13 @@ export const styles = StyleSheet.create({
     marginRight: wp('5%'),
     paddingHorizontal: wp('3.5%'),
     paddingVertical: hp('1%'),
-    opacity: 0.5,
+    opacity: 1,
     marginTop: hp('1%'),
     color: Colors.WHITE,
+    fontFamily: MONTSERRAT_REGULAR,
   },
   buttoncontainer: {
-    marginTop: hp('5%'),
+    marginTop: hp('2%'),
   },
   dropdown: {
     flexDirection: 'row',
@@ -74,7 +78,7 @@ export const styles = StyleSheet.create({
     marginHorizontal: wp('5.5%'),
     marginTop: hp('2%'),
     paddingHorizontal: wp('3.5%'),
-    paddingVertical: hp('1.5%'),
+    paddingVertical: hp('1%'),
     opacity: 0.58,
     color: Colors.WHITE,
     fontFamily: MONTSERRAT_REGULAR,
@@ -103,5 +107,47 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 22,
+  },
+  regularOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#49FF09BF',
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  selectedOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#49FF09BF',
+    borderRadius: 10,
+    marginVertical: 10,
+    backgroundColor: Colors.CHLOROPHYL_GREEN,
+  },
+  optionText: {
+    color: 'white',
+    paddingHorizontal: 5,
+    fontFamily: MONTSERRAT_REGULAR,
+  },
+  selectedOptionText: {
+    color: 'black',
+    paddingHorizontal: 5,
+    fontFamily: MONTSERRAT_REGULAR,
+  },
+  disabledButton: {
+    backgroundColor: Colors.CHLOROPHYL_GREEN,
+    padding: 5,
+    borderRadius: 25,
+    opacity: 0.5,
+    paddingHorizontal: 10,
+  },
+  button: {
+    backgroundColor: Colors.CHLOROPHYL_GREEN,
+    padding: 5,
+    borderRadius: 25,
+    paddingHorizontal: 10,
   },
 })

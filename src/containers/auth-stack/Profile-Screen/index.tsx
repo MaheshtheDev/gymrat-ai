@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { HomeStackNavProps, NavigationService } from '@navigation'
+import { HomeStackNavProps, NavigationService } from '../../../navigation'
 import { SafeAreaView, View, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 
@@ -11,14 +11,14 @@ import {
   LabelComponent,
   TextInputComponent,
   TextVarient,
-} from '@components'
-import { ROUTES, Strings } from '@constants'
-import { Auth } from 'aws-amplify'
+} from '../../../components'
+import { ROUTES, Strings } from '../../../constants'
 import axios from 'axios'
-import Colors from '@styles/colors'
+import Colors from '../../../styles/colors'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { API } from '../../../helpers/api'
 
-export const ProfileScreen: React.FC = ({ navigation, route }) => {
+export const ProfileScreen: React.FC = ({ navigation }: any) => {
   const [firstName, setFirstName] = useState('')
   const [age, setAge] = useState('')
   const [lastName, setLastName] = useState('')
@@ -28,7 +28,7 @@ export const ProfileScreen: React.FC = ({ navigation, route }) => {
   const [userdata, setUserdata] = useState({})
   const [showButton, setShowButton] = useState(false)
   const [userdetails, setUserdetails] = useState('')
-  const [name, setName] = useState([])
+  const [name, setName] = useState<string>()
   const [isLoading, setLoading] = useState(true)
 
   const handleIconPress = () => {
@@ -45,21 +45,11 @@ export const ProfileScreen: React.FC = ({ navigation, route }) => {
     handleGender()
   }, [gender, userdata])
   const getUserDetails = async () => {
-    const attributes = await Auth.currentUserInfo()
     setLoading(true)
 
     try {
-      const response = await axios.get(
-        `https://gymrat-api.vercel.app/api/user/details?userId=${attributes?.id}`,
-
-        {
-          headers: {
-            Authorization: 'Bearer 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',
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      setUserdata(response?.data[0])
+      const data = await API.getUserDetails()
+      setUserdata(data)
       handleGender()
     } catch (error) {
       console.error(error)
@@ -69,9 +59,9 @@ export const ProfileScreen: React.FC = ({ navigation, route }) => {
   }
 
   const fetchCurrentSessions = async () => {
-    const userdata = await Auth.currentUserInfo()
-    setUserdetails(userdata?.attributes)
-    const name = userdata?.attributes?.name.split(' ')
+    const data = await API.getUserDetails()
+    setUserdata(data)
+    const name = data.fullName
     setName(name)
   }
   const handleGender = () => {
@@ -112,7 +102,7 @@ export const ProfileScreen: React.FC = ({ navigation, route }) => {
             <TextInputComponent
               value={firstName}
               onChangeText={txt => setFirstName(txt)}
-              placeholder={name[0]}
+              placeholder={name}
               editable={disabled}
               maxLength={15}
               style={styles.subtitle}
@@ -129,20 +119,6 @@ export const ProfileScreen: React.FC = ({ navigation, route }) => {
               keyboardType='number-pad'
               onBlur={() => (disabled ? setDisabled(false) : setDisabled(true))}
               onChangeText={txt => setAge(txt)}
-              style={styles.subtitle}
-            />
-          </View>
-        </View>
-        <View style={styles.subcontainer}>
-          <View>
-            <LabelComponent label={Strings.LAST_NAME} style={styles.title} />
-            <TextInputComponent
-              placeholder={name[1]}
-              value={lastName}
-              maxLength={15}
-              editable={disabled}
-              onBlur={() => (disabled ? setDisabled(false) : setDisabled(true))}
-              onChangeText={txt => setLastName(txt)}
               style={styles.subtitle}
             />
           </View>
@@ -192,7 +168,6 @@ export const ProfileScreen: React.FC = ({ navigation, route }) => {
       <ButtonComponent
         onPress={() => {
           AsyncStorage.clear()
-          Auth.signOut()
           navigation.replace(ROUTES.AUTH_STACK)
         }}
         varient={ButtonVarient.logoutbutton}
