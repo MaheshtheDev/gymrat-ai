@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { HomeStackNavProps, NavigationService } from '../../../navigation'
+import { HomeStackNavProps, NavigationService } from '../../navigation'
 import { SafeAreaView, View, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 
@@ -11,12 +11,12 @@ import {
   LabelComponent,
   TextInputComponent,
   TextVarient,
-} from '../../../components'
-import { ROUTES, Strings } from '../../../constants'
+} from '../../components'
+import { ROUTES, Strings } from '../../constants'
 import axios from 'axios'
-import Colors from '../../../styles/colors'
+import Colors from '../../styles/colors'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { API } from '../../../helpers/api'
+import { API } from '../../helpers/api'
 
 export const ProfileScreen: React.FC = ({ navigation }: any) => {
   const [firstName, setFirstName] = useState('')

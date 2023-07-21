@@ -1,14 +1,19 @@
-import { AuthStack } from './auth-stack'
 import { ActivityIndicator, LogBox, Text } from 'react-native'
 
 import { NavigationContainer } from '@react-navigation/native'
-import { ROUTES } from '../constants'
 import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { navigationRef } from './NavigationService'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { HomeStack } from './home-stack'
 import { API } from '../helpers/api'
+import {
+  AddMoreDetailsScreen,
+  HomeScreen,
+  MealScreen,
+  ProfileScreen,
+  SignUpOptionsScreen,
+  Workoutscreen,
+} from '../containers'
 
 const Stack = createNativeStackNavigator()
 
@@ -61,7 +66,38 @@ export const AppNavigator = () => {
       }}
       fallback={<Text>Loading...</Text>}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
+        <Stack.Screen
+          name={'SignUpOptionsScreen'}
+          component={SignUpOptionsScreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name={'AddMoreDetailsScreen'}
+          component={AddMoreDetailsScreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name={'HomeScreen'}
+          component={HomeScreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+
+        <Stack.Screen
+          name={'ProfileScreen'}
+          component={ProfileScreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+
+        <Stack.Screen
+          name={'Workoutscreen'}
+          component={Workoutscreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name={'MealScreen'}
+          component={MealScreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )

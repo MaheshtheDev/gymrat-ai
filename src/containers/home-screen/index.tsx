@@ -14,7 +14,7 @@ import {
 import { styles } from './style'
 import Modal from 'react-native-modal'
 
-import { AntDesign, Entypo } from '@expo/vector-icons'
+import { Entypo } from '@expo/vector-icons'
 import {
   ButtonComponent,
   ButtonVarient,
@@ -258,14 +258,12 @@ export function HomeScreen({ navigation }: any) {
         onLogoutPress={async () => {
           await API.logOut().then(res => {
             console.log('logout response', res)
-            navigation.replace(ROUTES.AUTH_STACK, {
-              screen: ROUTES.SIGN_UP_OPTIONS_SCREEN,
-            })
+            navigation.replace(ROUTES.SIGN_UP_OPTIONS_SCREEN)
           })
         }}
         Profile={true}
         onProfilePress={() =>
-          navigation.navigate(ROUTES.HOME_STACK, { screen: ROUTES.PROFILE_SCREEN })
+          navigation.navigate(ROUTES.PROFILE_SCREEN)
         }
       />
       <ScrollView>
@@ -510,11 +508,7 @@ export function HomeScreen({ navigation }: any) {
                   <View style={styles.headercontainer}>
                     <LabelComponent label={title} style={styles.title} />
                     <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate(ROUTES.HOME_STACK, {
-                          screen: ROUTES.WORKOUT_DETAILS,
-                        })
-                      }>
+                      onPress={() => navigation.navigate(ROUTES.WORKOUT_DETAILS)}>
                       <View style={styles.iconcontainer}>
                         <LabelComponent
                           label='View all'
@@ -580,11 +574,7 @@ export function HomeScreen({ navigation }: any) {
                 <View style={styles.headercontainer}>
                   <LabelComponent label={title} style={styles.title} />
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate(ROUTES.HOME_STACK, {
-                        screen: ROUTES.MEAL_DETAILS,
-                      })
-                    }>
+                    onPress={() => navigation.navigate(ROUTES.MEAL_DETAILS)}>
                     <View style={styles.iconcontainer}>
                       <LabelComponent label='View all' style={styles.viewalltxt} />
                       <Entypo

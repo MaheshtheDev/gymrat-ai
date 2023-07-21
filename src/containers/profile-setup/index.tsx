@@ -1,10 +1,8 @@
 import {
   ActivityIndicator,
-  Button,
   Pressable,
   SafeAreaView,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native'
 import { Ionicons, Octicons } from '@expo/vector-icons'
@@ -14,24 +12,24 @@ import {
   LabelComponent,
   TextInputComponent,
   TextVarient,
-} from '../../../components'
+} from '../../components'
 import {
   FONT_SIZE_14,
   MONTSERRAT_LIGHT,
   MONTSERRAT_MEDIUM,
   MONTSERRAT_REGULAR,
-} from '../../../styles'
-import { ROUTES, Strings } from '../../../constants'
+} from '../../styles'
+import { ROUTES, Strings } from '../../constants'
 import React, { useEffect, useState } from 'react'
 
-import Colors from '../../../styles/colors'
+import Colors from '../../styles/colors'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { styles } from './style'
-import { API } from '../../../helpers/api'
-import { User } from '../../../models/api'
+import { API } from '../../helpers/api'
+import { User } from '../../models/api'
 import * as SecureStore from 'expo-secure-store'
-import { TempStorage, TempStorageKeys } from '../../../helpers/tempStorage'
+import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
 
 export function AddMoreDetailsScreen({ navigation }: any) {
   const [height, setHeight] = useState<number>(0)

@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Button, SafeAreaView, Text, View } from 'react-native'
+import { SafeAreaView, View } from 'react-native'
 import { styles } from './style'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import * as SecureStore from 'expo-secure-store'
 
-import {
-  ImageBackgroundComponent,
-  LabelComponent,
-  TextVarient,
-} from '../../../components'
-import { Images, ROUTES, Strings } from '../../../constants'
-import { useUserStore } from './../../../store/userStore'
-import { API } from '../../../helpers/api'
-import Colors from '../../../styles/colors'
-import { TempStorage, TempStorageKeys } from '../../../helpers/tempStorage'
+import { ImageBackgroundComponent, LabelComponent, TextVarient } from '../../components'
+import { Images, ROUTES, Strings } from '../../constants'
+import { useUserStore } from './../../store/userStore'
+import { API } from '../../helpers/api'
+import Colors from '../../styles/colors'
+import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
 
 export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
   //const [appleAuthAvailable, setAppleAuthAvailable] = useState<boolean>(true)
@@ -28,7 +24,7 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
 
       //if (isAvailable) {
       const credentialJson = await TempStorage.getItem(TempStorageKeys.APPLE_CREDENTIALS)
-      
+
       if (credentialJson) {
         setUserToken(credentialJson.toString())
         console.log('credentialJson')
@@ -37,13 +33,9 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
         if (isUserExist && isUserExist.status == 200) {
           console.log('user exist')
           console.log(isUserExist)
-          navigation.navigate(ROUTES.HOME_STACK, {
-            screen: ROUTES.HOME_SCREEN,
-          })
+          navigation.navigate(ROUTES.HOME_SCREEN)
         } else {
-          navigation.navigate(ROUTES.AUTH_STACK, {
-            screen: ROUTES.ADD_MORE_DETAILS_SCREEN,
-          })
+          navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
         }
       }
     }
@@ -59,16 +51,21 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
         ],
       })
       setUserToken(credential)
-      await TempStorage.setItem(TempStorageKeys.APPLE_CREDENTIALS, JSON.stringify(credential))
+      await TempStorage.setItem(
+        TempStorageKeys.APPLE_CREDENTIALS,
+        JSON.stringify(credential)
+      )
       const isUserExist = await API.getUserDetails(credential.user)
-      if (isUserExist != null && isUserExist != undefined && isUserExist.data != null && isUserExist.data != undefined && isUserExist.status == 200) {
-        navigation.navigate(ROUTES.HOME_STACK, {
-          screen: ROUTES.HOME_SCREEN,
-        })
+      if (
+        isUserExist != null &&
+        isUserExist != undefined &&
+        isUserExist.data != null &&
+        isUserExist.data != undefined &&
+        isUserExist.status == 200
+      ) {
+        navigation.navigate(ROUTES.HOME_SCREEN)
       } else {
-        navigation.navigate(ROUTES.AUTH_STACK, {
-          screen: ROUTES.ADD_MORE_DETAILS_SCREEN,
-        })
+        navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
       }
     } catch (e: any) {
       console.error(e)
@@ -103,13 +100,9 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
       if (isUserExist) {
         console.log('user exist')
         console.log(isUserExist)
-        navigation.navigate(ROUTES.HOME_STACK, {
-          screen: ROUTES.HOME_SCREEN,
-        })
+        navigation.navigate(ROUTES.HOME_SCREEN)
       } else {
-        navigation.navigate(ROUTES.AUTH_STACK, {
-          screen: ROUTES.ADD_MORE_DETAILS_SCREEN,
-        })
+        navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
       }
       return <></>
     }
@@ -128,13 +121,13 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
           />
         </View>
       </ImageBackgroundComponent>
-      <View style={{flex: 1, alignItems: "center"}}>
+      <View style={{ flex: 1, alignItems: 'center' }}>
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
           buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
           cornerRadius={25}
           style={{
-            width: "75%",
+            width: '75%',
             height: 44,
             backgroundColor: Colors.CHLOROPHYL_GREEN,
             borderRadius: 50,

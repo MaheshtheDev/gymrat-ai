@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native'
-import { FONT_SIZE_20, FONT_WEIGHT_OR_TEXT, MONTSERRAT_LIGHT } from '../../../styles'
+import { FONT_SIZE_20, FONT_WEIGHT_OR_TEXT, MONTSERRAT_LIGHT } from '../../styles'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen'
-import Colors from '../../../styles/colors'
+import Colors from '../../styles/colors'
 
 export const styles = StyleSheet.create({
   parentContainer: {
