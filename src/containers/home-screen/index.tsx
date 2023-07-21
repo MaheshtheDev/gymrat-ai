@@ -23,9 +23,9 @@ import {
   ProfileHeader,
   TextInputComponent,
   TextVarient,
-} from '../../../components'
-import { ROUTES, Strings } from '../../../constants'
-import Colors from '../../../styles/colors'
+} from '../../components'
+import { ROUTES, Strings } from '../../constants'
+import Colors from '../../styles/colors'
 import Toast from 'react-native-toast-message'
 import {
   FONT_SIZE_10,
@@ -34,11 +34,11 @@ import {
   FONT_SIZE_16,
   MONTSERRAT_MEDIUM,
   MONTSERRAT_REGULAR,
-} from '../../../styles'
-import { User } from '../../../models/api'
+} from '../../styles'
+import { User } from '../../models/api'
 
-import { API } from '../../../helpers/api'
-import { wp } from '../../../helpers'
+import { API } from '../../helpers/api'
+import { wp } from '../../helpers'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Sentry from 'sentry-expo'
 

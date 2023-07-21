@@ -28,7 +28,7 @@ export const AppNavigator = () => {
   const handleUser = async () => {
     try {
       const isUserExist = await API.getUserDetails()
-      if (isUserExist.data.length > 0) {
+      if (Array.isArray(isUserExist?.data) && isUserExist?.data?.length) {
         setUserExists(true)
       } else {
         setUserExists(false)
@@ -61,19 +61,7 @@ export const AppNavigator = () => {
       }}
       fallback={<Text>Loading...</Text>}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!userExists ? (
-          <>
-            <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
-
-            <Stack.Screen name={ROUTES.HOME_STACK} component={HomeStack} />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name={ROUTES.HOME_STACK} component={HomeStack} />
-
-            <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
-          </>
-        )}
+        <Stack.Screen name={ROUTES.AUTH_STACK} component={AuthStack} />
       </Stack.Navigator>
     </NavigationContainer>
   )

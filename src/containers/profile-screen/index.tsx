@@ -102,7 +102,7 @@ export const ProfileScreen: React.FC = ({ navigation }: any) => {
             <TextInputComponent
               value={firstName}
               onChangeText={txt => setFirstName(txt)}
-              placeholder={name}
+              placeholder={name || ""}
               editable={disabled}
               maxLength={15}
               style={styles.subtitle}

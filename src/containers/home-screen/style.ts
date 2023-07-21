@@ -20,12 +20,12 @@ import {
   MONTSERRAT_LIGHT,
   FONT_SIZE_9,
   MONTSERRAT_SEMIBOLD,
-} from '../../../styles'
+} from '../../styles'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen'
-import Colors from '../../../styles/colors'
+import Colors from '../../styles/colors'
 
 export const styles = StyleSheet.create({
   container: {
