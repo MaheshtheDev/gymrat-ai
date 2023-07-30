@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
 
-import { HomeStackNavProps, NavigationService } from '@navigation'
+import { HomeStackNavProps, NavigationService } from '../../navigation'
 import { SafeAreaView, View, FlatList, ScrollView, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 import axios from 'axios'
 
-import { CardComponent, Header, LabelComponent } from '@components'
-import Colors from '@styles/colors'
+import { CardComponent, Header, LabelComponent } from '../../components'
+import Colors from '../../styles/colors'
+import { useRoute } from '@react-navigation/native'
 
-export const MealScreen: React.FC = ({}) => {
+export function MealScreen({ navigation }: any) {
   const [mealPlan, setMealPlan] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-
+  const route = useRoute()
+  const { mealPlanData } = route.params as any;
   useEffect(() => {
     getMealData()
   }, [])
@@ -20,24 +22,7 @@ export const MealScreen: React.FC = ({}) => {
     setIsLoading(true)
 
     try {
-      const response = await axios.post(
-        'https://gymrat-api.vercel.app//api/gpt/meal',
-        {
-          height: 155,
-          weight: 160,
-          gender: 2,
-          age: 24,
-          goal: 1,
-        },
-        {
-          headers: {
-            Authorization: 'Bearer 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',
-            'Content-Type': 'application/json',
-          },
-          timeout: 120000,
-        }
-      )
-      setMealPlan(response?.data?.mealPlan)
+      setMealPlan(mealPlanData)
     } catch (error) {
       console.error(error)
     } finally {
@@ -64,7 +49,7 @@ export const MealScreen: React.FC = ({}) => {
       <ScrollView>
         <FlatList
           data={mealPlan}
-          renderItem={({ item }) => (
+          renderItem={({ item }: any) => (
             <>
               <CardComponent cardStyle={styles.mealview}>
                 <View style={styles.mealview}>

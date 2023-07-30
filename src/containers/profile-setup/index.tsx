@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  SafeAreaView,
-  Text,
-  View,
-} from 'react-native'
+import { ActivityIndicator, Pressable, SafeAreaView, Text, View } from 'react-native'
 import { Ionicons, Octicons } from '@expo/vector-icons'
 import {
   ButtonComponent,
@@ -30,10 +24,12 @@ import { API } from '../../helpers/api'
 import { User } from '../../models/api'
 import * as SecureStore from 'expo-secure-store'
 import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
+import * as Sentry from 'sentry-expo'
 
 export function AddMoreDetailsScreen({ navigation }: any) {
   const [height, setHeight] = useState<number>(0)
   const [weight, setWeight] = useState<number>(0)
+  const [userId, setUserId] = useState<string>('')
   const [name, setName] = useState('')
   const [age, setAge] = useState<number>(0)
   const [goalid, setGoalid] = useState<number>(-1)
@@ -50,6 +46,7 @@ export function AddMoreDetailsScreen({ navigation }: any) {
     const checkUserExistence = async () => {
       const credentialJson = await TempStorage.getItem(TempStorageKeys.APPLE_CREDENTIALS)
       const userId = JSON.parse(credentialJson || '').user
+      setUserId(userId)
       console.log('userId ' + userId)
       const isUserExist = await API.getUserDetails(userId)
       console.log('isUserExist')
@@ -57,9 +54,8 @@ export function AddMoreDetailsScreen({ navigation }: any) {
       if (isUserExist && isUserExist.status == 200) {
         console.log('user exist')
         console.log(isUserExist)
-        navigation.navigate(ROUTES.HOME_STACK, {
-          screen: ROUTES.HOME_SCREEN,
-        })
+        navigation.navigate(ROUTES.HOME_SCREEN)
+        setStep(1)
       }
     }
     checkUserExistence()
@@ -82,7 +78,7 @@ export function AddMoreDetailsScreen({ navigation }: any) {
   }
 
   const onSaveProfile = async () => {
-    const userIDNow = await SecureStore.getItemAsync('userId')
+    const userIDNow = userId
     const bmi = weight / (height / 100) ** 2
     const userDetails: User = {
       userId: userIDNow ? userIDNow : '',
@@ -93,16 +89,15 @@ export function AddMoreDetailsScreen({ navigation }: any) {
       age: age,
       goal: goalid,
       bmiValue: bmi,
-      suggestedPlanId: "1",
+      suggestedPlanId: '1',
     }
     console.log(userDetails)
     API.User(userDetails)
       .then(res => {
         console.log('res', res)
         console.log('pressed')
-        navigation.navigate(ROUTES.HOME_STACK, {
-          screen: ROUTES.HOME_SCREEN,
-        })
+        navigation.navigate(ROUTES.HOME_SCREEN)
+        setStep(1)
       })
       .catch(err => {
         console.log('err', err)
@@ -260,6 +255,7 @@ export function AddMoreDetailsScreen({ navigation }: any) {
             <Pressable
               style={isButtonDisabled ? styles.disabledButton : styles.button}
               disabled={isButtonDisabled}
+              sentry-label='GetMyPlan Button'
               onPress={() => {
                 onSaveProfile()
               }}>

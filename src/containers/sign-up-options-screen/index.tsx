@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, SafeAreaView, View } from 'react-native'
 import { styles } from './style'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import * as SecureStore from 'expo-secure-store'
 
 import { ImageBackgroundComponent, LabelComponent, TextVarient } from '../../components'
 import { Images, ROUTES, Strings } from '../../constants'
-import { useUserStore } from './../../store/userStore'
 import { API } from '../../helpers/api'
 import Colors from '../../styles/colors'
+import LottieView from 'lottie-react-native'
 import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
 
 export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
   //const [appleAuthAvailable, setAppleAuthAvailable] = useState<boolean>(true)
   const [userToken, setUserToken] = useState<any>('')
-  const setUser = useUserStore(state => state.setUserToken)
-  const user = useUserStore(state => state.userToken)
+  const animation = useRef(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const checkAvailability = async () => {
@@ -31,7 +31,7 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
         console.log(credentialJson)
         const isUserExist = await API.getUserDetails(userToken.user)
         if (isUserExist && isUserExist.status == 200) {
-          console.log('user exist')
+          console.log('user exist in sign up options screen')
           console.log(isUserExist)
           navigation.navigate(ROUTES.HOME_SCREEN)
         } else {
@@ -51,22 +51,23 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
         ],
       })
       setUserToken(credential)
+      setIsLoading(true)
+      await API.getUserDetails(credential.user).then(res => {
+        console.log(' in Login screen ')
+        console.log(credential.user)
+        console.log(res)
+        console.log(res != undefined && res.status == 200);
+        if (res !== undefined && res.status == 200) {
+          navigation.navigate(ROUTES.HOME_SCREEN)
+        } else {
+          navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
+        }
+        setIsLoading(false)
+      })
       await TempStorage.setItem(
         TempStorageKeys.APPLE_CREDENTIALS,
         JSON.stringify(credential)
       )
-      const isUserExist = await API.getUserDetails(credential.user)
-      if (
-        isUserExist != null &&
-        isUserExist != undefined &&
-        isUserExist.data != null &&
-        isUserExist.data != undefined &&
-        isUserExist.status == 200
-      ) {
-        navigation.navigate(ROUTES.HOME_SCREEN)
-      } else {
-        navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
-      }
     } catch (e: any) {
       console.error(e)
     }
@@ -84,30 +85,41 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
     setUserToken('')
   }
 
-  const getAppleAuthContent = async () => {
-    if (!user) {
-      return (
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-          cornerRadius={25}
-          style={{ width: 200, height: 44 }}
-          onPress={login}
-        />
-      )
-    } else {
-      const isUserExist = await API.getUserDetails(userToken.user)
-      if (isUserExist) {
-        console.log('user exist')
-        console.log(isUserExist)
-        navigation.navigate(ROUTES.HOME_SCREEN)
-      } else {
-        navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
-      }
-      return <></>
-    }
-  }
-  return (
+  //const getAppleAuthContent = async () => {
+  //  if (!user) {
+  //    return (
+  //      <AppleAuthentication.AppleAuthenticationButton
+  //        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+  //        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+  //        cornerRadius={25}
+  //        style={{ width: 200, height: 44 }}
+  //        onPress={login}
+  //      />
+  //    )
+  //  } else {
+  //    const isUserExist = await API.getUserDetails(userToken.user)
+  //    if (isUserExist) {
+  //      console.log('user exist')
+  //      console.log(isUserExist)
+  //      navigation.navigate(ROUTES.HOME_SCREEN)
+  //    } else {
+  //      navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
+  //    }
+  //    return <></>
+  //  }
+  //}
+  return isLoading ? (
+    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
+      <ActivityIndicator
+        size={'large'}
+        style={{
+          alignSelf: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      />
+    </View>
+  ) : (
     <SafeAreaView style={styles.container}>
       <View style={styles.titlecontainer}>
         <LabelComponent label={Strings.WELCOME_TEXT} varient={TextVarient.title} />

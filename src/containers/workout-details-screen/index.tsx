@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
 
-import { HomeStackNavProps, NavigationService } from '@navigation'
+import { NavigationService } from '../../navigation'
 import { SafeAreaView, View, FlatList, ActivityIndicator } from 'react-native'
 import { styles } from './style'
-import axios from 'axios'
 
-import { Header, LabelComponent } from '@components'
-import Colors from '@styles/colors'
+import { Header, LabelComponent } from '../../components'
+import Colors from '../../styles/colors'
+import { useRoute } from '@react-navigation/native'
 
-export const Workoutscreen: React.FC = ({}) => {
+export function Workoutscreen({ navigation }: any) {
   const [workoutPlan, setWorkoutPlan] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-
+  const route = useRoute()
+  const { workoutData } = route.params as any
   useEffect(() => {
     getWorkoutData()
   }, [])
@@ -20,25 +21,9 @@ export const Workoutscreen: React.FC = ({}) => {
     setIsLoading(true)
 
     try {
-      const response = await axios.post(
-        'https://gymrat-api.vercel.app/api/gpt/workout',
-        {
-          height: 155,
-          weight: 160,
-          gender: 2,
-          age: 24,
-          goal: 1,
-          partOfWeek: 1,
-        },
-        {
-          headers: {
-            Authorization: 'Bearer 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',
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      setWorkoutPlan(response?.data?.workoutPlan)
-      console.log(response?.data, 'shajshjahsjahsjhasjhasjj')
+      console.log('workoutplan in wds screen')
+      console.log(workoutData)
+      setWorkoutPlan(workoutData)
     } catch (error) {
       console.error(error)
     } finally {
@@ -66,23 +51,21 @@ export const Workoutscreen: React.FC = ({}) => {
 
       <FlatList
         data={workoutPlan}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            {item?.exercises?.map(v => {
+        renderItem={({ item, index }: any) => (
+          <View style={styles.card} key={index}>
+              <View style={styles.tablecontainer}>
+                <LabelComponent
+                  style={[styles.tableitem, { color: Colors.SPRING_GREEN }]}
+                  label={item.day}
+                />
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <LabelComponent style={styles.tableitem} label='Sets' />
+                  <LabelComponent style={styles.tableitem} label='Reps' />
+                </View>
+              </View>
+            {item?.exercises?.map((v: any) => {
               return (
-                <View>
-                  {v.sets == '4' && (
-                    <View style={styles.tablecontainer}>
-                      <LabelComponent
-                        style={[styles.tableitem, { color: Colors.SPRING_GREEN }]}
-                        label={item.day}
-                      />
-                      <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <LabelComponent style={styles.tableitem} label='Sets' />
-                        <LabelComponent style={styles.tableitem} label='Reps' />
-                      </View>
-                    </View>
-                  )}
+                <View key={v.name}>
                   <View style={styles.tablecontainer}>
                     <LabelComponent style={styles.tableitem} label={v.name} />
                     <View style={{ flex: 1, flexDirection: 'row' }}>

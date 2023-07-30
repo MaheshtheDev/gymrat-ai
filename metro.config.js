@@ -13,6 +13,7 @@ module.exports = (async () => {
   } = await getDefaultConfig()
   return {
     transformer: {
+      assetPlugins: ['expo-asset/tools/hashAssetFiles'],
       getTransformOptions: async () => ({
         transform: {
           experimentalImportSupport: false,

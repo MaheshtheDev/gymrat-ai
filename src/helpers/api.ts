@@ -73,6 +73,8 @@ export const API = {
     return response.data
   },
   async getUserDetails(userId?: string) {
+    console.log('User ID in get user details')
+    console.log(userId)
     const userData = await TempStorage.getItem(TempStorageKeys.USER_PROFILE)
     if (userData) {
       console.log('user already exists')
@@ -87,7 +89,8 @@ export const API = {
     }
 
     try {
-      await axios
+      console.log('get user details in try')
+      const res = await axios
         .get(`${this.BASE_URL}/user/details?userId=${userId}`)
         .then(async res => {
           console.log('Response ' + userId)
@@ -112,6 +115,7 @@ export const API = {
           )
           return { data: userDetails, status: res.status }
         })
+      return res
     } catch (e) {
       console.log(e)
       return { data: null, status: 404 }
@@ -157,12 +161,15 @@ export const API = {
       })
   },
   async getNewPlan(userId: string) {
-    await axios.get(`${this.BASE_URL}/gpt/new?userId=${userId}`).then(async res => {
-      console.log('Response from getting new plan')
-    }).catch(err => {
-      console.log('Error from getting new plan')
-      console.log(err)
-    })
+    await axios
+      .get(`${this.BASE_URL}/gpt/new?userId=${userId}`)
+      .then(async res => {
+        console.log('Response from getting new plan')
+      })
+      .catch(err => {
+        console.log('Error from getting new plan')
+        console.log(err)
+      })
   },
 
   async logOut() {

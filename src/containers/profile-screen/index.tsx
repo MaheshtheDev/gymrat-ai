@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { HomeStackNavProps, NavigationService } from '../../navigation'
+import { NavigationService } from '../../navigation'
 import { SafeAreaView, View, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 
@@ -13,12 +13,12 @@ import {
   TextVarient,
 } from '../../components'
 import { ROUTES, Strings } from '../../constants'
-import axios from 'axios'
 import Colors from '../../styles/colors'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { API } from '../../helpers/api'
+import { useRoute } from '@react-navigation/native'
 
-export const ProfileScreen: React.FC = ({ navigation }: any) => {
+export function ProfileScreen({ navigation }: any){
   const [firstName, setFirstName] = useState('')
   const [age, setAge] = useState('')
   const [lastName, setLastName] = useState('')
@@ -27,9 +27,12 @@ export const ProfileScreen: React.FC = ({ navigation }: any) => {
   const [visible, setVisible] = useState(true)
   const [userdata, setUserdata] = useState({})
   const [showButton, setShowButton] = useState(false)
-  const [userdetails, setUserdetails] = useState('')
   const [name, setName] = useState<string>()
-  const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(false)
+
+  const [user, setUser] = useState({} as any)
+  const route = useRoute()
+  const { userDetails } = route.params as any
 
   const handleIconPress = () => {
     setShowButton(true)
@@ -37,8 +40,10 @@ export const ProfileScreen: React.FC = ({ navigation }: any) => {
   }
 
   useEffect(() => {
-    fetchCurrentSessions()
-    getUserDetails()
+    setUser(userDetails);
+    console.log(userDetails);
+    //fetchCurrentSessions()
+    //getUserDetails()
   }, [])
 
   useEffect(() => {
@@ -100,9 +105,9 @@ export const ProfileScreen: React.FC = ({ navigation }: any) => {
           <View>
             <LabelComponent label={Strings.FRIST_NAME} style={styles.title} />
             <TextInputComponent
-              value={firstName}
+              value={user.fullName}
               onChangeText={txt => setFirstName(txt)}
-              placeholder={name || ""}
+              placeholder={name || ''}
               editable={disabled}
               maxLength={15}
               style={styles.subtitle}
@@ -112,7 +117,7 @@ export const ProfileScreen: React.FC = ({ navigation }: any) => {
           <View style={styles.titlecontainer}>
             <LabelComponent label={Strings.AGE} style={styles.title} />
             <TextInputComponent
-              placeholder={`${userdata?.age}`}
+              placeholder={`${user.age}`}
               maxLength={2}
               value={age}
               editable={disabled}
@@ -138,7 +143,7 @@ export const ProfileScreen: React.FC = ({ navigation }: any) => {
       </View>
       <View style={styles.accountlinkcontainer}>
         <LabelComponent label={Strings.EMAIL_ADDRESS} style={styles.title} />
-        <LabelComponent label={userdetails?.email} style={styles.subtitle} />
+        <LabelComponent label={user.email} style={styles.subtitle} />
         {/* <View style={styles.linkconatiner}>
           <LabelComponent label={Strings.ACCOUNT_LINK} style={styles.title} />
           <View style={styles.ss}>

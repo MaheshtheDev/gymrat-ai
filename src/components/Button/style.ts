@@ -82,7 +82,12 @@ const styles = StyleSheet.create({
     paddingVertical: hp('1.5%'),
     paddingHorizontal: hp('7.35%'),
     borderRadius: 25,
-    alignSelf:'center'
+    alignSelf: 'center',
+  },
+  moreOptions: {
+    backgroundColor: Colors.CHLOROPHYL_GREEN,
+    borderRadius: 50,
+    color: Colors.BLACK,
   },
 })
 

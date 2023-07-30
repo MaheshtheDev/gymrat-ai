@@ -19,7 +19,6 @@ import {
   MONTSERRAT_MEDIUM,
   MONTSERRAT_LIGHT,
   FONT_SIZE_9,
-  MONTSERRAT_SEMIBOLD,
 } from '../../styles'
 import {
   widthPercentageToDP as wp,
@@ -119,7 +118,7 @@ export const styles = StyleSheet.create({
   table1: {
     fontSize: FONT_SIZE_16,
     fontWeight: FONT_WEIGHT_OR_TEXT,
-    fontFamily: MONTSERRAT_SEMIBOLD,
+    fontFamily: MONTSERRAT_MEDIUM,
     color: Colors.WHITE,
     paddingRight: wp('12.4%'),
   },

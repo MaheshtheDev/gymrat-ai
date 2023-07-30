@@ -18,12 +18,12 @@ import {
   MONTSERRAT_REGULAR,
   MONTSERRAT_MEDIUM,
   MONTSERRAT_LIGHT,
-} from '@styles'
+} from '../../styles'
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen'
-import Colors from '@styles/colors'
+import Colors from '../../styles/colors'
 
 export const styles = StyleSheet.create({
   container: {
@@ -86,7 +86,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     paddingLeft: wp('4%'),
     paddingVertical: hp('1%'),
-    marginBottom: wp('1%'),
+    marginBottom: wp('5%'),
   },
   item: {
     marginHorizontal: wp('1%'),

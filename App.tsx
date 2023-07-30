@@ -6,12 +6,13 @@ import Toast from 'react-native-toast-message'
 import { Text, View } from 'react-native'
 import { MONTSERRAT_REGULAR } from './src/styles'
 import * as Sentry from 'sentry-expo'
+import Colors from './src/styles/colors'
 
 Sentry.init({
   dsn: 'https://ab01207621a84c8b92958afb8dad1c73@o4504897416593408.ingest.sentry.io/4505552071688192',
   enableInExpoDevelopment: true,
   environment: 'development',
-  debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+  debug: false, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 })
 
 export default function App() {
@@ -36,19 +37,22 @@ export default function App() {
     tomatoToast: ({ text, props }: any) => (
       <View
         style={{
-          width: '85%',
           backgroundColor: 'black',
           marginHorizontal: 10,
           marginTop: 20,
-          padding: 10,
+          paddingHorizontal: 20,
+          paddingVertical: 10,
           borderWidth: 1,
-          borderRadius: 5,
+          borderRadius: 10,
           borderColor: 'tomato',
         }}>
-        <Text style={{ color: 'white', fontFamily: MONTSERRAT_REGULAR, textAlign: 'center' }}>
+        <Text style={{ color: Colors.SUCCESS, fontFamily: MONTSERRAT_REGULAR }}>
           {props.text}
         </Text>
-        <Text style={{color: 'green', fontFamily: MONTSERRAT_REGULAR, textAlign: 'center'}}>{props.msg}</Text>
+        <Text
+          style={{ color: Colors.GRAY_DARK, fontFamily: MONTSERRAT_REGULAR, textAlign: 'center' }}>
+          {props.msg}
+        </Text>
       </View>
     ),
   }

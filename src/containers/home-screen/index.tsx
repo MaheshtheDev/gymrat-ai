@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import {
   SafeAreaView,
@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Pressable,
+  Button,
 } from 'react-native'
 import { styles } from './style'
 import Modal from 'react-native-modal'
@@ -24,7 +25,7 @@ import {
   TextInputComponent,
   TextVarient,
 } from '../../components'
-import { ROUTES, Strings } from '../../constants'
+import { ROUTES } from '../../constants'
 import Colors from '../../styles/colors'
 import Toast from 'react-native-toast-message'
 import {
@@ -32,15 +33,18 @@ import {
   FONT_SIZE_12,
   FONT_SIZE_14,
   FONT_SIZE_16,
+  MONTSERRAT_BOLD,
+  MONTSERRAT_EXTRA_BOLD,
   MONTSERRAT_MEDIUM,
   MONTSERRAT_REGULAR,
 } from '../../styles'
 import { User } from '../../models/api'
 
 import { API } from '../../helpers/api'
-import { wp } from '../../helpers'
+import { hp, wp } from '../../helpers'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Sentry from 'sentry-expo'
+import LottieView from 'lottie-react-native'
 
 const GOALDATA = [
   { value: 0, label: 'Lose Weight' },
@@ -56,19 +60,23 @@ export function HomeScreen({ navigation }: any) {
   const [isLoading, setLoading] = useState(false)
   const [height, setHeight] = useState<number>(0)
   const [weight, setWeight] = useState<number>(0)
-
+  const animation = useRef(null)
   const [selectedgoal, setSelectedgoal] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
   const [goalid, setGoalid] = useState(0)
   const [userDetails, setUserDetails] = useState<User>()
   const [dayName, setDayName] = useState('')
   const [goallabel, setGoallabel] = useState('')
+  const [combinedSections, setCombinedSections] = useState<any>([
+    { title: 'Workout', subtitle: 'Meal for the day' },
+  ])
 
   useEffect(() => {
     //getUserDetails()
   }, [goallabel])
 
   useEffect(() => {
+    console.log('use effect in home screen')
     let daysArray = [
       'Sunday',
       'Monday',
@@ -81,52 +89,9 @@ export function HomeScreen({ navigation }: any) {
     let day = new Date().getDay()
     let dayName = daysArray[day]
     setDayName(dayName)
+    console.log('day name', dayName)
     getUserDetails()
   }, [])
-
-  const clearInputs = () => {
-    setHeight(0)
-    setWeight(0)
-    setSelectedgoal('')
-  }
-
-  const getPlan = async () => {
-    try {
-      setLoading(true)
-      if (userDetails) {
-        await API.getPlanDetails(userDetails.suggestedPlanId, userDetails.bmiValue).then(
-          (res: any) => {
-            if (res?.status === 200) {
-              setWorkoutPlan([
-                {
-                  title: 'Workout Schedules',
-                  data: res?.workoutPlan,
-                  subtitle: 'Workout',
-                },
-              ])
-              setMealPlan([
-                {
-                  title: 'Meal Plan Schedules',
-                  data: res?.mealPlan,
-                  subtitle: 'Meal for the day',
-                },
-              ])
-              console.log('Workout Plan')
-              console.log(JSON.parse(res?.workoutPlan))
-              console.log('Meal Plan')
-              console.log(JSON.parse(res?.mealPlan))
-              if (res.workoutPlan.length > 0 && res.mealPlan.length > 0) {
-                setLoading(false)
-              }
-            }
-          }
-        )
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-    }
-  }
 
   const getUserDetails = async () => {
     try {
@@ -227,29 +192,33 @@ export function HomeScreen({ navigation }: any) {
     }
   }
 
-  const combinedSections = [{ title: 'Workout', subtitle: 'Meal for the day' }]
-
-  const User = [{ title: 'Workout Schedules', data: userDetails, subtitle: 'Workout' }]
-
   const showToast = () => {
     Toast.show({
       type: 'tomatoToast',
       props: {
         text: 'New Plan Requested!',
-        msg: 'We will mail you once your new plan is ready.',
+        msg: 'We will notify you once your new plan is ready.',
       },
     })
     if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
   }
   return isLoading ? (
-    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
-      <ActivityIndicator
-        size={'large'}
+    <View
+      style={{
+        backgroundColor: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+      }}>
+      <LottieView
+        autoPlay
+        ref={animation}
         style={{
-          alignSelf: 'center',
-          justifyContent: 'center',
-          flex: 1,
+          width: 200,
+          height: 200,
         }}
+        // Find more Lottie files at https://lottiefiles.com/featured
+        source={require('./loader.json')}
       />
     </View>
   ) : (
@@ -262,13 +231,15 @@ export function HomeScreen({ navigation }: any) {
           })
         }}
         Profile={true}
-        onProfilePress={() =>
-          navigation.navigate(ROUTES.PROFILE_SCREEN)
-        }
       />
       <ScrollView>
         <CardComponent cardStyle={styles.cardcontainer}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              paddingBottom: 10,
+            }}>
             <View
               style={{
                 alignContent: 'center',
@@ -330,27 +301,78 @@ export function HomeScreen({ navigation }: any) {
             </View>
           </View>
           <View>
-            <ButtonComponent
-              label='Update Metrics'
-              varient={ButtonVarient.lightgreen}
-              labelVarient={TextVarient.signuptitle}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: MONTSERRAT_MEDIUM,
+                    color: 'lightgrey',
+                    fontSize: 12,
+                  }}>
+                  Goal: &nbsp;
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: MONTSERRAT_BOLD,
+                    color: Colors.PRIMARY,
+                    fontSize: 16,
+                  }}>
+                  {goallabel}
+                </Text>
+              </View>
+            </View>
           </View>
         </CardComponent>
+
         <View
           style={{
             flexDirection: 'row',
+            justifyContent: 'flex-start',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            alignContent: 'center',
+            marginLeft: wp('4%'),
+            marginTop: hp('1%'),
           }}>
-          <LabelComponent label='Today Plan' style={styles.title} />
+          <Text
+            style={{ color: 'white', fontFamily: MONTSERRAT_MEDIUM, paddingRight: 5 }}>
+            Actions:{' '}
+          </Text>
           <Pressable
             style={{
               borderWidth: 1,
               borderColor: Colors.LIGHT_GREEN,
               borderRadius: 25,
-              marginRight: wp(5),
+              marginRight: wp(2),
+            }}
+            onPress={() => {
+              setModalVisible(!modalVisible)
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: MONTSERRAT_MEDIUM,
+                fontSize: 10,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+              }}>
+              Update Goal
+            </Text>
+          </Pressable>
+          <Pressable
+            style={{
+              borderWidth: 1,
+              borderColor: Colors.LIGHT_GREEN,
+              borderRadius: 25,
+              marginRight: wp(2),
             }}
             onPress={showToast}>
             <Text
@@ -365,138 +387,140 @@ export function HomeScreen({ navigation }: any) {
             </Text>
           </Pressable>
         </View>
-        {/*<FlatList
-          data={combinedSections}
-          scrollEnabled={false}
-          renderItem={({ item }) => {
-            return (
-              <CardComponent>
-                <View>
-                  <SectionList
-                    sections={workoutPlan}
-                    renderSectionHeader={({ section: { title, subtitle } }) => {
-                      return (
-                        <View>
-                          <LabelComponent label={subtitle} style={styles.workout} />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            alignContent: 'center',
+          }}>
+          <LabelComponent label="Today Plan's" style={styles.title} />
+        </View>
+
+        {workoutPlan && mealPlan && (
+          <CardComponent>
+            <View>
+              <SectionList
+                sections={workoutPlan}
+                scrollEnabled={false}
+                renderSectionHeader={() => {
+                  return (
+                    <View>
+                      <LabelComponent label={'Workout'} style={styles.workout} />
+                    </View>
+                  )
+                }}
+                renderItem={({ item }: any) => (
+                  <>
+                    {item.day === dayName && (
+                      <View>
+                        <View style={styles.tablecontainer}>
+                          <View
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              justifyContent: 'flex-end',
+                            }}>
+                            <>
+                              <LabelComponent
+                                style={styles.table1}
+                                label={''}></LabelComponent>
+                              <LabelComponent style={styles.table1} label='Sets' />
+                              <LabelComponent style={styles.table1} label='Reps' />
+                            </>
+                          </View>
                         </View>
-                      )
-                    }}
-                    renderItem={({ item }: any) => (
-                      <>
-                        {item.day === dayName && (
-                          <View>
-                            <View style={styles.tablecontainer}>
-                              <View
-                                style={{
-                                  flex: 1,
-                                  flexDirection: 'row',
-                                  justifyContent: 'space-around',
-                                }}>
-                                <>
-                                  <View></View>
-                                  <LabelComponent style={styles.table1} label='Sets' />
-                                  <LabelComponent style={styles.table1} label='Reps' />
-                                </>
-                              </View>
-                            </View>
-                            {item?.exercises?.map((v: any) => {
-                              return (
-                                <View>
-                                  <View style={styles.tablecontainer}>
+                        {item?.exercises?.map((v: any) => {
+                          return (
+                            <View>
+                              <View style={styles.tablecontainer}>
+                                <LabelComponent style={styles.tableitem} label={v.name} />
+                                <View style={{ flex: 1, flexDirection: 'row' }}>
+                                  {v.sets && (
                                     <LabelComponent
-                                      style={styles.tableitem}
-                                      label={v.name}
+                                      label={v.sets}
+                                      style={styles.repsitem}
                                     />
-                                    <View style={{ flex: 1, flexDirection: 'row' }}>
-                                      {v.sets && (
-                                        <LabelComponent
-                                          label={v.sets}
-                                          style={styles.repsitem}
-                                        />
-                                      )}
-                                      <LabelComponent
-                                        label={v.reps}
-                                        style={styles.repsitem}
-                                      />
-                                    </View>
-                                  </View>
+                                  )}
+                                  <LabelComponent
+                                    label={v.reps}
+                                    style={styles.repsitem}
+                                  />
                                 </View>
-                              )
-                            })}
-                          </View>
-                        )}
-                      </>
-                    )}
-                  />
-                </View>
-                <View>
-                  <SectionList
-                    sections={mealPlan}
-                    renderSectionHeader={({ section: { title, subtitle } }) => {
-                      return (
-                        <View>
-                          <LabelComponent label={subtitle} style={styles.subheading1} />
-                        </View>
-                      )
-                    }}
-                    renderItem={({ item }: any) => (
-                      <>
-                        {item.day === dayName && (
-                          <View>
-                            <View style={[styles.mealview, { marginTop: -0.5 }]}>
-                              <View style={styles.mealconatiner}>
-                                <LabelComponent
-                                  label='BREAKFAST'
-                                  style={styles.heading1}
-                                />
-                                <LabelComponent
-                                  label={`(${item.breakfast.calories}cal)`}
-                                  style={styles.headingmd}
-                                />
-                              </View>
-                              <View>
-                                <LabelComponent
-                                  label={item.breakfast.meal}
-                                  style={styles.subheading}
-                                />
-                              </View>
-                              <View style={styles.mealconatiner}>
-                                <LabelComponent label='LUNCH' style={styles.heading1} />
-                                <LabelComponent
-                                  label={`(${item.lunch.calories}cal)`}
-                                  style={styles.headingmd}
-                                />
-                              </View>
-                              <View>
-                                <LabelComponent
-                                  label={item.lunch.meal}
-                                  style={styles.subheading}
-                                />
-                              </View>
-                              <View style={styles.mealconatiner}>
-                                <LabelComponent label='DINNER' style={styles.heading1} />
-                                <LabelComponent
-                                  label={`(${item.dinner.calories}cal)`}
-                                  style={styles.headingmd}
-                                />
-                              </View>
-                              <View>
-                                <LabelComponent
-                                  label={item.dinner.meal}
-                                  style={styles.subheading}
-                                />
                               </View>
                             </View>
-                          </View>
-                        )}
-                      </>
+                          )
+                        })}
+                      </View>
                     )}
-                  />
-                </View>
-              </CardComponent>
-            )
-          }}
-        />*/}
+                  </>
+                )}
+              />
+            </View>
+            <View>
+              <SectionList
+                sections={mealPlan}
+                scrollEnabled={false}
+                renderSectionHeader={({ section: { title, subtitle } }) => {
+                  return (
+                    <View>
+                      <LabelComponent label={subtitle} style={styles.subheading1} />
+                    </View>
+                  )
+                }}
+                renderItem={({ item }: any) => (
+                  <>
+                    {item.day === dayName && (
+                      <View>
+                        <View style={[styles.mealview, { marginTop: -0.5 }]}>
+                          <View style={styles.mealconatiner}>
+                            <LabelComponent label='BREAKFAST' style={styles.heading1} />
+                            <LabelComponent
+                              label={`(${item.breakfast.calories}cal)`}
+                              style={styles.headingmd}
+                            />
+                          </View>
+                          <View>
+                            <LabelComponent
+                              label={item.breakfast.meal}
+                              style={styles.subheading}
+                            />
+                          </View>
+                          <View style={styles.mealconatiner}>
+                            <LabelComponent label='LUNCH' style={styles.heading1} />
+                            <LabelComponent
+                              label={`(${item.lunch.calories}cal)`}
+                              style={styles.headingmd}
+                            />
+                          </View>
+                          <View>
+                            <LabelComponent
+                              label={item.lunch.meal}
+                              style={styles.subheading}
+                            />
+                          </View>
+                          <View style={styles.mealconatiner}>
+                            <LabelComponent label='DINNER' style={styles.heading1} />
+                            <LabelComponent
+                              label={`(${item.dinner.calories}cal)`}
+                              style={styles.headingmd}
+                            />
+                          </View>
+                          <View>
+                            <LabelComponent
+                              label={item.dinner.meal}
+                              style={styles.subheading}
+                            />
+                          </View>
+                        </View>
+                      </View>
+                    )}
+                  </>
+                )}
+              />
+            </View>
+          </CardComponent>
+        )}
 
         {workoutPlan && (
           <View>
@@ -508,7 +532,11 @@ export function HomeScreen({ navigation }: any) {
                   <View style={styles.headercontainer}>
                     <LabelComponent label={title} style={styles.title} />
                     <TouchableOpacity
-                      onPress={() => navigation.navigate(ROUTES.WORKOUT_DETAILS)}>
+                      onPress={() =>
+                        navigation.navigate(ROUTES.WORKOUT_DETAILS, {
+                          workoutData: workoutPlan[0].data,
+                        })
+                      }>
                       <View style={styles.iconcontainer}>
                         <LabelComponent
                           label='View all'
@@ -574,7 +602,11 @@ export function HomeScreen({ navigation }: any) {
                 <View style={styles.headercontainer}>
                   <LabelComponent label={title} style={styles.title} />
                   <TouchableOpacity
-                    onPress={() => navigation.navigate(ROUTES.MEAL_DETAILS)}>
+                    onPress={() =>
+                      navigation.navigate(ROUTES.MEAL_DETAILS, {
+                        mealPlanData: mealPlan[0].data,
+                      })
+                    }>
                     <View style={styles.iconcontainer}>
                       <LabelComponent label='View all' style={styles.viewalltxt} />
                       <Entypo
@@ -590,8 +622,8 @@ export function HomeScreen({ navigation }: any) {
             renderItem={({ item }: any) => (
               <>
                 {item.day === dayName && (
-                  <CardComponent>
-                    <View style={styles.mealview}>
+                  <CardComponent key={item.day}>
+                    <View style={styles.mealview} key={item.day}>
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='BREAKFAST' style={styles.heading} />
                         <LabelComponent
@@ -731,3 +763,64 @@ export function HomeScreen({ navigation }: any) {
     </SafeAreaView>
   )
 }
+
+// comment code of `more options`
+//<View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
+//  <Pressable
+//    style={{
+//      borderWidth: 1,
+//      borderColor: Colors.LIGHT_GREEN,
+//      borderRadius: 25,
+//      marginRight: wp(2),
+//    }}
+//    onPress={() => {}}>
+//    <Text
+//      style={{
+//        color: Colors.SELECTIVE_YELLOW,
+//        fontFamily: MONTSERRAT_MEDIUM,
+//        fontSize: 10,
+//        paddingHorizontal: 10,
+//        paddingVertical: 5,
+//      }}>
+//      Update Goal
+//    </Text>
+//  </Pressable>
+//  <Pressable
+//    style={{
+//      borderWidth: 1,
+//      borderColor: Colors.LIGHT_GREEN,
+//      borderRadius: 25,
+//      marginRight: wp(2),
+//    }}
+//    onPress={showToast}>
+//    <Text
+//      style={{
+//        color: 'white',
+//        fontFamily: MONTSERRAT_MEDIUM,
+//        fontSize: 10,
+//        paddingHorizontal: 10,
+//        paddingVertical: 5,
+//      }}>
+//      Request New Plan
+//    </Text>
+//  </Pressable>
+//  <Pressable
+//    style={{
+//      borderWidth: 1,
+//      borderColor: Colors.LIGHT_GREEN,
+//      borderRadius: 25,
+//      marginRight: wp(5),
+//    }}
+//    onPress={() => {}}>
+//    <Text
+//      style={{
+//        color: 'white',
+//        fontFamily: MONTSERRAT_MEDIUM,
+//        fontSize: 10,
+//        paddingHorizontal: 10,
+//        paddingVertical: 5,
+//      }}>
+//      Update Metrics
+//    </Text>
+//  </Pressable>
+//</View>
