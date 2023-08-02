@@ -23,6 +23,7 @@ export const API = {
           const userDetails: User = {
             userId: res.data.userDetails.userId,
             fullName: res.data.userDetails.name,
+            email: res.data.userDetails.email,
             height: res.data.userDetails.bodyMetrics.height,
             weight: res.data.userDetails.bodyMetrics.weight,
             bmiValue: res.data.userDetails.bodyMetrics.bmiValue,
@@ -98,6 +99,7 @@ export const API = {
           const userDetails: User = {
             userId: res.data.userDetails.userId,
             fullName: res.data.userDetails.name,
+            email: res.data.userDetails.email,
             height: res.data.userDetails.bodyMetrics.height,
             weight: res.data.userDetails.bodyMetrics.weight,
             bmiValue: res.data.userDetails.bodyMetrics.bmiValue,

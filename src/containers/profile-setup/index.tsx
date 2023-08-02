@@ -22,14 +22,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { styles } from './style'
 import { API } from '../../helpers/api'
 import { User } from '../../models/api'
-import * as SecureStore from 'expo-secure-store'
 import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
-import * as Sentry from 'sentry-expo'
+import { useUserStore } from '../../store/userStore'
 
-export function AddMoreDetailsScreen({ navigation }: any) {
+export function AddMoreDetailsScreen({ route, navigation }: any) {
   const [height, setHeight] = useState<number>(0)
   const [weight, setWeight] = useState<number>(0)
-  const [userId, setUserId] = useState<string>('')
   const [name, setName] = useState('')
   const [age, setAge] = useState<number>(0)
   const [goalid, setGoalid] = useState<number>(-1)
@@ -37,6 +35,9 @@ export function AddMoreDetailsScreen({ navigation }: any) {
   const [isLoading, setIsLoading] = useState(false)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
   const [step, setStep] = useState(1)
+  const user = useUserStore(state => state.user)
+  const [credential, setCredential] = useState<any>(null)
+  //const { userToken } = route.params
 
   useEffect(() => {
     checkInputsFilled()
@@ -45,17 +46,18 @@ export function AddMoreDetailsScreen({ navigation }: any) {
   useEffect(() => {
     const checkUserExistence = async () => {
       const credentialJson = await TempStorage.getItem(TempStorageKeys.APPLE_CREDENTIALS)
-      const userId = JSON.parse(credentialJson || '').user
-      setUserId(userId)
-      console.log('userId ' + userId)
-      const isUserExist = await API.getUserDetails(userId)
-      console.log('isUserExist')
-      console.log(isUserExist)
-      if (isUserExist && isUserExist.status == 200) {
-        console.log('user exist')
-        console.log(isUserExist)
-        navigation.navigate(ROUTES.HOME_SCREEN)
-        setStep(1)
+
+      const parsedCredentials = JSON.parse(credentialJson || '')
+      if (parsedCredentials) {
+        setCredential(parsedCredentials)
+        setName(parsedCredentials.fullName.givenName)
+        const isUserExist = await API.getUserDetails(parsedCredentials.user)
+        if (isUserExist && isUserExist.status == 200) {
+          console.log('user exist')
+          console.log(isUserExist)
+          navigation.navigate(ROUTES.HOME_SCREEN)
+          setStep(1)
+        }
       }
     }
     checkUserExistence()
@@ -78,10 +80,9 @@ export function AddMoreDetailsScreen({ navigation }: any) {
   }
 
   const onSaveProfile = async () => {
-    const userIDNow = userId
     const bmi = weight / (height / 100) ** 2
     const userDetails: User = {
-      userId: userIDNow ? userIDNow : '',
+      userId: credential.user,
       fullName: name,
       height: height,
       weight: weight,
@@ -90,6 +91,7 @@ export function AddMoreDetailsScreen({ navigation }: any) {
       goal: goalid,
       bmiValue: bmi,
       suggestedPlanId: '1',
+      email: credential.email,
     }
     console.log(userDetails)
     API.User(userDetails)
@@ -101,6 +103,9 @@ export function AddMoreDetailsScreen({ navigation }: any) {
       })
       .catch(err => {
         console.log('err', err)
+      })
+      .finally(() => {
+        setIsLoading(false)
       })
   }
 
@@ -147,9 +152,10 @@ export function AddMoreDetailsScreen({ navigation }: any) {
                   <LabelComponent label='Name*' style={styles.label} />
                   <TextInputComponent
                     placeholder={'Enter your name'}
-                    style={styles.txtinput}
+                    style={[styles.txtinput, { backgroundColor: '#1E1E1E' }]}
                     onChangeText={text => setName(text)}
                     defaultValue={name ? name : ''}
+                    editable={false}
                   />
                 </View>
                 <View>
@@ -232,6 +238,17 @@ export function AddMoreDetailsScreen({ navigation }: any) {
             </KeyboardAwareScrollView>
           </View>
         </>
+      ) : isLoading ? (
+        <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
+          <ActivityIndicator
+            size={'large'}
+            style={{
+              alignSelf: 'center',
+              justifyContent: 'center',
+              flex: 1,
+            }}
+          />
+        </View>
       ) : (
         <View>
           <View
@@ -257,6 +274,7 @@ export function AddMoreDetailsScreen({ navigation }: any) {
               disabled={isButtonDisabled}
               sentry-label='GetMyPlan Button'
               onPress={() => {
+                setIsLoading(true)
                 onSaveProfile()
               }}>
               <Text

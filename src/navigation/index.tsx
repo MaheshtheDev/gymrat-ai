@@ -104,6 +104,6 @@ export const AppNavigator = () => {
 }
 
 export * from './stack-param-list'
-export * from './auth-stack'
-export * from './home-stack'
+//export * from './auth-stack'
+//export * from './home-stack'
 export * from './NavigationService'

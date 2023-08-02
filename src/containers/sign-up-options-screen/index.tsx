@@ -11,7 +11,7 @@ import Colors from '../../styles/colors'
 import LottieView from 'lottie-react-native'
 import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
 
-export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
+export function SignUpOptionsScreen({ navigation }: any) {
   //const [appleAuthAvailable, setAppleAuthAvailable] = useState<boolean>(true)
   const [userToken, setUserToken] = useState<any>('')
   const animation = useRef(null)
@@ -50,24 +50,27 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       })
+      console.log('credential')
+      console.log(credential)
       setUserToken(credential)
       setIsLoading(true)
-      await API.getUserDetails(credential.user).then(res => {
-        console.log(' in Login screen ')
-        console.log(credential.user)
-        console.log(res)
-        console.log(res != undefined && res.status == 200);
-        if (res !== undefined && res.status == 200) {
-          navigation.navigate(ROUTES.HOME_SCREEN)
-        } else {
-          navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN)
-        }
-        setIsLoading(false)
-      })
       await TempStorage.setItem(
         TempStorageKeys.APPLE_CREDENTIALS,
         JSON.stringify(credential)
       )
+      await API.getUserDetails(credential.user).then(res => {
+        console.log(' in Login screen ')
+        console.log(credential.user)
+        console.log(res)
+        console.log(res != undefined && res.status == 200)
+        if (res !== undefined && res.status == 200) {
+          navigation.navigate(ROUTES.HOME_SCREEN)
+        } else {
+          navigation.navigate(ROUTES.ADD_MORE_DETAILS_SCREEN, { userToken: credential })
+        }
+        setIsLoading(false)
+      })
+      
     } catch (e: any) {
       console.error(e)
     }
@@ -136,13 +139,13 @@ export const SignUpOptionsScreen: React.FC = ({ navigation }: any) => {
       <View style={{ flex: 1, alignItems: 'center' }}>
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
           cornerRadius={25}
           style={{
             width: '75%',
-            height: 44,
-            backgroundColor: Colors.CHLOROPHYL_GREEN,
-            borderRadius: 50,
+            height: 45,
+            //backgroundColor: Colors.CHLOROPHYL_GREEN,
+            borderRadius: 40,
             alignItems: 'center',
           }}
           onPress={login}

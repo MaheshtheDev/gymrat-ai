@@ -5,7 +5,7 @@ export const Images = {
 }
 
 export const Strings = {
-  WELCOME_TEXT: 'Welcome to GYMRATS AI',
+  WELCOME_TEXT: 'Welcome to GYMRAT AI',
   WELCOME_DESCRIPTION_TEXT: `Reimagine\nYour Workout\nand Meal Plan\nwith A.I`,
   SIGN_UP: 'Sign Up',
   LETS_GO: 'Let’s Go',

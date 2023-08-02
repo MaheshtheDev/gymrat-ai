@@ -44,7 +44,6 @@ import { API } from '../../helpers/api'
 import { hp, wp } from '../../helpers'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Sentry from 'sentry-expo'
-import LottieView from 'lottie-react-native'
 
 const GOALDATA = [
   { value: 0, label: 'Lose Weight' },
@@ -58,8 +57,6 @@ export function HomeScreen({ navigation }: any) {
   const [workoutPlan, setWorkoutPlan] = useState<any>()
   const [mealPlan, setMealPlan] = useState<any>()
   const [isLoading, setLoading] = useState(false)
-  const [height, setHeight] = useState<number>(0)
-  const [weight, setWeight] = useState<number>(0)
   const animation = useRef(null)
   const [selectedgoal, setSelectedgoal] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
@@ -127,7 +124,6 @@ export function HomeScreen({ navigation }: any) {
         console.log(workoutPlan)
         console.log('Meal Plan')
         console.log(mealPlan)
-        //getPlan()
         setUserDetails(userDetails)
         setLoading(false)
         if (userDetails?.workoutPlan == null || userDetails?.workoutPlan == undefined) {
@@ -203,22 +199,14 @@ export function HomeScreen({ navigation }: any) {
     if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
   }
   return isLoading ? (
-    <View
-      style={{
-        backgroundColor: 'black',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-      }}>
-      <LottieView
-        autoPlay
-        ref={animation}
+    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
+      <ActivityIndicator
+        size={'large'}
         style={{
-          width: 200,
-          height: 200,
+          alignSelf: 'center',
+          justifyContent: 'center',
+          flex: 1,
         }}
-        // Find more Lottie files at https://lottiefiles.com/featured
-        source={require('./loader.json')}
       />
     </View>
   ) : (
@@ -476,39 +464,39 @@ export function HomeScreen({ navigation }: any) {
                           <View style={styles.mealconatiner}>
                             <LabelComponent label='BREAKFAST' style={styles.heading1} />
                             <LabelComponent
-                              label={`(${item.breakfast.calories}cal)`}
+                              label={`(${item.mealsForTheDay.breakfast.calories}cal)`}
                               style={styles.headingmd}
                             />
                           </View>
                           <View>
                             <LabelComponent
-                              label={item.breakfast.meal}
+                              label={item.mealsForTheDay.breakfast.meal}
                               style={styles.subheading}
                             />
                           </View>
                           <View style={styles.mealconatiner}>
                             <LabelComponent label='LUNCH' style={styles.heading1} />
                             <LabelComponent
-                              label={`(${item.lunch.calories}cal)`}
+                              label={`(${item.mealsForTheDay.lunch.calories}cal)`}
                               style={styles.headingmd}
                             />
                           </View>
                           <View>
                             <LabelComponent
-                              label={item.lunch.meal}
+                              label={item.mealsForTheDay.lunch.meal}
                               style={styles.subheading}
                             />
                           </View>
                           <View style={styles.mealconatiner}>
                             <LabelComponent label='DINNER' style={styles.heading1} />
                             <LabelComponent
-                              label={`(${item.dinner.calories}cal)`}
+                              label={`(${item.mealsForTheDay.dinner.calories}cal)`}
                               style={styles.headingmd}
                             />
                           </View>
                           <View>
                             <LabelComponent
-                              label={item.dinner.meal}
+                              label={item.mealsForTheDay.dinner.meal}
                               style={styles.subheading}
                             />
                           </View>
@@ -627,39 +615,39 @@ export function HomeScreen({ navigation }: any) {
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='BREAKFAST' style={styles.heading} />
                         <LabelComponent
-                          label={`(${item.breakfast.calories}cal)`}
+                          label={`(${item.mealsForTheDay.breakfast.calories}cal)`}
                           style={styles.headingmd}
                         />
                       </View>
                       <View>
                         <LabelComponent
-                          label={item.breakfast.meal}
+                          label={item.mealsForTheDay.breakfast.meal}
                           style={styles.subheading}
                         />
                       </View>
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='LUNCH' style={styles.heading} />
                         <LabelComponent
-                          label={`(${item.lunch.calories}cal)`}
+                          label={`(${item.mealsForTheDay.lunch.calories}cal)`}
                           style={styles.headingmd}
                         />
                       </View>
                       <View>
                         <LabelComponent
-                          label={item.lunch.meal}
+                          label={item.mealsForTheDay.lunch.meal}
                           style={styles.subheading}
                         />
                       </View>
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='DINNER' style={styles.heading} />
                         <LabelComponent
-                          label={`(${item.dinner.calories}cal)`}
+                          label={`(${item.mealsForTheDay.dinner.calories}cal)`}
                           style={styles.headingmd}
                         />
                       </View>
                       <View>
                         <LabelComponent
-                          label={item.dinner.meal}
+                          label={item.mealsForTheDay.dinner.meal}
                           style={styles.subheading}
                         />
                       </View>
