@@ -10,6 +10,7 @@ import { API } from '../../helpers/api'
 import Colors from '../../styles/colors'
 import LottieView from 'lottie-react-native'
 import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
+import { Loader } from '../../components/Loader'
 
 export function SignUpOptionsScreen({ navigation }: any) {
   //const [appleAuthAvailable, setAppleAuthAvailable] = useState<boolean>(true)
@@ -112,16 +113,7 @@ export function SignUpOptionsScreen({ navigation }: any) {
   //  }
   //}
   return isLoading ? (
-    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
-      <ActivityIndicator
-        size={'large'}
-        style={{
-          alignSelf: 'center',
-          justifyContent: 'center',
-          flex: 1,
-        }}
-      />
-    </View>
+    <Loader />
   ) : (
     <SafeAreaView style={styles.container}>
       <View style={styles.titlecontainer}>

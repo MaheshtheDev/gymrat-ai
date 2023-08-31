@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { HomeStackNavProps, NavigationService } from '../../navigation'
+import { NavigationService } from '../../navigation/NavigationService'
 import { SafeAreaView, View, FlatList, ScrollView, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 import axios from 'axios'
@@ -57,35 +57,41 @@ export function MealScreen({ navigation }: any) {
                   <View style={styles.mealconatiner}>
                     <LabelComponent label='BREAKFAST' style={styles.heading} />
                     <LabelComponent
-                      label={`(${item.breakfast.calories}cal)`}
+                      label={`(${item.meals.breakfast.calories}cal)`}
                       style={styles.headingmd}
                     />
                   </View>
                   <View>
                     <LabelComponent
-                      label={item.breakfast.meal}
+                      label={item.meals.breakfast.meal}
                       style={styles.subheading}
                     />
                   </View>
                   <View style={styles.mealconatiner}>
                     <LabelComponent label='LUNCH' style={styles.heading} />
                     <LabelComponent
-                      label={`(${item.lunch.calories}cal)`}
+                      label={`(${item.meals.lunch.calories}cal)`}
                       style={styles.headingmd}
                     />
                   </View>
                   <View>
-                    <LabelComponent label={item.lunch.meal} style={styles.subheading} />
+                    <LabelComponent
+                      label={item.meals.lunch.meal}
+                      style={styles.subheading}
+                    />
                   </View>
                   <View style={styles.mealconatiner}>
                     <LabelComponent label='DINNER' style={styles.heading} />
                     <LabelComponent
-                      label={`(${item.dinner.calories}cal)`}
+                      label={`(${item.meals.dinner.calories}cal)`}
                       style={styles.headingmd}
                     />
                   </View>
                   <View>
-                    <LabelComponent label={item.dinner.meal} style={styles.subheading} />
+                    <LabelComponent
+                      label={item.meals.dinner.meal}
+                      style={styles.subheading}
+                    />
                   </View>
                 </View>
               </CardComponent>

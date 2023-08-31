@@ -24,6 +24,7 @@ import { API } from '../../helpers/api'
 import { User } from '../../models/api'
 import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
 import { useUserStore } from '../../store/userStore'
+import { Loader } from '../../components/Loader'
 
 export function AddMoreDetailsScreen({ route, navigation }: any) {
   const [height, setHeight] = useState<number>(0)
@@ -36,7 +37,7 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
   const [step, setStep] = useState(1)
   const user = useUserStore(state => state.user)
-  const [credential, setCredential] = useState<any>(null)
+  const [credential, setCredential] = useState<any>({ fullName: { givenName: '' } })
   //const { userToken } = route.params
 
   useEffect(() => {
@@ -80,6 +81,8 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
   }
 
   const onSaveProfile = async () => {
+    //await API.logOut();
+    //setIsLoading(false);
     const bmi = weight / (height / 100) ** 2
     const userDetails: User = {
       userId: credential.user,
@@ -124,16 +127,7 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
   ]
 
   return isLoading ? (
-    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
-      <ActivityIndicator
-        size={'large'}
-        style={{
-          alignSelf: 'center',
-          justifyContent: 'center',
-          flex: 1,
-        }}
-      />
-    </View>
+    <Loader />
   ) : (
     <SafeAreaView style={styles.container}>
       {step === 1 ? (
@@ -155,7 +149,7 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
                     style={[styles.txtinput, { backgroundColor: '#1E1E1E' }]}
                     onChangeText={text => setName(text)}
                     defaultValue={name ? name : ''}
-                    editable={false}
+                    editable={credential.fullName.givenName ? false : true}
                   />
                 </View>
                 <View>

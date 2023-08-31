@@ -44,4 +44,5 @@ export const Strings = {
   EMAIL_ADDRESS: 'Email Address',
   ACCOUNT_LINK: 'Account Linked',
   LOG_OUT: 'Logout',
+  DELETE_ACCOUNT: 'Delete Account',
 }

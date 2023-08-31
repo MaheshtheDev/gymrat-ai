@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { NavigationService } from '../../navigation'
+import { NavigationService } from '../../navigation/NavigationService'
 import { SafeAreaView, View, FlatList, ActivityIndicator } from 'react-native'
 import { styles } from './style'
 

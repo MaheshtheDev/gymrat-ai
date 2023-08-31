@@ -335,7 +335,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#49FF09BF',
     borderRadius: 5,
-    marginVertical: 10,
+    marginVertical: 5,
   },
   selectedOption: {
     flexDirection: 'row',
@@ -344,7 +344,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#49FF09BF',
     borderRadius: 5,
-    marginVertical: 10,
+    marginVertical: 5,
     backgroundColor: Colors.CHLOROPHYL_GREEN,
   },
   optionText: {

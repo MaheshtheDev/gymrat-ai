@@ -1,85 +1,31 @@
 import React, { useEffect, useState } from 'react'
 
-import { NavigationService } from '../../navigation'
-import { SafeAreaView, View, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { NavigationService } from '../../navigation/NavigationService'
+import { SafeAreaView, View, ActivityIndicator, Text } from 'react-native'
 import { styles } from './style'
 
-import {
-  ButtonComponent,
-  ButtonVarient,
-  Header,
-  LabelComponent,
-  TextInputComponent,
-  TextVarient,
-} from '../../components'
-import { ROUTES, Strings } from '../../constants'
+import { Header } from '../../components'
+import { ROUTES } from '../../constants'
 import Colors from '../../styles/colors'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { API } from '../../helpers/api'
-import { useRoute } from '@react-navigation/native'
+import { hp } from '../../helpers'
 
-export function ProfileScreen({ navigation }: any){
-  const [firstName, setFirstName] = useState('')
-  const [age, setAge] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [gender, setGender] = useState('')
+export function ProfileScreen({ route, navigation }: any) {
   const [disabled, setDisabled] = useState(false)
   const [visible, setVisible] = useState(true)
-  const [userdata, setUserdata] = useState({})
-  const [showButton, setShowButton] = useState(false)
-  const [name, setName] = useState<string>()
   const [isLoading, setLoading] = useState(false)
 
-  const [user, setUser] = useState({} as any)
-  const route = useRoute()
-  const { userDetails } = route.params as any
+  const { userData, id } = route.params as any
 
   const handleIconPress = () => {
-    setShowButton(true)
     setDisabled(true)
   }
 
   useEffect(() => {
-    setUser(userDetails);
-    console.log(userDetails);
-    //fetchCurrentSessions()
-    //getUserDetails()
+    console.log('In Profile Screen user details')
+    console.log(userData)
+    console.log(id)
   }, [])
-
-  useEffect(() => {
-    handleGender()
-  }, [gender, userdata])
-  const getUserDetails = async () => {
-    setLoading(true)
-
-    try {
-      const data = await API.getUserDetails()
-      setUserdata(data)
-      handleGender()
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchCurrentSessions = async () => {
-    const data = await API.getUserDetails()
-    setUserdata(data)
-    const name = data.fullName
-    setName(name)
-  }
-  const handleGender = () => {
-    if (userdata?.gender === 0) {
-      setGender('Male')
-    } else if (userdata?.gender === 1) {
-      setGender('Female')
-    } else if (userdata?.gender === 2) {
-      setGender('Others')
-    } else {
-      setGender('')
-    }
-  }
 
   return isLoading ? (
     <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
@@ -96,89 +42,56 @@ export function ProfileScreen({ navigation }: any){
     <SafeAreaView style={styles.container}>
       <Header
         Lebel={true}
-        editICon={visible}
+        editICon={false}
         onBackPress={() => NavigationService.goBack()}
         onIconPress={() => handleIconPress()}
       />
       <View style={styles.maincontainer}>
-        <View style={{ flex: 1 }}>
+        <View>
+          {/* form that shows the user profile details */}
           <View>
-            <LabelComponent label={Strings.FRIST_NAME} style={styles.title} />
-            <TextInputComponent
-              value={user.fullName}
-              onChangeText={txt => setFirstName(txt)}
-              placeholder={name || ''}
-              editable={disabled}
-              maxLength={15}
-              style={styles.subtitle}
-              onBlur={() => (disabled ? setDisabled(false) : setDisabled(true))}
-            />
+            <Text style={styles.title}>Full Name </Text>
+            <Text style={styles.subtitle}>{userData.fullName}</Text>
           </View>
-          <View style={styles.titlecontainer}>
-            <LabelComponent label={Strings.AGE} style={styles.title} />
-            <TextInputComponent
-              placeholder={`${user.age}`}
-              maxLength={2}
-              value={age}
-              editable={disabled}
-              keyboardType='number-pad'
-              onBlur={() => (disabled ? setDisabled(false) : setDisabled(true))}
-              onChangeText={txt => setAge(txt)}
-              style={styles.subtitle}
-            />
-          </View>
-          <View style={styles.titlecontainer}>
-            <LabelComponent label={Strings.GENDER} style={styles.title} />
-            <TextInputComponent
-              placeholder={gender}
-              maxLength={6}
-              value={gender}
-              editable={disabled}
-              onBlur={() => (disabled ? setDisabled(false) : setDisabled(true))}
-              onChangeText={txt => setGender(txt)}
-              style={[styles.subtitle, { opacity: 0.6 }]}
-            />
+        </View>
+        <View style={{ paddingVertical: hp('1.5%') }}>
+          {/* form that shows the user profile details */}
+          <View>
+            <Text style={styles.title}>Email </Text>
+            <Text style={styles.subtitle}>{userData.email}</Text>
           </View>
         </View>
       </View>
-      <View style={styles.accountlinkcontainer}>
-        <LabelComponent label={Strings.EMAIL_ADDRESS} style={styles.title} />
-        <LabelComponent label={user.email} style={styles.subtitle} />
-        {/* <View style={styles.linkconatiner}>
-          <LabelComponent label={Strings.ACCOUNT_LINK} style={styles.title} />
-          <View style={styles.ss}>
-            <View style={styles.linkemailcontainer}>
-              <Google height={15} width={15} />
-              <LabelComponent
-                label='mahesh.svmr@gmail.com'
-                numberOfLines={2}
-                style={styles.email}
-              />
-            </View>
-          </View>
-        </View> */}
+      <View
+        style={{
+          paddingVertical: 25,
+          alignItems: 'center',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}>
+        <Text
+          onPress={async () => {
+            await API.logOut().then(res => {
+              console.log('logout response', res)
+              navigation.replace(ROUTES.SIGN_UP_OPTIONS_SCREEN)
+            })
+          }}
+          style={styles.logoutbutton}>
+          Logout
+        </Text>
 
-        {showButton && (
-          <TouchableOpacity
-            onPress={() => {
-              setVisible(true)
-              setShowButton(false)
-            }}>
-            <View style={styles.linkemailcontainer1}>
-              <LabelComponent label='SAVE' style={styles.save} />
-            </View>
-          </TouchableOpacity>
-        )}
+        <Text
+          onPress={async () => {
+            setLoading(true)
+            await API.deleteAccount(userData.userId).then(res => {
+              setLoading(false)
+              navigation.replace(ROUTES.SIGN_UP_OPTIONS_SCREEN)
+            })
+          }}
+          style={styles.delete}>
+          Delete Account
+        </Text>
       </View>
-      <ButtonComponent
-        onPress={() => {
-          AsyncStorage.clear()
-          navigation.replace(ROUTES.AUTH_STACK)
-        }}
-        varient={ButtonVarient.logoutbutton}
-        labelVarient={TextVarient.LogOut}
-        label={Strings.LOG_OUT}
-      />
     </SafeAreaView>
   )
 }

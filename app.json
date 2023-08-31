@@ -11,11 +11,13 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gymrat.ai",
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "package": "com.gymrat.ai",
@@ -27,7 +29,10 @@
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
-    "plugins": ["sentry-expo", "expo-apple-authentication"],
+    "plugins": [
+      "sentry-expo",
+      "expo-apple-authentication"
+    ],
     "extra": {
       "eas": {
         "projectId": "7a26df6e-bd0b-4749-839c-f73997a36066"

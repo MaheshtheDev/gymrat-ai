@@ -52,27 +52,7 @@ export const API = {
 
     return response.data
   },
-  async UpdateUser(body: any) {
-    var response: any
-    try {
-      response = await axios
-        .put(`${this.BASE_URL}/user/details`, body)
-        .then(async res => {
-          console.log('Response from updating')
-          console.log(res)
-          return { data: res.data, status: res.status }
-        })
-        .catch(err => {
-          console.log('Error from updating')
-          console.log(err)
-        })
-      console.log(response.data)
-    } catch (e) {
-      console.log(e)
-    }
 
-    return response.data
-  },
   async getUserDetails(userId?: string) {
     console.log('User ID in get user details')
     console.log(userId)
@@ -96,6 +76,9 @@ export const API = {
         .then(async res => {
           console.log('Response ' + userId)
           console.log(res)
+          if (res == null) {
+            return { data: null, status: 404 }
+          }
           const userDetails: User = {
             userId: res.data.userDetails.userId,
             fullName: res.data.userDetails.name,
@@ -117,12 +100,70 @@ export const API = {
           )
           return { data: userDetails, status: res.status }
         })
+        .catch(err => {
+          console.log('User Not found')
+          console.log(err)
+          return { data: null, status: 404 }
+        })
       return res
     } catch (e) {
       console.log(e)
       return { data: null, status: 404 }
     }
   },
+
+  async UpdateUser(body: any) {
+    var response: any
+    try {
+      response = await axios
+        .put(`${this.BASE_URL}/user/details`, body)
+        .then(async res => {
+          console.log('Response from updating')
+          console.log(res)
+          return { data: res.data, status: res.status }
+        })
+        .catch(err => {
+          console.log('Error from updating')
+          console.log(err)
+        })
+      console.log(response.data)
+    } catch (e) {
+      console.log(e)
+    }
+
+    return response.data
+  },
+
+  async UpdateExpoNotification(body: { userId: any; data: any }) {
+    console.log('UpdateExpoNotification')
+    console.log(body)
+    await axios
+      .post(`${this.BASE_URL}/user/notification`, body)
+      .then(async res => {
+        console.log('Response from updating expo notification')
+        console.log(res)
+      })
+      .catch(err => {
+        console.log('Error from updating expo notification')
+        console.log(err)
+      })
+  },
+
+  async checkPlanStatus(userId: string) {
+    await axios
+      .get(`${this.BASE_URL}/user/plan-status?userId=${userId}`)
+      .then(async res => {
+        console.log('Response from checking plan status')
+        console.log(res)
+        //if (res.data.status == 200) {
+        //  await TempStorage.setItem(
+        //    TempStorageKeys.USER_PROFILE,
+        //    JSON.stringify(res.data.userDetails)
+        //  )
+        //}
+      })
+  },
+
   async getPlanDetails(id: string, bmiValue: number) {
     console.log('getPlanDetails')
     console.log(id)
@@ -162,6 +203,7 @@ export const API = {
         return { mealPlan: null, workoutPlan: null, status: 404 }
       })
   },
+
   async getNewPlan(userId: string) {
     await axios
       .get(`${this.BASE_URL}/gpt/new?userId=${userId}`)
@@ -180,6 +222,25 @@ export const API = {
       TempStorage.removeItem(TempStorageKeys.WORKOUT_PLAN),
       TempStorage.removeItem(TempStorageKeys.MEAL_PLAN),
       TempStorage.removeItem(TempStorageKeys.APPLE_CREDENTIALS),
+    ])
+  },
+
+  async deleteAccount(userId: string) {
+    await Promise.all([
+      TempStorage.removeItem(TempStorageKeys.USER_PROFILE),
+      TempStorage.removeItem(TempStorageKeys.WORKOUT_PLAN),
+      TempStorage.removeItem(TempStorageKeys.MEAL_PLAN),
+      TempStorage.removeItem(TempStorageKeys.APPLE_CREDENTIALS),
+      axios
+        .delete(`${this.BASE_URL}/user/details?userId=${userId}`)
+        .then(async res => {
+          console.log('Response from deleting account')
+          console.log(res)
+        })
+        .catch(err => {
+          console.log('Error from deleting account')
+          console.log(err)
+        }),
     ])
   },
 }

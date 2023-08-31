@@ -11,6 +11,7 @@ export type User = {
   suggestedPlanId: string
   mealPlan?: string
   workoutPlan?: string
+  expoNotificationToken?: string
 }
 
 export type UserDTO = {

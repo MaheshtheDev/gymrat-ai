@@ -1,49 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react'
-
 import {
   SafeAreaView,
   SectionList,
   View,
-  FlatList,
   TouchableOpacity,
   Text,
   ActivityIndicator,
   ScrollView,
   Pressable,
   Button,
+  Platform,
+  Alert,
 } from 'react-native'
-import { styles } from './style'
-import Modal from 'react-native-modal'
 
-import { Entypo } from '@expo/vector-icons'
-import {
-  ButtonComponent,
-  ButtonVarient,
-  CardComponent,
-  LabelComponent,
-  ProfileHeader,
-  TextInputComponent,
-  TextVarient,
-} from '../../components'
+import * as Device from 'expo-device'
+import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants'
+
+import Modal from 'react-native-modal'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import Toast from 'react-native-toast-message'
+import * as Sentry from 'sentry-expo'
+
+import { styles } from './style'
+import { CardComponent, LabelComponent, ProfileHeader } from '../../components'
 import { ROUTES } from '../../constants'
 import Colors from '../../styles/colors'
-import Toast from 'react-native-toast-message'
 import {
   FONT_SIZE_10,
-  FONT_SIZE_12,
-  FONT_SIZE_14,
   FONT_SIZE_16,
   MONTSERRAT_BOLD,
-  MONTSERRAT_EXTRA_BOLD,
   MONTSERRAT_MEDIUM,
   MONTSERRAT_REGULAR,
 } from '../../styles'
 import { User } from '../../models/api'
-
 import { API } from '../../helpers/api'
 import { hp, wp } from '../../helpers'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import * as Sentry from 'sentry-expo'
+import { Loader } from '../../components/Loader'
+import { Entypo } from '@expo/vector-icons'
 
 const GOALDATA = [
   { value: 0, label: 'Lose Weight' },
@@ -53,20 +47,93 @@ const GOALDATA = [
   { value: 4, label: 'Get Fit' },
 ]
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+})
+
+async function sendPushNotification(expoPushToken: any) {
+  console.log('expo push token', expoPushToken)
+  let expoToken
+  await registerForPushNotificationsAsync().then((token: any) => (expoToken = token))
+  console.log('expo token', expoToken)
+  const message = {
+    to: expoPushToken,
+    title: 'Original Title',
+    body: 'And here is the body!',
+  }
+
+  await fetch('https://api.expo.dev/v2/push/send', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify([
+      {
+        to: 'ExponentPushToken[U8Y2Y5JkJVOCw-5KEGp2qB]',
+        title: 'Personalised Plan is Ready 🎉!',
+        body: 'Your new requested workout and meal plan is ready.',
+      },
+    ]),
+  })
+}
+
+async function registerForPushNotificationsAsync() {
+  let token
+  console.log('device', Device.isDevice)
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    let finalStatus = existingStatus
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync()
+      finalStatus = status
+    }
+    if (finalStatus !== 'granted') {
+      Alert.alert(
+        'Enable Notifications!',
+        'Please enable push notifications from your device settings',
+        [],
+        { userInterfaceStyle: 'dark' }
+      )
+      return
+    }
+    token = await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig?.extra?.eas?.projectId ?? '',
+    })
+    console.log(token)
+  } else {
+    console.log('Must use physical device for Push Notifications')
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    })
+  }
+
+  return token
+}
+
 export function HomeScreen({ navigation }: any) {
   const [workoutPlan, setWorkoutPlan] = useState<any>()
   const [mealPlan, setMealPlan] = useState<any>()
   const [isLoading, setLoading] = useState(false)
-  const animation = useRef(null)
-  const [selectedgoal, setSelectedgoal] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
   const [goalid, setGoalid] = useState(0)
   const [userDetails, setUserDetails] = useState<User>()
   const [dayName, setDayName] = useState('')
   const [goallabel, setGoallabel] = useState('')
-  const [combinedSections, setCombinedSections] = useState<any>([
-    { title: 'Workout', subtitle: 'Meal for the day' },
-  ])
+  const [expoPushToken, setExpoPushToken] = useState('')
+  const [notification, setNotification] = useState(false)
+  const notificationListener = useRef<Notifications.Subscription>()
+  const responseListener = useRef<Notifications.Subscription>()
 
   useEffect(() => {
     //getUserDetails()
@@ -88,6 +155,43 @@ export function HomeScreen({ navigation }: any) {
     setDayName(dayName)
     console.log('day name', dayName)
     getUserDetails()
+
+    async function checkForUpdates() {
+      if (!userDetails?.userId) return
+      await API.checkPlanStatus(userDetails?.userId).then(res => {})
+    }
+    checkForUpdates()
+
+    registerForPushNotificationsAsync().then((token: any) => {
+      setExpoPushToken(token)
+      if (userDetails?.expoNotificationToken !== expoPushToken && userDetails?.userId) {
+        API.UpdateExpoNotification({
+          userId: userDetails?.userId,
+          data: JSON.stringify(token),
+        })
+      }
+    })
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(
+      notification => {
+        setNotification(!!notification)
+      }
+    )
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      response => {
+        console.log(response)
+      }
+    )
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current as Notifications.Subscription
+      )
+      Notifications.removeNotificationSubscription(
+        responseListener.current as Notifications.Subscription
+      )
+    }
   }, [])
 
   const getUserDetails = async () => {
@@ -163,7 +267,6 @@ export function HomeScreen({ navigation }: any) {
     } finally {
       setLoading(false)
     }
-    //throw new Error('Function not implemented.')
   }
 
   const GoalUpdate = async () => {
@@ -199,16 +302,7 @@ export function HomeScreen({ navigation }: any) {
     if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
   }
   return isLoading ? (
-    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
-      <ActivityIndicator
-        size={'large'}
-        style={{
-          alignSelf: 'center',
-          justifyContent: 'center',
-          flex: 1,
-        }}
-      />
-    </View>
+    <Loader />
   ) : (
     <SafeAreaView style={styles.container}>
       <ProfileHeader
@@ -219,6 +313,13 @@ export function HomeScreen({ navigation }: any) {
           })
         }}
         Profile={true}
+        userData={userDetails}
+        onProfilePress={() =>
+          navigation.navigate(ROUTES.PROFILE_SCREEN, {
+            userData: userDetails,
+            id: 1,
+          })
+        }
       />
       <ScrollView>
         <CardComponent cardStyle={styles.cardcontainer}>
@@ -384,7 +485,6 @@ export function HomeScreen({ navigation }: any) {
           }}>
           <LabelComponent label="Today Plan's" style={styles.title} />
         </View>
-
         {workoutPlan && mealPlan && (
           <CardComponent>
             <View>
@@ -401,7 +501,7 @@ export function HomeScreen({ navigation }: any) {
                 renderItem={({ item }: any) => (
                   <>
                     {item.day === dayName && (
-                      <View>
+                      <View key={item.day}>
                         <View style={styles.tablecontainer}>
                           <View
                             style={{
@@ -420,7 +520,7 @@ export function HomeScreen({ navigation }: any) {
                         </View>
                         {item?.exercises?.map((v: any) => {
                           return (
-                            <View>
+                            <View key={v.name}>
                               <View style={styles.tablecontainer}>
                                 <LabelComponent style={styles.tableitem} label={v.name} />
                                 <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -459,44 +559,44 @@ export function HomeScreen({ navigation }: any) {
                 renderItem={({ item }: any) => (
                   <>
                     {item.day === dayName && (
-                      <View>
+                      <View key={item.day}>
                         <View style={[styles.mealview, { marginTop: -0.5 }]}>
                           <View style={styles.mealconatiner}>
                             <LabelComponent label='BREAKFAST' style={styles.heading1} />
                             <LabelComponent
-                              label={`(${item.mealsForTheDay.breakfast.calories}cal)`}
+                              label={`(${item.meals.breakfast.calories}cal)`}
                               style={styles.headingmd}
                             />
                           </View>
                           <View>
                             <LabelComponent
-                              label={item.mealsForTheDay.breakfast.meal}
+                              label={item.meals.breakfast.meal}
                               style={styles.subheading}
                             />
                           </View>
                           <View style={styles.mealconatiner}>
                             <LabelComponent label='LUNCH' style={styles.heading1} />
                             <LabelComponent
-                              label={`(${item.mealsForTheDay.lunch.calories}cal)`}
+                              label={`(${item.meals.lunch.calories}cal)`}
                               style={styles.headingmd}
                             />
                           </View>
                           <View>
                             <LabelComponent
-                              label={item.mealsForTheDay.lunch.meal}
+                              label={item.meals.lunch.meal}
                               style={styles.subheading}
                             />
                           </View>
                           <View style={styles.mealconatiner}>
                             <LabelComponent label='DINNER' style={styles.heading1} />
                             <LabelComponent
-                              label={`(${item.mealsForTheDay.dinner.calories}cal)`}
+                              label={`(${item.meals.dinner.calories}cal)`}
                               style={styles.headingmd}
                             />
                           </View>
                           <View>
                             <LabelComponent
-                              label={item.mealsForTheDay.dinner.meal}
+                              label={item.meals.dinner.meal}
                               style={styles.subheading}
                             />
                           </View>
@@ -615,39 +715,39 @@ export function HomeScreen({ navigation }: any) {
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='BREAKFAST' style={styles.heading} />
                         <LabelComponent
-                          label={`(${item.mealsForTheDay.breakfast.calories}cal)`}
+                          label={`(${item.meals.breakfast.calories}cal)`}
                           style={styles.headingmd}
                         />
                       </View>
                       <View>
                         <LabelComponent
-                          label={item.mealsForTheDay.breakfast.meal}
+                          label={item.meals.breakfast.meal}
                           style={styles.subheading}
                         />
                       </View>
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='LUNCH' style={styles.heading} />
                         <LabelComponent
-                          label={`(${item.mealsForTheDay.lunch.calories}cal)`}
+                          label={`(${item.meals.lunch.calories}cal)`}
                           style={styles.headingmd}
                         />
                       </View>
                       <View>
                         <LabelComponent
-                          label={item.mealsForTheDay.lunch.meal}
+                          label={item.meals.lunch.meal}
                           style={styles.subheading}
                         />
                       </View>
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='DINNER' style={styles.heading} />
                         <LabelComponent
-                          label={`(${item.mealsForTheDay.dinner.calories}cal)`}
+                          label={`(${item.meals.dinner.calories}cal)`}
                           style={styles.headingmd}
                         />
                       </View>
                       <View>
                         <LabelComponent
-                          label={item.mealsForTheDay.dinner.meal}
+                          label={item.meals.dinner.meal}
                           style={styles.subheading}
                         />
                       </View>
@@ -751,64 +851,3 @@ export function HomeScreen({ navigation }: any) {
     </SafeAreaView>
   )
 }
-
-// comment code of `more options`
-//<View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-//  <Pressable
-//    style={{
-//      borderWidth: 1,
-//      borderColor: Colors.LIGHT_GREEN,
-//      borderRadius: 25,
-//      marginRight: wp(2),
-//    }}
-//    onPress={() => {}}>
-//    <Text
-//      style={{
-//        color: Colors.SELECTIVE_YELLOW,
-//        fontFamily: MONTSERRAT_MEDIUM,
-//        fontSize: 10,
-//        paddingHorizontal: 10,
-//        paddingVertical: 5,
-//      }}>
-//      Update Goal
-//    </Text>
-//  </Pressable>
-//  <Pressable
-//    style={{
-//      borderWidth: 1,
-//      borderColor: Colors.LIGHT_GREEN,
-//      borderRadius: 25,
-//      marginRight: wp(2),
-//    }}
-//    onPress={showToast}>
-//    <Text
-//      style={{
-//        color: 'white',
-//        fontFamily: MONTSERRAT_MEDIUM,
-//        fontSize: 10,
-//        paddingHorizontal: 10,
-//        paddingVertical: 5,
-//      }}>
-//      Request New Plan
-//    </Text>
-//  </Pressable>
-//  <Pressable
-//    style={{
-//      borderWidth: 1,
-//      borderColor: Colors.LIGHT_GREEN,
-//      borderRadius: 25,
-//      marginRight: wp(5),
-//    }}
-//    onPress={() => {}}>
-//    <Text
-//      style={{
-//        color: 'white',
-//        fontFamily: MONTSERRAT_MEDIUM,
-//        fontSize: 10,
-//        paddingHorizontal: 10,
-//        paddingVertical: 5,
-//      }}>
-//      Update Metrics
-//    </Text>
-//  </Pressable>
-//</View>

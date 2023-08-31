@@ -6,6 +6,7 @@ enum Colors {
   TRANSPARENT = 'transparent',
   YELLOW = '#FBBC0580',
   BORDERGREEN = '#49FF09BF',
+  RED = '#FF0000',
 
   // ACTIONS
   SUCCESS = '#3adb76',

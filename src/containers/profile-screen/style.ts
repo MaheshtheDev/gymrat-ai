@@ -5,6 +5,9 @@ import {
   FONT_WEIGHT_REGULAR,
   MONTSERRAT_REGULAR,
   MONTSERRAT_LIGHT,
+  FONT_WEIGHT_BOLD,
+  MONTSERRAT_SEMIBOLD_ITALIC,
+  FONT_SIZE_14,
 } from '../../styles'
 import {
   widthPercentageToDP as wp,
@@ -21,29 +24,26 @@ export const styles = StyleSheet.create({
     fontFamily: MONTSERRAT_LIGHT,
     fontSize: FONT_SIZE_13,
     fontWeight: FONT_WEIGHT_REGULAR,
-    color: Colors.JAVA,
+    color: Colors.WHITE,
     marginBottom: hp('0.3%'),
   },
   subtitle: {
     color: Colors.WHITE,
-    fontSize: FONT_SIZE_13,
-    fontFamily: MONTSERRAT_LIGHT,
-    fontWeight: FONT_WEIGHT_REGULAR,
-
-
-    
+    fontSize: FONT_SIZE_14,
+    fontFamily: MONTSERRAT_REGULAR,
+    fontWeight: FONT_WEIGHT_BOLD,
   },
   titlecontainer: {
     marginTop: hp('1.5%'),
   },
   maincontainer: {
-    flexDirection: 'row',
-    justifyContent:'space-between',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     marginHorizontal: wp('9%'),
   },
   subcontainer: {
     marginLeft: wp('9%'),
-    flex:1
+    flex: 1,
   },
   emaillabel: {
     color: Colors.JAVA,
@@ -59,25 +59,25 @@ export const styles = StyleSheet.create({
     marginVertical: hp('1.5%'),
   },
   linkemailcontainer: {
-    flexDirection: 'row',   
+    flexDirection: 'row',
   },
   email: {
     color: Colors.WHITE,
     fontSize: FONT_SIZE_13,
-    flexWrap:'wrap',
+    flexWrap: 'wrap',
     fontFamily: MONTSERRAT_REGULAR,
     fontWeight: FONT_WEIGHT_REGULAR,
     marginLeft: wp('1%'),
   },
-  save:{
-    textAlign:'center',
-    color:Colors.BLACK,
-    flex:1
+  save: {
+    textAlign: 'center',
+    color: Colors.BLACK,
+    flex: 1,
   },
   linkemailcontainer1: {
     flexDirection: 'row',
     width: '40%',
-    backgroundColor:Colors.CHLOROPHYL_GREEN,
+    backgroundColor: Colors.CHLOROPHYL_GREEN,
     borderRadius: 25,
     borderWidth: 1,
     borderColor: Colors.YELLOW,
@@ -85,12 +85,26 @@ export const styles = StyleSheet.create({
     paddingHorizontal: wp('2%'),
     marginTop: hp('0.5%'),
   },
-  ss:{
+  ss: {
     borderRadius: 25,
     borderWidth: 1,
     borderColor: Colors.YELLOW,
     paddingVertical: hp('1%'),
     paddingHorizontal: wp('2%'),
     marginTop: hp('0.5%'),
-  }
+  },
+  delete: {
+    textAlign: 'center',
+    color: Colors.RED,
+    fontFamily: MONTSERRAT_BOLD,
+    fontSize: FONT_SIZE_13,
+    paddingVertical: hp('1%'),
+  },
+  logoutbutton: {
+    paddingVertical: hp('1.5%'),
+    paddingHorizontal: hp('7.35%'),
+    alignSelf: 'center',
+    color: Colors.SPRING_GREEN,
+    fontFamily: MONTSERRAT_BOLD,
+  },
 })
