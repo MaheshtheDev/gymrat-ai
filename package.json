@@ -49,6 +49,7 @@
     "react-native-svg-transformer": "^1.0.0",
     "react-native-toast-message": "^2.1.6",
     "sentry-expo": "~6.2.0",
+    "zod": "^3.22.2",
     "zustand": "^4.3.8"
   },
   "devDependencies": {

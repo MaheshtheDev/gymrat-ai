@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 
 import { NavigationService } from '../../navigation/NavigationService'
-import { SafeAreaView, View, ActivityIndicator, Text } from 'react-native'
+import { SafeAreaView, View, Text } from 'react-native'
 import { styles } from './style'
 
 import { Header } from '../../components'
 import { ROUTES } from '../../constants'
-import Colors from '../../styles/colors'
 import { API } from '../../helpers/api'
 import { hp } from '../../helpers'
+import { Loader } from '../../components/Loader'
 
 export function ProfileScreen({ route, navigation }: any) {
   const [disabled, setDisabled] = useState(false)
@@ -28,16 +28,7 @@ export function ProfileScreen({ route, navigation }: any) {
   }, [])
 
   return isLoading ? (
-    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
-      <ActivityIndicator
-        size={'large'}
-        style={{
-          alignSelf: 'center',
-          justifyContent: 'center',
-          flex: 1,
-        }}
-      />
-    </View>
+    <Loader />
   ) : (
     <SafeAreaView style={styles.container}>
       <Header
@@ -60,6 +51,11 @@ export function ProfileScreen({ route, navigation }: any) {
             <Text style={styles.title}>Email </Text>
             <Text style={styles.subtitle}>{userData.email}</Text>
           </View>
+        </View>
+        {/* TODO: Test Settings Sections*/}
+        <View style={{paddingVertical: hp('1.5%')}}>
+          <Text>SETTINGS</Text>
+          <Text></Text>
         </View>
       </View>
       <View

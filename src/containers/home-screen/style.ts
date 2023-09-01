@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.BLACK,
   },
+
   cardcontainer: {
     paddingVertical: hp('1%'),
     backgroundColor: Colors.SHARK,
@@ -42,17 +43,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
-  label1: {
-    color: Colors.GUMBO,
-    fontSize: FONT_SIZE_12,
-    textAlign: 'center',
-    fontFamily: MONTSERRAT_REGULAR,
-  },
-  label2: {
-    color: Colors.WHITE,
-    fontWeight: FONT_WEIGHT_OR_TEXT,
-    fontFamily: MONTSERRAT_REGULAR,
-  },
   roundcontainer: {
     height: 50,
     width: 50,
@@ -64,12 +54,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   txt: {
     color: Colors.WHITE,
     fontWeight: FONT_WEIGHT_REGULAR,
     fontFamily: MONTSERRAT_MEDIUM,
     textAlign: 'center',
   },
+
   subtxt: {
     fontSize: FONT_SIZE_8,
     fontWeight: FONT_WEIGHT_REGULAR,
@@ -77,14 +69,7 @@ export const styles = StyleSheet.create({
     color: Colors.WHITE,
     alignSelf: 'center',
   },
-  bottomtxt1: {
-    fontSize: FONT_SIZE_12,
-    fontWeight: FONT_WEIGHT_REGULAR,
-    color: Colors.GUMBO,
-    marginTop: hp('0.5%'),
-    marginHorizontal: wp('1%'),
-    marginBottom: hp('1.5%'),
-  },
+
   card: {
     backgroundColor: Colors.CYLINDRICAL_GREEN,
     marginLeft: wp('3.5%'),
@@ -94,19 +79,7 @@ export const styles = StyleSheet.create({
     paddingVertical: hp('1%'),
     marginBottom: wp('1%'),
   },
-  item: {
-    marginHorizontal: wp('1%'),
-    marginVertical: hp('0.2%'),
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  tableitem1: {
-    flex: 1,
-    fontSize: FONT_SIZE_16,
-    fontWeight: FONT_WEIGHT_OR_TEXT,
-    fontFamily: MONTSERRAT_LIGHT,
-    color: Colors.SPRING_GREEN,
-  },
+
   tableitem: {
     fontSize: FONT_SIZE_16,
     fontWeight: FONT_WEIGHT_OR_TEXT,
@@ -115,6 +88,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flex: 1,
   },
+
   table1: {
     fontSize: FONT_SIZE_16,
     fontWeight: FONT_WEIGHT_OR_TEXT,
@@ -122,6 +96,7 @@ export const styles = StyleSheet.create({
     color: Colors.WHITE,
     paddingRight: wp('12.4%'),
   },
+
   repsitem: {
     fontSize: FONT_SIZE_16,
     fontWeight: FONT_WEIGHT_OR_TEXT,
@@ -131,15 +106,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: wp('2.5%'),
   },
-  setsContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  repsContainer: {
-    flex: 1,
-    alignItems: 'center',
-    marginRight: wp('1.5%'),
-  },
+
   tablecontainer: {
     justifyContent: 'flex-end',
     flexDirection: 'row',
@@ -147,6 +114,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     marginBottom: hp('0.5%'),
   },
+
   title: {
     fontSize: FONT_SIZE_20,
     fontWeight: FONT_WEIGHT_OR_TEXT,
@@ -155,9 +123,11 @@ export const styles = StyleSheet.create({
     marginVertical: hp('1.2%'),
     marginLeft: wp('4%'),
   },
+
   mealconatiner: {
     flexDirection: 'row',
   },
+
   heading: {
     fontWeight: FONT_WEIGHT_OR_TEXT,
     fontSize: FONT_SIZE_12,
@@ -167,6 +137,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp('0.3%'),
     marginTop: hp('0.5%'),
   },
+
   heading1: {
     fontWeight: FONT_WEIGHT_OR_TEXT,
     fontSize: FONT_SIZE_12,
@@ -176,6 +147,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp('0.3%'),
     marginTop: hp('0.5%'),
   },
+
   headingmd: {
     fontSize: FONT_SIZE_9,
     fontFamily: MONTSERRAT_BOLD,
@@ -184,6 +156,7 @@ export const styles = StyleSheet.create({
     color: Colors.WHITE,
     marginHorizontal: wp('0.2%'),
   },
+
   subheading: {
     fontSize: FONT_SIZE_14,
     fontWeight: FONT_WEIGHT_OR_TEXT,
@@ -191,6 +164,7 @@ export const styles = StyleSheet.create({
     color: Colors.WHITE,
     marginBottom: hp('0.4%'),
   },
+
   subheading1: {
     fontSize: FONT_SIZE_18,
     fontWeight: FONT_WEIGHT_TITLE,
@@ -198,6 +172,7 @@ export const styles = StyleSheet.create({
     color: Colors.SELECTIVE_YELLOW,
     marginTop: hp('1%'),
   },
+
   workout: {
     flex: 1,
     fontSize: FONT_SIZE_18,
@@ -206,29 +181,13 @@ export const styles = StyleSheet.create({
     color: Colors.LIGHT_GREEN,
     marginTop: hp('1%'),
   },
-  goalcontainer: {
-    justifyContent: 'center',
-    marginHorizontal: wp('2%'),
-  },
+
   viewalltxt: {
     color: Colors.SELECTIVE_YELLOW,
     fontSize: FONT_SIZE_12,
     fontFamily: MONTSERRAT_MEDIUM,
   },
-  goaltxt: {
-    fontSize: FONT_SIZE_14,
-    fontWeight: FONT_WEIGHT_REGULAR,
-    fontFamily: MONTSERRAT_REGULAR,
-    color: Colors.GUMBO,
-    textAlign: 'center',
-  },
-  gaintxt: {
-    color: Colors.CHLOROPHYL_GREEN,
-    fontWeight: FONT_WEIGHT_600,
-    fontSize: FONT_SIZE_14,
-    fontFamily: MONTSERRAT_BOLD,
-    textAlign: 'center',
-  },
+
   goalchangetxt: {
     fontSize: FONT_SIZE_6,
     color: Colors.CORDUROY,
@@ -237,19 +196,23 @@ export const styles = StyleSheet.create({
     fontFamily: MONTSERRAT_REGULAR,
     textAlign: 'right',
   },
+
   flatlist: {
     flexDirection: 'row',
     flex: 1,
   },
+
   headercontainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+
   iconcontainer: {
     flexDirection: 'row',
     marginRight: wp('4%'),
   },
+
   modaltitle: {
     color: Colors.WHITE,
     fontSize: FONT_SIZE_18,
@@ -258,12 +221,14 @@ export const styles = StyleSheet.create({
     marginBottom: hp('2%'),
     marginTop: hp('2%'),
   },
+
   label: {
     color: Colors.WHITE,
     fontWeight: FONT_WEIGHT_OR_TEXT,
     fontFamily: MONTSERRAT_BOLD,
     marginHorizontal: wp('5%'),
   },
+
   txtinput: {
     backgroundColor: Colors.BLACK,
     borderRadius: 25,
@@ -277,6 +242,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp('3%'),
     marginLeft: wp('3%'),
   },
+
   modalcontainer: {
     backgroundColor: Colors.BLACK,
     alignSelf: 'center',
@@ -285,21 +251,61 @@ export const styles = StyleSheet.create({
     borderRadius: 7,
     paddingVertical: hp('2%'),
   },
+
+  modalTitle: {
+    color: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: MONTSERRAT_REGULAR,
+    fontSize: FONT_SIZE_16,
+    textAlign: 'center',
+  },
+
+  modalSavePressable: {
+    paddingVertical: 4,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    backgroundColor: Colors.SPRING_GREEN,
+  },
+
+  modalSaveText: {
+    color: 'black',
+    fontFamily: MONTSERRAT_REGULAR,
+    fontSize: FONT_SIZE_16,
+  },
+
+  modalCancelPressable: {
+    borderColor: 'white',
+    borderWidth: 1,
+    paddingVertical: 4,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+  },
+
+  modalCancelText: {
+    color: 'white',
+    fontFamily: MONTSERRAT_REGULAR,
+    fontSize: FONT_SIZE_16,
+  },
+
   savebutton: {
     backgroundColor: Colors.CHLOROPHYL_GREEN,
     borderRadius: 27,
     width: '40%',
     marginRight: wp('6%'),
   },
+
   cancelbutton: {
     backgroundColor: Colors.CHLOROPHYL_GREEN,
     borderRadius: 27,
     width: '40%',
     marginLeft: wp('4%'),
   },
+
   mealview: {
     marginVertical: hp('1%'),
   },
+
   dropdown: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -315,6 +321,7 @@ export const styles = StyleSheet.create({
     marginBottom: hp('3%'),
     marginLeft: wp('3%'),
   },
+
   optionsContainer: {
     justifyContent: 'center',
     alignSelf: 'center',
@@ -324,6 +331,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
   },
+
   option: {
     backgroundColor: 'black',
   },
@@ -337,6 +345,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 5,
   },
+
   selectedOption: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -347,14 +356,81 @@ export const styles = StyleSheet.create({
     marginVertical: 5,
     backgroundColor: Colors.CHLOROPHYL_GREEN,
   },
+
   optionText: {
     color: 'white',
     paddingHorizontal: 5,
     fontFamily: MONTSERRAT_REGULAR,
   },
+
   selectedOptionText: {
     color: 'black',
     paddingHorizontal: 5,
     fontFamily: MONTSERRAT_REGULAR,
+  },
+
+  userMetricsText: {
+    color: 'white',
+    fontFamily: MONTSERRAT_REGULAR,
+    fontSize: FONT_SIZE_10,
+  },
+
+  userMetricsView: {
+    alignContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+
+  goalXView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  goalYView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  goalTitleText: {
+    fontFamily: MONTSERRAT_MEDIUM,
+    color: 'lightgrey',
+    fontSize: 12,
+  },
+
+  goalLabelText: {
+    fontFamily: MONTSERRAT_BOLD,
+    color: Colors.PRIMARY,
+    fontSize: 16,
+  },
+
+  actionsView: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginLeft: wp('4%'),
+    marginTop: hp('1%'),
+  },
+
+  actionsTitleText: {
+    color: 'white',
+    fontFamily: MONTSERRAT_MEDIUM,
+    paddingRight: 5,
+  },
+
+  actionsButtonPressable: {
+    borderWidth: 1,
+    borderColor: Colors.LIGHT_GREEN,
+    borderRadius: 25,
+    marginRight: wp(2),
+  },
+
+  actionsButtonText: {
+    color: 'white',
+    fontFamily: MONTSERRAT_MEDIUM,
+    fontSize: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
 })

@@ -8,6 +8,7 @@ import axios from 'axios'
 import { CardComponent, Header, LabelComponent } from '../../components'
 import Colors from '../../styles/colors'
 import { useRoute } from '@react-navigation/native'
+import { Loader } from '../../components/Loader'
 
 export function MealScreen({ navigation }: any) {
   const [mealPlan, setMealPlan] = useState([])
@@ -30,16 +31,7 @@ export function MealScreen({ navigation }: any) {
     }
   }
   return isLoading ? (
-    <View style={{ backgroundColor: Colors.BLACK, flex: 1 }}>
-      <ActivityIndicator
-        size={'large'}
-        style={{
-          alignSelf: 'center',
-          justifyContent: 'center',
-          flex: 1,
-        }}
-      />
-    </View>
+    <Loader />
   ) : (
     <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}>

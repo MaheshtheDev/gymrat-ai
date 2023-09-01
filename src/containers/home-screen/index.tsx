@@ -5,10 +5,8 @@ import {
   View,
   TouchableOpacity,
   Text,
-  ActivityIndicator,
   ScrollView,
   Pressable,
-  Button,
   Platform,
   Alert,
 } from 'react-native'
@@ -16,6 +14,7 @@ import {
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants'
+import { Entypo } from '@expo/vector-icons'
 
 import Modal from 'react-native-modal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -24,28 +23,11 @@ import * as Sentry from 'sentry-expo'
 
 import { styles } from './style'
 import { CardComponent, LabelComponent, ProfileHeader } from '../../components'
-import { ROUTES } from '../../constants'
+import { ROUTES, GOALDATA } from '../../constants'
 import Colors from '../../styles/colors'
-import {
-  FONT_SIZE_10,
-  FONT_SIZE_16,
-  MONTSERRAT_BOLD,
-  MONTSERRAT_MEDIUM,
-  MONTSERRAT_REGULAR,
-} from '../../styles'
 import { User } from '../../models/api'
-import { API } from '../../helpers/api'
-import { hp, wp } from '../../helpers'
+import { API, mealPlanScheme, workoutPlanScheme } from '../../helpers'
 import { Loader } from '../../components/Loader'
-import { Entypo } from '@expo/vector-icons'
-
-const GOALDATA = [
-  { value: 0, label: 'Lose Weight' },
-  { value: 1, label: 'Gain Weight' },
-  { value: 2, label: 'Maintain Weight' },
-  { value: 3, label: 'Build Muscle' },
-  { value: 4, label: 'Get Fit' },
-]
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -54,72 +36,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
   }),
 })
-
-async function sendPushNotification(expoPushToken: any) {
-  console.log('expo push token', expoPushToken)
-  let expoToken
-  await registerForPushNotificationsAsync().then((token: any) => (expoToken = token))
-  console.log('expo token', expoToken)
-  const message = {
-    to: expoPushToken,
-    title: 'Original Title',
-    body: 'And here is the body!',
-  }
-
-  await fetch('https://api.expo.dev/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify([
-      {
-        to: 'ExponentPushToken[U8Y2Y5JkJVOCw-5KEGp2qB]',
-        title: 'Personalised Plan is Ready 🎉!',
-        body: 'Your new requested workout and meal plan is ready.',
-      },
-    ]),
-  })
-}
-
-async function registerForPushNotificationsAsync() {
-  let token
-  console.log('device', Device.isDevice)
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync()
-    let finalStatus = existingStatus
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync()
-      finalStatus = status
-    }
-    if (finalStatus !== 'granted') {
-      Alert.alert(
-        'Enable Notifications!',
-        'Please enable push notifications from your device settings',
-        [],
-        { userInterfaceStyle: 'dark' }
-      )
-      return
-    }
-    token = await Notifications.getExpoPushTokenAsync({
-      projectId: Constants.expoConfig?.extra?.eas?.projectId ?? '',
-    })
-    console.log(token)
-  } else {
-    console.log('Must use physical device for Push Notifications')
-  }
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    })
-  }
-
-  return token
-}
 
 export function HomeScreen({ navigation }: any) {
   const [workoutPlan, setWorkoutPlan] = useState<any>()
@@ -194,40 +110,93 @@ export function HomeScreen({ navigation }: any) {
     }
   }, [])
 
+  async function registerForPushNotificationsAsync() {
+    let token
+    console.log('device', Device.isDevice)
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync()
+      let finalStatus = existingStatus
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync()
+        finalStatus = status
+      }
+      if (finalStatus !== 'granted') {
+        return
+      }
+      token = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId ?? '',
+      })
+      console.log(token)
+    } else {
+      console.log('Must use physical device for Push Notifications')
+    }
+
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      })
+    }
+
+    return token
+  }
+
   const getUserDetails = async () => {
     try {
       setLoading(true)
       const userdata = await API.getUserDetails()
       if (userdata?.data !== null && userdata?.data !== undefined) {
         const userDetails: User = userdata?.data
-        console.log('User Details -- in get user details')
-        console.log(userDetails)
-        console.log('plans in user details')
-
         console.log(JSON.parse(userDetails?.workoutPlan || '[]'))
         console.log(JSON.parse(userDetails?.mealPlan || '[]'))
         const goalLabel =
           GOALDATA.find(item => item.value === userDetails?.goal)?.label || ''
         setGoallabel(goalLabel)
         setGoalid(userDetails?.goal)
-        setWorkoutPlan([
-          {
-            title: 'Workout Schedule',
-            data: JSON.parse(userDetails.workoutPlan || '[]').days,
-            subtitle: 'Workout',
-          },
-        ])
-        setMealPlan([
-          {
-            title: 'Meal Plan Schedule',
-            data: JSON.parse(userDetails.mealPlan || '[]').days,
-            subtitle: 'Meal for the day',
-          },
-        ])
-        console.log('Workout Plan')
-        console.log(workoutPlan)
-        console.log('Meal Plan')
-        console.log(mealPlan)
+        // TODO: Check if the workout plan and meal plan are valid and Test it
+
+        console.log('workout plan', workoutPlan)
+
+        if (
+          workoutPlanScheme.safeParse(JSON.parse(userDetails?.workoutPlan || '[]'))
+            .success &&
+          mealPlanScheme.safeParse(JSON.parse(userDetails?.mealPlan || '[]')).success
+        ) {
+          setWorkoutPlan([
+            {
+              title: 'Workout Schedule',
+              data: JSON.parse(userDetails.workoutPlan || '[]').days,
+              subtitle: 'Workout',
+            },
+          ])
+          setMealPlan([
+            {
+              title: 'Meal Plan Schedule',
+              data: JSON.parse(userDetails.mealPlan || '[]').days,
+              subtitle: 'Meal for the day',
+            },
+          ])
+        } else {
+          Alert.alert(
+            'Oops...!',
+            "A.I didn't come up with a plan yet for you",
+            [
+              {
+                text: 'Request a New Plan',
+                onPress: () => {
+                  showToast()
+                },
+              },
+            ],
+            { userInterfaceStyle: 'dark' }
+          )
+        }
+        //console.log('Workout Plan')
+        //console.log(workoutPlan)
+        //console.log('Meal Plan')
+        //console.log(mealPlan)
         setUserDetails(userDetails)
         setLoading(false)
         if (userDetails?.workoutPlan == null || userDetails?.workoutPlan == undefined) {
@@ -250,10 +219,10 @@ export function HomeScreen({ navigation }: any) {
                   subtitle: 'Meal for the day',
                 },
               ])
-              console.log('Workout Plan in if')
-              console.log(workoutPlan)
-              console.log('Meal Plan in if')
-              console.log(mealPlan)
+              //console.log('Workout Plan in if')
+              //console.log(workoutPlan)
+              //console.log('Meal Plan in if')
+              //console.log(mealPlan)
               if (res.workoutPlan.length > 0 && res.mealPlan.length > 0) {
                 setLoading(false)
               }
@@ -271,6 +240,7 @@ export function HomeScreen({ navigation }: any) {
 
   const GoalUpdate = async () => {
     setGoallabel(GOALDATA.find(item => item.value === goalid)?.label || '')
+
     var body = {
       goal: goalid,
       height: userDetails?.height,
@@ -280,18 +250,14 @@ export function HomeScreen({ navigation }: any) {
       userId: userDetails?.userId,
     }
 
-    console.log('goal id', goalid)
-    console.log('goal label', goallabel)
-
     try {
       await API.UpdateUser(body)
     } catch (error) {
       console.error(error, 'errrrr')
-    } finally {
     }
   }
 
-  const showToast = () => {
+  const showToast = async () => {
     Toast.show({
       type: 'tomatoToast',
       props: {
@@ -299,8 +265,23 @@ export function HomeScreen({ navigation }: any) {
         msg: 'We will notify you once your new plan is ready.',
       },
     })
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    let finalStatus = existingStatus
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync()
+      finalStatus = status
+    }
+    if (finalStatus !== 'granted') {
+      Alert.alert(
+        'Enable Notifications',
+        'Please enable notifications in settings to get notified when your new plan is ready.',
+        [{ text: 'Ok' }],
+        { userInterfaceStyle: 'dark' }
+      )
+    }
     if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
   }
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -329,153 +310,54 @@ export function HomeScreen({ navigation }: any) {
               justifyContent: 'space-around',
               paddingBottom: 10,
             }}>
-            <View
-              style={{
-                alignContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: 10,
-              }}>
+            <View style={styles.userMetricsView}>
               <View style={styles.roundcontainer}>
                 <LabelComponent label={userDetails?.weight} style={styles.txt} />
                 <LabelComponent label='lbs' style={styles.subtxt} />
               </View>
-              <Text
-                style={{
-                  color: 'white',
-                  fontFamily: MONTSERRAT_REGULAR,
-                  fontSize: FONT_SIZE_10,
-                }}>
-                Weight
-              </Text>
+              <Text style={styles.userMetricsText}>Weight</Text>
             </View>
-            <View
-              style={{
-                alignContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: 10,
-              }}>
+            <View style={styles.userMetricsView}>
               <View style={styles.roundcontainer}>
                 <LabelComponent label={userDetails?.height} style={styles.txt} />
                 <LabelComponent label='cm' style={styles.subtxt} />
               </View>
-              <Text
-                style={{
-                  color: 'white',
-                  fontFamily: MONTSERRAT_REGULAR,
-                  fontSize: FONT_SIZE_10,
-                }}>
-                Height
-              </Text>
+              <Text style={styles.userMetricsText}>Height</Text>
             </View>
-            <View
-              style={{
-                alignContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: 10,
-              }}>
+            <View style={styles.userMetricsView}>
               <View style={styles.roundcontainer}>
                 <LabelComponent
                   label={userDetails?.bmiValue?.toFixed(2)}
                   style={styles.txt}
                 />
               </View>
-              <Text
-                style={{
-                  color: 'white',
-                  fontFamily: MONTSERRAT_REGULAR,
-                  fontSize: FONT_SIZE_10,
-                }}>
-                BMI
-              </Text>
+              <Text style={styles.userMetricsText}>BMI</Text>
             </View>
           </View>
           <View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: MONTSERRAT_MEDIUM,
-                    color: 'lightgrey',
-                    fontSize: 12,
-                  }}>
-                  Goal: &nbsp;
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: MONTSERRAT_BOLD,
-                    color: Colors.PRIMARY,
-                    fontSize: 16,
-                  }}>
-                  {goallabel}
-                </Text>
+            <View style={styles.goalXView}>
+              <View style={styles.goalYView}>
+                <Text style={styles.goalTitleText}>Goal: &nbsp;</Text>
+                <Text style={styles.goalLabelText}>{goallabel}</Text>
               </View>
             </View>
           </View>
         </CardComponent>
 
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            marginLeft: wp('4%'),
-            marginTop: hp('1%'),
-          }}>
-          <Text
-            style={{ color: 'white', fontFamily: MONTSERRAT_MEDIUM, paddingRight: 5 }}>
-            Actions:{' '}
-          </Text>
+        <View style={styles.actionsView}>
+          <Text style={styles.actionsTitleText}>Actions: </Text>
           <Pressable
-            style={{
-              borderWidth: 1,
-              borderColor: Colors.LIGHT_GREEN,
-              borderRadius: 25,
-              marginRight: wp(2),
-            }}
+            style={styles.actionsButtonPressable}
             onPress={() => {
               setModalVisible(!modalVisible)
             }}>
-            <Text
-              style={{
-                color: 'white',
-                fontFamily: MONTSERRAT_MEDIUM,
-                fontSize: 10,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-              }}>
-              Update Goal
-            </Text>
+            <Text style={styles.actionsButtonText}>Update Goal</Text>
           </Pressable>
-          <Pressable
-            style={{
-              borderWidth: 1,
-              borderColor: Colors.LIGHT_GREEN,
-              borderRadius: 25,
-              marginRight: wp(2),
-            }}
-            onPress={showToast}>
-            <Text
-              style={{
-                color: 'white',
-                fontFamily: MONTSERRAT_MEDIUM,
-                fontSize: 10,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-              }}>
-              Request New Plan
-            </Text>
+          <Pressable style={styles.actionsButtonPressable} onPress={showToast}>
+            <Text style={styles.actionsButtonText}>Request New Plan</Text>
           </Pressable>
         </View>
+
         <View
           style={{
             flexDirection: 'row',
@@ -485,6 +367,7 @@ export function HomeScreen({ navigation }: any) {
           }}>
           <LabelComponent label="Today Plan's" style={styles.title} />
         </View>
+
         {workoutPlan && mealPlan && (
           <CardComponent>
             <View>
@@ -765,17 +648,7 @@ export function HomeScreen({ navigation }: any) {
             isVisible={modalVisible}
             onBackdropPress={() => setModalVisible(!modalVisible)}>
             <View style={styles.modalcontainer}>
-              <Text
-                style={{
-                  color: 'white',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: MONTSERRAT_REGULAR,
-                  fontSize: FONT_SIZE_16,
-                  textAlign: 'center',
-                }}>
-                What's your new Goal?
-              </Text>
+              <Text style={styles.modalTitle}>What's your new Goal?</Text>
               <KeyboardAwareScrollView style={{}}>
                 <View>
                   <View
@@ -807,41 +680,16 @@ export function HomeScreen({ navigation }: any) {
               </KeyboardAwareScrollView>
               <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                 <Pressable
-                  style={{
-                    borderColor: 'white',
-                    borderWidth: 1,
-                    paddingVertical: 4,
-                    paddingHorizontal: 20,
-                    borderRadius: 25,
-                  }}
+                  style={styles.modalCancelPressable}
                   onPress={() => setModalVisible(!modalVisible)}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontFamily: MONTSERRAT_REGULAR,
-                      fontSize: FONT_SIZE_16,
-                    }}>
-                    Cancel
-                  </Text>
+                  <Text style={styles.modalCancelText}>Cancel</Text>
                 </Pressable>
                 <Pressable
-                  style={{
-                    paddingVertical: 4,
-                    paddingHorizontal: 20,
-                    borderRadius: 25,
-                    backgroundColor: Colors.SPRING_GREEN,
-                  }}
+                  style={styles.modalSavePressable}
                   onPress={() => {
                     GoalUpdate(), setModalVisible(!modalVisible)
                   }}>
-                  <Text
-                    style={{
-                      color: 'black',
-                      fontFamily: MONTSERRAT_REGULAR,
-                      fontSize: FONT_SIZE_16,
-                    }}>
-                    Save
-                  </Text>
+                  <Text style={styles.modalSaveText}>Save</Text>
                 </Pressable>
               </View>
             </View>
