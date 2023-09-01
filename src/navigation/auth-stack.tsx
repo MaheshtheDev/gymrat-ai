@@ -1,35 +1,31 @@
 import * as React from 'react'
 
-import { ROUTES, Strings } from '@constants'
-
 import { AuthStackParamList } from './stack-param-list'
-import { SignUpOptionsScreen } from '@containers'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { SignUpOptionsScreen, AddMoreDetailsScreen } from '../containers'
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack'
 
 const Stack = createNativeStackNavigator<AuthStackParamList>()
-type AuthStackProps = {}
+type AuthStackProps = {
+  onPress?: () => void
+  navigation: NativeStackNavigationProp<AuthStackParamList>
+}
 
-export const AuthStack: React.FC<AuthStackProps> = ({}) => {
+export const AuthStack: React.FC<AuthStackProps> = ({ navigation }) => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName='SignUpOptionsScreen'>
       <Stack.Screen
-        name={ROUTES.SIGN_UP_OPTIONS_SCREEN}
+        name={'SignUpOptionsScreen'}
         component={SignUpOptionsScreen}
         options={{ headerShown: false, gestureEnabled: false }}
       />
-      {/* <Stack.Screen
-        name={ROUTES.SIGN_UP_SCREEN}
-        component={SignUpScreen}
-        options={{
-          headerStyle: headerStyle,
-          header: () => (
-            <Header
-              isBackButtonVisible={true}
-              onBackButtonPress={() => globalNavigateBack(false)}
-            />
-          ),
-        }}
-      /> */}
+      <Stack.Screen
+        name={'AddMoreDetailsScreen'}
+        component={AddMoreDetailsScreen}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
     </Stack.Navigator>
   )
 }
