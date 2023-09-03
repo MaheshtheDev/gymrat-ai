@@ -28,6 +28,7 @@ import Colors from '../../styles/colors'
 import { User } from '../../models/api'
 import { API, mealPlanScheme, workoutPlanScheme } from '../../helpers'
 import { Loader } from '../../components/Loader'
+import { TempStorage } from '../../helpers/tempStorage'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -258,28 +259,31 @@ export function HomeScreen({ navigation }: any) {
   }
 
   const showToast = async () => {
-    Toast.show({
-      type: 'tomatoToast',
-      props: {
-        text: 'New Plan Requested!',
-        msg: 'We will notify you once your new plan is ready.',
-      },
-    })
-    const { status: existingStatus } = await Notifications.getPermissionsAsync()
-    let finalStatus = existingStatus
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync()
-      finalStatus = status
+    if (userDetails?.userId) {
+      Toast.show({
+        type: 'tomatoToast',
+        props: {
+          text: 'New Plan Requested!',
+          msg: 'We will notify you once your new plan is ready.',
+        },
+      })
+      const { status: existingStatus } = await Notifications.getPermissionsAsync()
+      let finalStatus = existingStatus
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync()
+        finalStatus = status
+      }
+      if (finalStatus !== 'granted') {
+        Alert.alert(
+          'Enable Notifications',
+          'Please enable notifications in settings to get notified when your new plan is ready.',
+          [{ text: 'Ok' }],
+          { userInterfaceStyle: 'dark' }
+        )
+      }
+      await TempStorage.setItem('newPlanRequested', 'true')
+      API.getNewPlan(userDetails?.userId)
     }
-    if (finalStatus !== 'granted') {
-      Alert.alert(
-        'Enable Notifications',
-        'Please enable notifications in settings to get notified when your new plan is ready.',
-        [{ text: 'Ok' }],
-        { userInterfaceStyle: 'dark' }
-      )
-    }
-    if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
   }
 
   return isLoading ? (

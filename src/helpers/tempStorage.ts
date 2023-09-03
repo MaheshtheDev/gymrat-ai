@@ -5,6 +5,7 @@ export const TempStorageKeys = {
   APPLE_CREDENTIALS: 'appleCredentials',
   WORKOUT_PLAN: 'workoutPlan',
   MEAL_PLAN: 'mealPlan',
+  NEW_PLAN_REQUESTED: 'newPlanRequested',
 }
 
 export const TempStorage = {
