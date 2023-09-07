@@ -53,7 +53,7 @@ export const API = {
     return response.data
   },
 
-  async getUserDetails(userId?: string) {
+  async getUserDetails(userId?: string, forceFetch?: boolean) {
     console.log('User ID in get user details')
     console.log(userId)
     const userData = await TempStorage.getItem(TempStorageKeys.USER_PROFILE)
@@ -141,7 +141,7 @@ export const API = {
       .post(`${this.BASE_URL}/user/notification`, body)
       .then(async res => {
         console.log('Response from updating expo notification')
-        console.log(res)
+        //console.log(res)
       })
       .catch(err => {
         console.log('Error from updating expo notification')
@@ -150,18 +150,19 @@ export const API = {
   },
 
   async checkPlanStatus(userId: string) {
-    await axios
+    const res = await axios
       .get(`${this.BASE_URL}/user/plan-status?userId=${userId}`)
       .then(async res => {
         console.log('Response from checking plan status')
-        console.log(res)
-        //if (res.data.status == 200) {
-        //  await TempStorage.setItem(
-        //    TempStorageKeys.USER_PROFILE,
-        //    JSON.stringify(res.data.userDetails)
-        //  )
-        //}
+        console.log(res.data.planUpdated)
+        return { isPlanUpdated: res.data.planUpdated, status: 200 }
       })
+      .catch(err => {
+        console.log('Error from checking plan status')
+        console.log(err)
+        return { isPlanUpdated: false }
+      })
+    return res
   },
 
   async getPlanDetails(id: string, bmiValue: number) {

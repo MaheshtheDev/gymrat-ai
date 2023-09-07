@@ -13,7 +13,7 @@ import { z } from 'zod'
 export const mealPlanScheme = z.object({
   days: z.array(
     z.object({
-      day: z.string(),
+      dayOfTheWeek: z.string(),
       meals: z.object({
         breakfast: z.object({
           meal: z.string(),

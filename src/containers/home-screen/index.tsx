@@ -70,13 +70,17 @@ export function HomeScreen({ navigation }: any) {
     let dayName = daysArray[day]
     setDayName(dayName)
     console.log('day name', dayName)
-    getUserDetails()
 
     async function checkForUpdates() {
       if (!userDetails?.userId) return
-      await API.checkPlanStatus(userDetails?.userId).then(res => {})
+      await API.checkPlanStatus(userDetails?.userId).then(res => {
+        console.log('check plan status')
+        console.log(res)
+      })
     }
-    checkForUpdates()
+    //checkForUpdates()
+
+    getUserDetails()
 
     registerForPushNotificationsAsync().then((token: any) => {
       setExpoPushToken(token)
@@ -146,9 +150,16 @@ export function HomeScreen({ navigation }: any) {
   const getUserDetails = async () => {
     try {
       setLoading(true)
-      const userdata = await API.getUserDetails()
-      if (userdata?.data !== null && userdata?.data !== undefined) {
-        const userDetails: User = userdata?.data
+      var userData = await API.getUserDetails()
+      if (userData?.data !== null && userData?.data !== undefined) {
+        await API.checkPlanStatus(userData?.data.userId).then(async res => {
+          console.log('check plan status', userDetails?.userId)
+          console.log(res)
+          if (res.isPlanUpdated) {
+            userData = await API.getUserDetails(undefined, false)
+          }
+        })
+        const userDetails: User = userData?.data
         console.log(JSON.parse(userDetails?.workoutPlan || '[]'))
         console.log(JSON.parse(userDetails?.mealPlan || '[]'))
         const goalLabel =
@@ -157,7 +168,7 @@ export function HomeScreen({ navigation }: any) {
         setGoalid(userDetails?.goal)
         // TODO: Check if the workout plan and meal plan are valid and Test it
 
-        console.log('workout plan', workoutPlan)
+        //console.log('workout plan', workoutPlan)
 
         if (
           workoutPlanScheme.safeParse(JSON.parse(userDetails?.workoutPlan || '[]'))
@@ -178,21 +189,22 @@ export function HomeScreen({ navigation }: any) {
               subtitle: 'Meal for the day',
             },
           ])
-        } else {
-          Alert.alert(
-            'Oops...!',
-            "A.I didn't come up with a plan yet for you",
-            [
-              {
-                text: 'Request a New Plan',
-                onPress: () => {
-                  showToast()
-                },
-              },
-            ],
-            { userInterfaceStyle: 'dark' }
-          )
-        }
+        } 
+        //else {
+        //  Alert.alert(
+        //    'Oops...!',
+        //    "A.I didn't come up with a plan yet for you",
+        //    [
+        //      {
+        //        text: 'Request a New Plan',
+        //        onPress: () => {
+        //          showToast()
+        //        },
+        //      },
+        //    ],
+        //    { userInterfaceStyle: 'dark' }
+        //  )
+        //}
         //console.log('Workout Plan')
         //console.log(workoutPlan)
         //console.log('Meal Plan')
@@ -441,8 +453,8 @@ export function HomeScreen({ navigation }: any) {
                 }}
                 renderItem={({ item }: any) => (
                   <>
-                    {item.day === dayName && (
-                      <View key={item.day}>
+                    {item.dayOfTheWeek === dayName && (
+                      <View key={item.dayOfTheWeek}>
                         <View style={[styles.mealview, { marginTop: -0.5 }]}>
                           <View style={styles.mealconatiner}>
                             <LabelComponent label='BREAKFAST' style={styles.heading1} />
@@ -592,9 +604,9 @@ export function HomeScreen({ navigation }: any) {
             }}
             renderItem={({ item }: any) => (
               <>
-                {item.day === dayName && (
-                  <CardComponent key={item.day}>
-                    <View style={styles.mealview} key={item.day}>
+                {item.dayOfTheWeek === dayName && (
+                  <CardComponent key={item.dayOfTheWeek}>
+                    <View style={styles.mealview} key={item.dayOfTheWeek}>
                       <View style={styles.mealconatiner}>
                         <LabelComponent label='BREAKFAST' style={styles.heading} />
                         <LabelComponent

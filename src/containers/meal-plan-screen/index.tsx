@@ -45,7 +45,7 @@ export function MealScreen({ navigation }: any) {
             <>
               <CardComponent cardStyle={styles.mealview}>
                 <View style={styles.mealview}>
-                  <LabelComponent label={item.day} style={styles.days} />
+                  <LabelComponent label={item.dayOfTheWeek} style={styles.days} />
                   <View style={styles.mealconatiner}>
                     <LabelComponent label='BREAKFAST' style={styles.heading} />
                     <LabelComponent
