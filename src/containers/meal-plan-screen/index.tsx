@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react'
+import {
+  SafeAreaView,
+  View,
+  FlatList,
+  ScrollView,
+  Pressable,
+  Linking,
+} from 'react-native'
 
-import { NavigationService } from '../../navigation/NavigationService'
-import { SafeAreaView, View, FlatList, ScrollView, ActivityIndicator } from 'react-native'
-import { styles } from './style'
-import axios from 'axios'
-
-import { CardComponent, Header, LabelComponent } from '../../components'
-import Colors from '../../styles/colors'
 import { useRoute } from '@react-navigation/native'
+
+import { styles } from './style'
+import { NavigationService } from '../../navigation/NavigationService'
+import { CardComponent, Header, LabelComponent } from '../../components'
 import { Loader } from '../../components/Loader'
+import InfoIcon from '../../assets/svg/InfoIcon.svg'
 
 export function MealScreen({ navigation }: any) {
   const [mealPlan, setMealPlan] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const route = useRoute()
-  const { mealPlanData } = route.params as any;
+  const { mealPlanData } = route.params as any
   useEffect(() => {
     getMealData()
   }, [])
@@ -36,7 +42,15 @@ export function MealScreen({ navigation }: any) {
     <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}>
         <Header onBackPress={() => NavigationService.goBack()} />
-        <LabelComponent label='Meal Plan Schedules' style={styles.title} />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <LabelComponent label='Meal Plan Schedules ' style={styles.title} />
+          <Pressable
+            onPress={() => {
+              Linking.openURL('https://gymrat.maheshthedev.me/mpr')
+            }}>
+            <InfoIcon height={20} width={20} />
+          </Pressable>
+        </View>
       </View>
       <ScrollView>
         <FlatList

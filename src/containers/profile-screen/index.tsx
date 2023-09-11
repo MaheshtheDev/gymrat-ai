@@ -23,8 +23,6 @@ export function ProfileScreen({ route, navigation }: any) {
 
   useEffect(() => {
     console.log('In Profile Screen user details')
-    console.log(userData)
-    console.log(id)
   }, [])
 
   return isLoading ? (
@@ -53,10 +51,10 @@ export function ProfileScreen({ route, navigation }: any) {
           </View>
         </View>
         {/* TODO: Test Settings Sections*/}
-        <View style={{paddingVertical: hp('1.5%')}}>
-          <Text>SETTINGS</Text>
+        {/*<View style={{ paddingVertical: hp('1.5%') }}>
+          <Text style={{ color: Colors.WHITE }}>SETTINGS</Text>
           <Text></Text>
-        </View>
+        </View>*/}
       </View>
       <View
         style={{

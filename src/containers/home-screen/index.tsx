@@ -9,6 +9,7 @@ import {
   Pressable,
   Platform,
   Alert,
+  Linking,
 } from 'react-native'
 
 import * as Device from 'expo-device'
@@ -28,6 +29,7 @@ import Colors from '../../styles/colors'
 import { User } from '../../models/api'
 import { API, mealPlanScheme, workoutPlanScheme } from '../../helpers'
 import { Loader } from '../../components/Loader'
+import InfoIcon from '../../assets/svg/InfoIcon.svg'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -46,7 +48,7 @@ export function HomeScreen({ navigation }: any) {
   const [userDetails, setUserDetails] = useState<User>()
   const [dayName, setDayName] = useState('')
   const [goallabel, setGoallabel] = useState('')
-  const [expoPushToken, setExpoPushToken] = useState('')
+  const [expoPushToken, setExpoPushToken] = useState<any>('')
   const [notification, setNotification] = useState(false)
   const notificationListener = useRef<Notifications.Subscription>()
   const responseListener = useRef<Notifications.Subscription>()
@@ -87,7 +89,7 @@ export function HomeScreen({ navigation }: any) {
       if (userDetails?.expoNotificationToken !== expoPushToken && userDetails?.userId) {
         API.UpdateExpoNotification({
           userId: userDetails?.userId,
-          data: JSON.stringify(token),
+          data: token.data,
         })
       }
     })
@@ -128,7 +130,7 @@ export function HomeScreen({ navigation }: any) {
         return
       }
       token = await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.expoConfig?.extra?.eas?.projectId ?? '',
+        projectId: '7a26df6e-bd0b-4749-839c-f73997a36066',
       })
       console.log(token)
     } else {
@@ -189,7 +191,7 @@ export function HomeScreen({ navigation }: any) {
               subtitle: 'Meal for the day',
             },
           ])
-        } 
+        }
         //else {
         //  Alert.alert(
         //    'Oops...!',
@@ -290,6 +292,32 @@ export function HomeScreen({ navigation }: any) {
         [{ text: 'Ok' }],
         { userInterfaceStyle: 'dark' }
       )
+    } else {
+      console.log('expo push token', expoPushToken)
+      if (expoPushToken == '') {
+        registerForPushNotificationsAsync().then((token: any) => {
+          setExpoPushToken(token)
+          if (
+            userDetails?.expoNotificationToken !== expoPushToken &&
+            userDetails?.userId
+          ) {
+            API.UpdateExpoNotification({
+              userId: userDetails?.userId,
+              data: token.data,
+            })
+          }
+        })
+      }
+      if (
+        userDetails?.expoNotificationToken !== expoPushToken.data &&
+        userDetails?.userId
+      ) {
+        console.log('Updating the expo notif token')
+        await API.UpdateExpoNotification({
+          userId: userDetails?.userId,
+          data: expoPushToken.data,
+        })
+      }
     }
     if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
   }
@@ -583,7 +611,15 @@ export function HomeScreen({ navigation }: any) {
             renderSectionHeader={({ section: { title, subtitle } }) => {
               return (
                 <View style={styles.headercontainer}>
-                  <LabelComponent label={title} style={styles.title} />
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <LabelComponent label={title + ' '} style={styles.title} />
+                    <Pressable
+                      onPress={() => {
+                        Linking.openURL('https://gymrat.maheshthedev.me/mpr')
+                      }}>
+                      <InfoIcon height={20} width={20} />
+                    </Pressable>
+                  </View>
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate(ROUTES.MEAL_DETAILS, {
