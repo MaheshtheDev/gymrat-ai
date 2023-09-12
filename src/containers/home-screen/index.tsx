@@ -14,7 +14,6 @@ import {
 
 import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
-import Constants from 'expo-constants'
 import { Entypo } from '@expo/vector-icons'
 
 import Modal from 'react-native-modal'
@@ -474,8 +473,15 @@ export function HomeScreen({ navigation }: any) {
                 scrollEnabled={false}
                 renderSectionHeader={({ section: { title, subtitle } }) => {
                   return (
-                    <View>
-                      <LabelComponent label={subtitle} style={styles.subheading1} />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <LabelComponent label={subtitle + ' '} style={styles.subheading1} />
+                      <Pressable
+                        onPress={() => {
+                          Linking.openURL('https://gymrat.maheshthedev.me/mpr')
+                        }}
+                        style={styles.mtsh1}>
+                        <InfoIcon height={20} width={20} />
+                      </Pressable>
                     </View>
                   )
                 }}

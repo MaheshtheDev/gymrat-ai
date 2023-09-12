@@ -173,6 +173,10 @@ export const styles = StyleSheet.create({
     marginTop: hp('1%'),
   },
 
+  mtsh1: {
+    marginTop: hp('1%'),
+  },
+
   workout: {
     flex: 1,
     fontSize: FONT_SIZE_18,
