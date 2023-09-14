@@ -11,13 +11,6 @@ import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants'
 import Colors from './src/styles/colors'
 
-//Sentry.init({
-//  dsn: 'https://ab01207621a84c8b92958afb8dad1c73@o4504897416593408.ingest.sentry.io/4505552071688192',
-//  enableInExpoDevelopment: true,
-//  environment: 'development',
-//  debug: false, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
-//})
-
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
