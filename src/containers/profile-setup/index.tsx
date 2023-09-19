@@ -81,9 +81,7 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
   }
 
   const onSaveProfile = async () => {
-    //await API.logOut();
-    //setIsLoading(false);
-    const bmi = weight / (height / 100) ** 2
+    const bmi = (weight * 0.453592) / (height * 0.01) ** 2
     const userDetails: User = {
       userId: credential.user,
       fullName: name,
@@ -164,7 +162,7 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
                 </View>
 
                 <View>
-                  <LabelComponent label='Height*' style={styles.label} />
+                  <LabelComponent label='Height(in cms)*' style={styles.label} />
                   <TextInputComponent
                     placeholder={'Enter your height in cms'}
                     style={styles.txtinput}
@@ -174,7 +172,7 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
                   />
                 </View>
                 <View>
-                  <LabelComponent label='Weight*' style={styles.label} />
+                  <LabelComponent label='Weight(in pounds)*' style={styles.label} />
                   <TextInputComponent
                     placeholder={'Enter your weight in pounds'}
                     style={styles.txtinput}

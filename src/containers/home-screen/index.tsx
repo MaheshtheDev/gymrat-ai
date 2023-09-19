@@ -365,10 +365,7 @@ export function HomeScreen({ navigation }: any) {
             </View>
             <View style={styles.userMetricsView}>
               <View style={styles.roundcontainer}>
-                <LabelComponent
-                  label={userDetails?.bmiValue?.toFixed(2)}
-                  style={styles.txt}
-                />
+                <LabelComponent label={(userDetails?.weight ? ((userDetails.weight * 0.453592) / (userDetails.height * 0.01) ** 2).toFixed(2) : 0)} style={styles.txt} />
               </View>
               <Text style={styles.userMetricsText}>BMI</Text>
             </View>
@@ -392,6 +389,9 @@ export function HomeScreen({ navigation }: any) {
             }}>
             <Text style={styles.actionsButtonText}>Update Goal</Text>
           </Pressable>
+          {/*<Pressable style={styles.actionsButtonPressable}>
+            <Text style={styles.actionsButtonText}>Update Metrics</Text>
+          </Pressable>*/}
           <Pressable style={styles.actionsButtonPressable} onPress={showToast}>
             <Text style={styles.actionsButtonText}>Request New Plan</Text>
           </Pressable>
