@@ -2,7 +2,7 @@
   "expo": {
     "name": "GymRat AI",
     "slug": "gymrat-ai",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gymrat.ai",
-      "buildNumber": "9"
+      "buildNumber": "0.0.2"
     },
     "android": {
       "package": "com.gymrat.ai",
