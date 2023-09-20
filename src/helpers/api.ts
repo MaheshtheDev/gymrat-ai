@@ -3,8 +3,9 @@ import { User } from '../models/api'
 import { TempStorage, TempStorageKeys } from './tempStorage'
 
 export const API = {
-  BASE_URL: 'https://gymrat-api.vercel.app/api',
+  BASE_URL: __DEV__ ? 'http://192.168.4.30:3000/api' : 'https://gymrat-api.vercel.app/api',
   async User(body: User) {
+    console.log(this.BASE_URL)
     var response: any
     try {
       const userDetails = await this.getUserDetails(body.userId)
@@ -54,6 +55,43 @@ export const API = {
   },
 
   async getUserDetails(userId?: string, forceFetch?: boolean) {
+    if (forceFetch) {
+      console.log(this.BASE_URL);
+      const res = await axios
+        .get(`${this.BASE_URL}/user/details?userId=${userId}`)
+        .then(async res => {
+          console.log('Response ' + userId)
+          console.log(res)
+          if (res == null) {
+            return { data: null, status: 404 }
+          }
+          const userDetails: User = {
+            userId: res.data.userDetails.userId,
+            fullName: res.data.userDetails.name,
+            email: res.data.userDetails.email,
+            height: res.data.userDetails.bodyMetrics.height,
+            weight: res.data.userDetails.bodyMetrics.weight,
+            bmiValue: res.data.userDetails.bodyMetrics.bmiValue,
+            age: res.data.userDetails.bodyMetrics.age,
+            goal: res.data.userDetails.bodyMetrics.goal,
+            gender: res.data.userDetails.gender,
+            suggestedPlanId: res.data.userDetails.suggestedPlanId,
+            mealPlan: res.data.suggestedPlan[0].mealPlan,
+            workoutPlan: res.data.suggestedPlan[0].workoutPlan,
+          }
+          console.log(userDetails)
+          await TempStorage.setItem(
+            TempStorageKeys.USER_PROFILE,
+            JSON.stringify(userDetails)
+          )
+          return { data: userDetails, status: res.status }
+        })
+        .catch(err => {
+          console.log('User Not found')
+          console.log(err)
+          return { data: null, status: 404 }
+        })
+    }
     console.log('User ID in get user details')
     console.log(userId)
     const userData = await TempStorage.getItem(TempStorageKeys.USER_PROFILE)

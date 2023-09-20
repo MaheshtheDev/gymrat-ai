@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
   Linking,
+  RefreshControl,
 } from 'react-native'
 
 import * as Device from 'expo-device'
@@ -29,6 +30,7 @@ import { User } from '../../models/api'
 import { API, mealPlanScheme, workoutPlanScheme } from '../../helpers'
 import { Loader } from '../../components/Loader'
 import InfoIcon from '../../assets/svg/InfoIcon.svg'
+import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -51,10 +53,8 @@ export function HomeScreen({ navigation }: any) {
   const [notification, setNotification] = useState(false)
   const notificationListener = useRef<Notifications.Subscription>()
   const responseListener = useRef<Notifications.Subscription>()
-
-  useEffect(() => {
-    //getUserDetails()
-  }, [goallabel])
+  const [refreshing, setRefreshing] = useState(false)
+  const ref: any = useRef(null)
 
   useEffect(() => {
     console.log('use effect in home screen')
@@ -71,16 +71,6 @@ export function HomeScreen({ navigation }: any) {
     let dayName = daysArray[day]
     setDayName(dayName)
     console.log('day name', dayName)
-
-    async function checkForUpdates() {
-      if (!userDetails?.userId) return
-      await API.checkPlanStatus(userDetails?.userId).then(res => {
-        console.log('check plan status')
-        console.log(res)
-      })
-    }
-    //checkForUpdates()
-
     getUserDetails()
 
     registerForPushNotificationsAsync().then((token: any) => {
@@ -115,6 +105,15 @@ export function HomeScreen({ navigation }: any) {
     }
   }, [])
 
+  async function checkForUpdates() {
+    const isPlanUpdated = await TempStorage.getItem(TempStorageKeys.IS_PLAN_UPDATED)
+    if (isPlanUpdated) {
+      console.log('isPlanUpdated: ', isPlanUpdated)
+      getUserDetails(userDetails?.userId, !!isPlanUpdated)
+      await TempStorage.setItem(TempStorageKeys.IS_PLAN_UPDATED, 'false')
+    }
+  }
+
   async function registerForPushNotificationsAsync() {
     let token
     console.log('device', Device.isDevice)
@@ -148,18 +147,11 @@ export function HomeScreen({ navigation }: any) {
     return token
   }
 
-  const getUserDetails = async () => {
+  const getUserDetails = async (userId?: string, forceFetch?: boolean) => {
     try {
       setLoading(true)
-      var userData = await API.getUserDetails()
+      var userData = await API.getUserDetails(userId, forceFetch)
       if (userData?.data !== null && userData?.data !== undefined) {
-        await API.checkPlanStatus(userData?.data.userId).then(async res => {
-          console.log('check plan status', userDetails?.userId)
-          console.log(res)
-          if (res.isPlanUpdated) {
-            userData = await API.getUserDetails(undefined, false)
-          }
-        })
         const userDetails: User = userData?.data
         console.log(JSON.parse(userDetails?.workoutPlan || '[]'))
         console.log(JSON.parse(userDetails?.mealPlan || '[]'))
@@ -167,9 +159,6 @@ export function HomeScreen({ navigation }: any) {
           GOALDATA.find(item => item.value === userDetails?.goal)?.label || ''
         setGoallabel(goalLabel)
         setGoalid(userDetails?.goal)
-        // TODO: Check if the workout plan and meal plan are valid and Test it
-
-        //console.log('workout plan', workoutPlan)
 
         if (
           workoutPlanScheme.safeParse(JSON.parse(userDetails?.workoutPlan || '[]'))
@@ -318,7 +307,10 @@ export function HomeScreen({ navigation }: any) {
         })
       }
     }
-    if (userDetails?.userId) API.getNewPlan(userDetails?.userId)
+    if (userDetails?.userId) {
+      API.getNewPlan(userDetails?.userId)
+      await TempStorage.setItem(TempStorageKeys.IS_PLAN_UPDATED, 'true')
+    }
   }
 
   return isLoading ? (
@@ -341,7 +333,18 @@ export function HomeScreen({ navigation }: any) {
           })
         }
       />
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              checkForUpdates()
+              console.log('refreshing')
+            }}
+            colors={['#ff0000', '#00ff00', '#0000ff']} // Colors for the spinning loader segments
+            //progressBackgroundColor='#ffffff' // Background color of the loader circle
+          />
+        }>
         <CardComponent cardStyle={styles.cardcontainer}>
           <View
             style={{
@@ -365,7 +368,17 @@ export function HomeScreen({ navigation }: any) {
             </View>
             <View style={styles.userMetricsView}>
               <View style={styles.roundcontainer}>
-                <LabelComponent label={(userDetails?.weight ? ((userDetails.weight * 0.453592) / (userDetails.height * 0.01) ** 2).toFixed(2) : 0)} style={styles.txt} />
+                <LabelComponent
+                  label={
+                    userDetails?.weight
+                      ? (
+                          (userDetails.weight * 0.453592) /
+                          (userDetails.height * 0.01) ** 2
+                        ).toFixed(2)
+                      : 0
+                  }
+                  style={styles.txt}
+                />
               </View>
               <Text style={styles.userMetricsText}>BMI</Text>
             </View>
@@ -389,9 +402,6 @@ export function HomeScreen({ navigation }: any) {
             }}>
             <Text style={styles.actionsButtonText}>Update Goal</Text>
           </Pressable>
-          {/*<Pressable style={styles.actionsButtonPressable}>
-            <Text style={styles.actionsButtonText}>Update Metrics</Text>
-          </Pressable>*/}
           <Pressable style={styles.actionsButtonPressable} onPress={showToast}>
             <Text style={styles.actionsButtonText}>Request New Plan</Text>
           </Pressable>
