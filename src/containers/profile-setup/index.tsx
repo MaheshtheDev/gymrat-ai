@@ -264,7 +264,6 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
             <Pressable
               style={isButtonDisabled ? styles.disabledButton : styles.button}
               disabled={isButtonDisabled}
-              sentry-label='GetMyPlan Button'
               onPress={() => {
                 setIsLoading(true)
                 onSaveProfile()

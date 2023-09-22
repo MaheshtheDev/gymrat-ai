@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gymrat.ai",
-      "buildNumber": "0.0.2"
+      "buildNumber": "17"
     },
     "android": {
       "package": "com.gymrat.ai",
@@ -30,7 +30,6 @@
       "favicon": "./src/assets/favicon.png"
     },
     "plugins": [
-      "sentry-expo",
       "expo-apple-authentication"
     ],
     "extra": {

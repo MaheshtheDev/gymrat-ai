@@ -20,7 +20,6 @@ import { Entypo } from '@expo/vector-icons'
 import Modal from 'react-native-modal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Toast from 'react-native-toast-message'
-import * as Sentry from 'sentry-expo'
 
 import { styles } from './style'
 import { CardComponent, LabelComponent, ProfileHeader } from '../../components'
@@ -233,7 +232,6 @@ export function HomeScreen({ navigation }: any) {
         }
       }
     } catch (error) {
-      Sentry.Native.captureException(error)
       console.error(error)
     } finally {
       setLoading(false)
