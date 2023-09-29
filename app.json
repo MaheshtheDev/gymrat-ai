@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gymrat.ai",
-      "buildNumber": "17"
+      "buildNumber": "0.0.3"
     },
     "android": {
       "package": "com.gymrat.ai",
