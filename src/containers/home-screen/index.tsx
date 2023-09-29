@@ -105,12 +105,12 @@ export function HomeScreen({ navigation }: any) {
   }, [])
 
   async function checkForUpdates() {
-    const isPlanUpdated = await TempStorage.getItem(TempStorageKeys.IS_PLAN_UPDATED)
-    if (isPlanUpdated) {
-      console.log('isPlanUpdated: ', isPlanUpdated)
-      getUserDetails(userDetails?.userId, !!isPlanUpdated)
-      await TempStorage.setItem(TempStorageKeys.IS_PLAN_UPDATED, 'false')
-    }
+    //const isPlanUpdated = await TempStorage.getItem(TempStorageKeys.IS_PLAN_UPDATED)
+    //if (isPlanUpdated) {
+    //  console.log('isPlanUpdated: ', isPlanUpdated)
+      await getUserDetails(userDetails?.userId, true)
+      //await TempStorage.setItem(TempStorageKeys.IS_PLAN_UPDATED, 'false')
+    //}
   }
 
   async function registerForPushNotificationsAsync() {
@@ -150,7 +150,10 @@ export function HomeScreen({ navigation }: any) {
     try {
       setLoading(true)
       var userData = await API.getUserDetails(userId, forceFetch)
+      console.log('user data')
+      console.log(userData)
       if (userData?.data !== null && userData?.data !== undefined) {
+        console.log("in if of get user details")
         const userDetails: User = userData?.data
         console.log(JSON.parse(userDetails?.workoutPlan || '[]'))
         console.log(JSON.parse(userDetails?.mealPlan || '[]'))
@@ -158,6 +161,9 @@ export function HomeScreen({ navigation }: any) {
           GOALDATA.find(item => item.value === userDetails?.goal)?.label || ''
         setGoallabel(goalLabel)
         setGoalid(userDetails?.goal)
+
+        const wpParse = workoutPlanScheme.safeParse(JSON.parse(userDetails?.workoutPlan || '[]'))
+        const mpParse = mealPlanScheme.safeParse(JSON.parse(userDetails?.mealPlan || '[]'))
 
         if (
           workoutPlanScheme.safeParse(JSON.parse(userDetails?.workoutPlan || '[]'))
@@ -178,22 +184,26 @@ export function HomeScreen({ navigation }: any) {
               subtitle: 'Meal for the day',
             },
           ])
+          console.log("Parsed workout and meal plan with the schema")
         }
-        //else {
-        //  Alert.alert(
-        //    'Oops...!',
-        //    "A.I didn't come up with a plan yet for you",
-        //    [
-        //      {
-        //        text: 'Request a New Plan',
-        //        onPress: () => {
-        //          showToast()
-        //        },
-        //      },
-        //    ],
-        //    { userInterfaceStyle: 'dark' }
-        //  )
-        //}
+        else {
+          console.log("in else of parsing workout and meal plan")
+          console.log(wpParse)
+          console.log(mpParse)
+          Alert.alert(
+            'Oops...!',
+            "A.I didn't come up with a plan yet for you",
+            [
+              {
+                text: 'Request a New Plan',
+                onPress: () => {
+                  showToast()
+                },
+              },
+            ],
+            { userInterfaceStyle: 'dark' }
+          )
+        }
         //console.log('Workout Plan')
         //console.log(workoutPlan)
         //console.log('Meal Plan')

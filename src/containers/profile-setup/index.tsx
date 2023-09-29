@@ -1,30 +1,26 @@
-import { ActivityIndicator, Pressable, SafeAreaView, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, Pressable, SafeAreaView, Text, View } from 'react-native'
 import { Ionicons, Octicons } from '@expo/vector-icons'
+import React, { useEffect, useState } from 'react'
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
+import Colors from '../../styles/colors'
 import {
   ButtonComponent,
   ButtonVarient,
   LabelComponent,
   TextInputComponent,
   TextVarient,
+  Loader,
 } from '../../components'
 import {
-  FONT_SIZE_14,
-  MONTSERRAT_LIGHT,
   MONTSERRAT_MEDIUM,
   MONTSERRAT_REGULAR,
 } from '../../styles'
-import { ROUTES, Strings } from '../../constants'
-import React, { useEffect, useState } from 'react'
-
-import Colors from '../../styles/colors'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import { ROUTES, Strings, GENDER, GOALDATA } from '../../constants'
 import { styles } from './style'
-import { API } from '../../helpers/api'
+import { API, TempStorage, TempStorageKeys } from '../../helpers'
 import { User } from '../../models/api'
-import { TempStorage, TempStorageKeys } from '../../helpers/tempStorage'
-import { useUserStore } from '../../store/userStore'
-import { Loader } from '../../components/Loader'
 
 export function AddMoreDetailsScreen({ route, navigation }: any) {
   const [height, setHeight] = useState<number>(0)
@@ -36,9 +32,10 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
   const [isLoading, setIsLoading] = useState(false)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
   const [step, setStep] = useState(1)
-  const user = useUserStore(state => state.user)
+  const [error, setError] = useState('')
+  const [heightError, setHeightError] = useState('')
+  const [weightError, setWeightError] = useState('')
   const [credential, setCredential] = useState<any>({ fullName: { givenName: '' } })
-  //const { userToken } = route.params
 
   useEffect(() => {
     checkInputsFilled()
@@ -66,7 +63,13 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
 
   const checkInputsFilled = () => {
     if (
-      (age && genderid !== undefined && genderid !== null && name && height && weight) ||
+      (age &&
+        genderid !== undefined &&
+        genderid !== null &&
+        genderid !== -1 &&
+        name &&
+        height &&
+        weight) ||
       (goalid !== undefined && goalid !== null && goalid !== -1)
     ) {
       setIsButtonDisabled(false)
@@ -75,7 +78,50 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
     }
   }
 
+  const handleAgeChange = (text: string) => {
+    const ageNum = parseInt(text)
+    if (isNaN(ageNum) || ageNum < 18) {
+      setError('*Age must be 18 or older')
+    } else {
+      setError('')
+    }
+    setAge(ageNum)
+  }
+
+  const handleHeightChange = (text: string) => {
+    const heightNum = parseInt(text)
+    if (isNaN(heightNum) || heightNum <= 50 || heightNum >= 300) {
+      setHeightError('*Please enter a valid height in cms')
+    } else {
+      setHeightError('')
+    }
+    setHeight(heightNum)
+  }
+
+  const handleWeightChange = (text: string) => {
+    const weightNum = parseInt(text)
+    if (isNaN(weightNum) || weightNum <= 10) {
+      setWeightError('*Please enter a valid weight in pounds')
+    } else {
+      setWeightError('')
+    }
+    setWeight(weightNum)
+  }
+
   const handleFirstContinueButtonPress = () => {
+    if (
+      name === '' ||
+      age === 0 ||
+      height === 0 ||
+      weight === 0 ||
+      genderid === -1 ||
+      weightError !== '' ||
+      heightError !== '' ||
+      error !== ''
+    ) {
+      Alert.alert('Please fill all required details')
+      return
+    }
     setStep(2)
     goalid !== -1 ? setIsButtonDisabled(false) : setIsButtonDisabled(true)
   }
@@ -110,20 +156,6 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
       })
   }
 
-  const GENDER = [
-    { value: 0, label: 'Male' },
-    { value: 1, label: 'Female' },
-    { value: 2, label: 'Others' },
-  ]
-
-  const GOALDATA = [
-    { value: 0, label: 'Lose Weight' },
-    { value: 1, label: 'Gain Weight' },
-    { value: 2, label: 'Maintain Weight' },
-    { value: 3, label: 'Build Muscle' },
-    { value: 4, label: 'Get Fit' },
-  ]
-
   return isLoading ? (
     <Loader />
   ) : (
@@ -156,9 +188,10 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
                     placeholder={'Enter your age'}
                     style={styles.txtinput}
                     keyboardType='number-pad'
-                    onChangeText={text => setAge(parseInt(text, 10))}
+                    onChangeText={text => handleAgeChange(text)}
                     defaultValue={age ? age.toString() : ''}
                   />
+                  {error !== '' && <Text style={styles.inputError}>{error}</Text>}
                 </View>
 
                 <View>
@@ -167,20 +200,28 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
                     placeholder={'Enter your height in cms'}
                     style={styles.txtinput}
                     keyboardType='number-pad'
-                    onChangeText={text => setHeight(parseInt(text, 10))}
+                    onChangeText={handleHeightChange}
                     defaultValue={height ? height.toString() : ''}
                   />
+                  {heightError !== '' && (
+                    <Text style={styles.inputError}>{heightError}</Text>
+                  )}
                 </View>
+
                 <View>
                   <LabelComponent label='Weight(in pounds)*' style={styles.label} />
                   <TextInputComponent
                     placeholder={'Enter your weight in pounds'}
                     style={styles.txtinput}
                     keyboardType='number-pad'
-                    onChangeText={text => setWeight(parseInt(text, 10))}
+                    onChangeText={handleWeightChange}
                     defaultValue={weight ? weight.toString() : ''}
                   />
+                  {weightError !== '' && (
+                    <Text style={styles.inputError}>{weightError}</Text>
+                  )}
                 </View>
+
                 <View>
                   <LabelComponent label={Strings.GENDER} style={styles.label} />
                   <View
@@ -215,6 +256,7 @@ export function AddMoreDetailsScreen({ route, navigation }: any) {
                     ))}
                   </View>
                 </View>
+
                 <View style={styles.buttoncontainer}>
                   <ButtonComponent
                     varient={

@@ -5,7 +5,7 @@ import { SafeAreaView, View, Text } from 'react-native'
 import { styles } from './style'
 
 import { Header } from '../../components'
-import { ROUTES } from '../../constants'
+import { GENDER, ROUTES } from '../../constants'
 import { API } from '../../helpers/api'
 import { hp } from '../../helpers'
 import { Loader } from '../../components/Loader'
@@ -19,6 +19,11 @@ export function ProfileScreen({ route, navigation }: any) {
 
   const handleIconPress = () => {
     setDisabled(true)
+  }
+
+  const getGenderLabel = (value: number) => {
+    const gender = GENDER.find(item => item.value === value)
+    return gender ? gender.label : ''
   }
 
   useEffect(() => {
@@ -36,19 +41,24 @@ export function ProfileScreen({ route, navigation }: any) {
         onIconPress={() => handleIconPress()}
       />
       <View style={styles.maincontainer}>
-        <View>
-          {/* form that shows the user profile details */}
-          <View>
-            <Text style={styles.title}>Full Name </Text>
-            <Text style={styles.subtitle}>{userData.fullName}</Text>
-          </View>
+        <View style={{ paddingVertical: hp('0.5%') }}>
+          <Text style={styles.title}>Full Name </Text>
+          <Text style={styles.subtitle}>{userData.fullName}</Text>
         </View>
-        <View style={{ paddingVertical: hp('1.5%') }}>
+        <View style={{ paddingVertical: hp('0.5%') }}>
           {/* form that shows the user profile details */}
-          <View>
-            <Text style={styles.title}>Email </Text>
-            <Text style={styles.subtitle}>{userData.email}</Text>
-          </View>
+          <Text style={styles.title}>Email </Text>
+          <Text style={styles.subtitle}>{userData.email}</Text>
+        </View>
+        <View style={{ paddingVertical: hp('0.5%') }}>
+          {/* form that shows the user profile details */}
+          <Text style={styles.title}>Age </Text>
+          <Text style={styles.subtitle}>{userData.age}</Text>
+        </View>
+        <View style={{ paddingVertical: hp('0.5%') }}>
+          {/* form that shows the user profile details */}
+          <Text style={styles.title}>Gender </Text>
+          <Text style={styles.subtitle}>{getGenderLabel(userData.gender)}</Text>
         </View>
         {/* TODO: Test Settings Sections*/}
         {/*<View style={{ paddingVertical: hp('1.5%') }}>

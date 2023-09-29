@@ -65,6 +65,14 @@ export const styles = StyleSheet.create({
     color: Colors.WHITE,
     fontFamily: MONTSERRAT_REGULAR,
   },
+  inputError: {
+    color: Colors.RED,
+    fontWeight: FONT_WEIGHT_OR_TEXT,
+    fontSize: FONT_SIZE_12,
+    fontFamily: MONTSERRAT_REGULAR,
+    marginTop: hp('1%'),
+    marginHorizontal: wp('9%'),
+  },
   buttoncontainer: {
     marginTop: hp('2%'),
   },

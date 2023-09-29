@@ -6,6 +6,12 @@ export const GOALDATA = [
   { value: 4, label: 'Get Fit' },
 ]
 
+export const GENDER = [
+  { value: 0, label: 'Male' },
+  { value: 1, label: 'Female' },
+  { value: 2, label: 'Others' },
+]
+
 export const Images = {
   welcomeImage: require('../assets/image/wlcbackgroundimg.png'),
   google: require('../assets/image/google.png'),
